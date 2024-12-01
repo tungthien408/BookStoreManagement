@@ -1,0 +1,47 @@
+package QuanLyCuaHangBanSach;
+
+import java.io.Serializable;
+
+public class ChiTietPhieu implements Serializable {
+    private String maSach;
+    private int soLuong;
+    private int donGia;
+
+    public ChiTietPhieu(String maSach, int soLuong, int donGia) {
+        setMaSach(maSach);
+        setSoLuong(soLuong);
+        setDonGia(donGia);
+    }
+
+    public void inChiTietPhieu() {
+        System.out.printf("│%-16s│%-16s│%-16s│\n", maSach, soLuong, donGia);
+    }
+
+    public String toString() {
+        return maSach + "-" + soLuong + "-" + donGia;
+    }
+
+    public String getMaSach() {
+        return maSach;
+    }
+
+    public void setMaSach(String maSach) {
+        this.maSach = maSach;
+    }
+
+    public int getSoLuong() {
+        return soLuong;
+    }
+
+    public void setSoLuong(int soLuong) {
+        this.soLuong = soLuong;
+    }
+
+    public int getDonGia() {
+        return donGia;
+    }
+
+    public void setDonGia(int donGia) {
+        this.donGia = donGia;
+    }
+} 
