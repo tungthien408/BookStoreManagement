@@ -8,8 +8,8 @@ public class PhieuXuat extends Phieu implements Serializable {
     private String tinhTrang = "Cho xuat kho";
 
     public PhieuXuat(String maPhieu, String ngayLap, String maNhanVienBanHang,
-                     String maNhanVienThuKho, DSChiTietPhieu dsChiTietPhieu, 
-                     int tongTien, String maHoaDon) {
+            String maNhanVienThuKho, DSChiTietPhieu dsChiTietPhieu,
+            int tongTien, String maHoaDon) {
         super(maPhieu, ngayLap, dsChiTietPhieu, tongTien, maNhanVienBanHang);
         this.maNhanVienThuKho = maNhanVienThuKho;
         this.maHoaDon = maHoaDon;
@@ -18,7 +18,7 @@ public class PhieuXuat extends Phieu implements Serializable {
     public void inPhieu() {
         System.out.printf("│%-8s│%-8s│%-12s│%-16s", maPhieu, maHoaDon, ngayLap, tongTien);
         String colorTinhTrang = tinhTrang;
-        if(tinhTrang.equals("Cho xuat kho"))
+        if (tinhTrang.equals("Cho xuat kho"))
             colorTinhTrang = Check.toYellowText(tinhTrang);
         else
             colorTinhTrang = Check.toGreenText(tinhTrang);
@@ -27,8 +27,8 @@ public class PhieuXuat extends Phieu implements Serializable {
 
     public void xemChiTietPhieu() {
         System.out.printf("┌%-50s┐\n", Check.repeatStr("─", 50));
-        System.out.printf("│%-10s%-30s%-10s│\n", Check.repeatStr(" ", 10), 
-            "Chi tiet phieu xuat", Check.repeatStr(" ", 10));
+        System.out.printf("│%-10s%-30s%-10s│\n", Check.repeatStr(" ", 10),
+                "Chi tiet phieu xuat", Check.repeatStr(" ", 10));
         System.out.printf("│%-50s│\n", ("Ma phieu: " + getMaPhieu()));
         System.out.printf("│%-50s│\n", ("Ngay lap: " + getNgayLap()));
         System.out.printf("│%-50s│\n", ("Tong tien: " + getTongTien()));
@@ -36,17 +36,17 @@ public class PhieuXuat extends Phieu implements Serializable {
         System.out.printf("│%-50s│\n", ("Ma nhan vien thu kho: " + getMaNhanVienThuKho()));
         System.out.printf("│%-50s│\n", ("Tinh trang: " + getTinhTrang()));
         dsChiTietPhieu.xuatDS();
-        System.out.printf("└%-16s┴%-16s┴%-16s┘\n", Check.repeatStr("─", 16), 
-            Check.repeatStr("─", 16), Check.repeatStr("─", 16));
+        System.out.printf("└%-16s┴%-16s┴%-16s┘\n", Check.repeatStr("─", 16),
+                Check.repeatStr("─", 16), Check.repeatStr("─", 16));
     }
 
     public void xuatKho(Nguoi nguoi, DanhSachHoaDon danhSachHoaDon) {
-        if(tinhTrang.equals("Da xuat kho"))
+        if (tinhTrang.equals("Da xuat kho"))
             return;
         maNhanVienThuKho = nguoi.getId();
         tinhTrang = "Da xuat kho";
         for (HoaDon hoaDon : danhSachHoaDon.getHoaDonArrayList())
-            if(hoaDon.getMaHoaDon().equals(maHoaDon))
+            if (hoaDon.getMaHoaDon().equals(maHoaDon))
                 hoaDon.setTinhTrang("Da xuat kho");
     }
 
@@ -66,4 +66,4 @@ public class PhieuXuat extends Phieu implements Serializable {
     public void setTinhTrang(String tinhTrang) {
         this.tinhTrang = tinhTrang;
     }
-} 
+}

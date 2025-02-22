@@ -2,7 +2,6 @@ package QuanLyCuaHangBanSach;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Locale;
 
 public class DanhSachHoaDon implements Serializable, DanhSach {
     private ArrayList<HoaDon> hoaDonArrayList = new ArrayList<>();
@@ -13,21 +12,30 @@ public class DanhSachHoaDon implements Serializable, DanhSach {
         Sach s1 = danhSachSach.getListSach()[0];
         Sach s2 = danhSachSach.getListSach()[1];
         Sach s3 = danhSachSach.getListSach()[2];
-        Sach s4 = danhSachSach.getListSach()[3];
         a.getCthd().add(new ChiTietHoaDon(s1.getMaSach(), 10, s1.getGiaBan()));
         a.getCthd().add(new ChiTietHoaDon(s2.getMaSach(), 3, s2.getGiaBan()));
         a.getCthd().add(new ChiTietHoaDon(s3.getMaSach(), 6, s3.getGiaBan()));
         s1.mua(10);
         s2.mua(3);
         s3.mua(6);
-        hoaDonArrayList.add(new HoaDon(getID(), "nam", "minh", "12/12/2023", a.tinhTongTien(), a, "Da xac nhan"));
+        hoaDonArrayList.add(
+                new HoaDon(getID(), "Doraemon", "Honekawa Suneo", "12/12/2024", a.tinhTongTien(), a, "Da xac nhan"));
 
         DanhSachChiTietHoaDon b = new DanhSachChiTietHoaDon();
         b.getCthd().add(new ChiTietHoaDon(s2.getMaSach(), 6, s2.getGiaBan()));
         b.getCthd().add(new ChiTietHoaDon(s3.getMaSach(), 4, s3.getGiaBan()));
         s2.mua(6);
         s3.mua(4);
-        hoaDonArrayList.add(new HoaDon(getID(), "nam", "minh", "1/2/2024", b.tinhTongTien(), b, "Da xac nhan"));
+        hoaDonArrayList.add(
+                new HoaDon(getID(), "Doraemon", "Nobi Nobita", "1/2/2024", b.tinhTongTien(), b, "Da xac nhan"));
+        
+                DanhSachChiTietHoaDon c = new DanhSachChiTietHoaDon();
+                c.getCthd().add(new ChiTietHoaDon(s2.getMaSach(), 12, s2.getGiaBan()));
+                c.getCthd().add(new ChiTietHoaDon(s1.getMaSach(), 4, s1.getGiaBan()));
+                s2.mua(12);
+                s1.mua(4);
+                hoaDonArrayList.add(
+                        new HoaDon(getID(), "Doraemon", "Chaien", "4/7/2024", b.tinhTongTien(), b, "Da xac nhan"));
     }
 
     public String getID() {
@@ -114,25 +122,16 @@ public class DanhSachHoaDon implements Serializable, DanhSach {
     }
 
     public void timHD(Nguoi nguoi) {
-        String tuKhoa = Check.takeStringInput("Nhap tu khoa can tim: ");
+        String tuKhoa = Check.takeStringInput("Nhap ID can tim: ");
         ArrayList<HoaDon> filter = new ArrayList<>();
-        int tongTien = 0;
 
         for (HoaDon hoaDon : hoaDonArrayList) {
             if (nguoi instanceof KhachHang && !hoaDon.getMaKhachHang().equals(nguoi.getId()))
                 continue;
-
-            try {
-                tongTien = Integer.parseInt(tuKhoa);
-            } catch (NumberFormatException ignored) {
-            }
-
             boolean check = Check.subStrInStrIgnoreCase(hoaDon.getMaHoaDon(), tuKhoa) ||
                     Check.subStrInStrIgnoreCase(hoaDon.getMaNhanVien(), tuKhoa) ||
-                    Check.subStrInStrIgnoreCase(hoaDon.getMaKhachHang(), tuKhoa) ||
-                    Check.subStrInStrIgnoreCase(hoaDon.getNgayLap(), tuKhoa) ||
-                    Check.subStrInStrIgnoreCase(hoaDon.getTinhTrang(), tuKhoa) ||
-                    hoaDon.getTongTien() == tongTien;
+                    Check.subStrInStrIgnoreCase(hoaDon.getMaKhachHang(), tuKhoa);
+
             if (check)
                 filter.add(hoaDon);
         }
@@ -141,7 +140,7 @@ public class DanhSachHoaDon implements Serializable, DanhSach {
         if (filter.isEmpty())
             Check.printError("Khong tim thay");
         else {
-            xuatTieuDe();
+             xuatTieuDe();
             for (HoaDon hoaDon : filter)
                 hoaDon.xuatThongTin();
         }
@@ -172,8 +171,11 @@ public class DanhSachHoaDon implements Serializable, DanhSach {
                 Check.printError("Hoa don da duoc xac nhan");
                 return;
             }
-            hoaDon.setTinhTrang("Da xac nhan");
+            else{
+                hoaDon.setTinhTrang("Da xac nhan");
             Check.printMessage("Xac nhan thanh cong");
+            }
+            
         }
     }
 
@@ -191,8 +193,12 @@ public class DanhSachHoaDon implements Serializable, DanhSach {
                 Check.printError("Don hang chua duoc xuat kho");
                 return;
             }
-            hoaDon.setTinhTrang("Da nhan hang");
-            Check.printMessage("Xac nhan thanh cong");
+           
+              if (nguoi instanceof KhachHang) {
+                hoaDon.setTinhTrang("Da nhan hang");
+                Check.printMessage("Xac nhan thanh cong");
+                ((KhachHang) nguoi).SetTichDiem(hoaDon.getTongTien());
+            }
         }
     }
 
@@ -217,7 +223,7 @@ public class DanhSachHoaDon implements Serializable, DanhSach {
         if (nguoi instanceof NhanVienBanHang) {
             do {
                 xuatDS();
-                System.out.println(Check.toBlueText("MENU HOA DON"));
+                System.out.println(Check.toBlueText("MENU HOA DON CHO NHAN VIEN BAN HANG"));
                 System.out.println("1. Xem chi tiet hoa don");
                 System.out.println("2. Sua thong tin hoa don");
                 System.out.println("3. Tim kiem trong bang");
@@ -239,7 +245,7 @@ public class DanhSachHoaDon implements Serializable, DanhSach {
         {
             do {
                 xuatDS();
-                System.out.println(Check.toBlueText("MENU HOA DON"));
+                System.out.println(Check.toBlueText("MENU HOA DON CHO KHACH HANG"));
                 System.out.println("1. Xem chi tiet hoa don");
                 System.out.println("2. Mua sach");
                 System.out.println("3. Tim kiem trong bang");
@@ -259,6 +265,7 @@ public class DanhSachHoaDon implements Serializable, DanhSach {
     }
 
     public void themHoaDon(DanhSachSach danhSachSach, Nguoi nguoi) {
+        // xuatDS();
         DanhSachChiTietHoaDon dsct = new DanhSachChiTietHoaDon();
         dsct.nhapChiTietHoaDon(danhSachSach);
         hoaDonArrayList.add(new HoaDon(getID(), "nv001", nguoi.getId(),

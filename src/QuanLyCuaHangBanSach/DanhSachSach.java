@@ -20,7 +20,7 @@ public class DanhSachSach implements Serializable, DanhSach {
     public String getID() {
         count++;
         String str = String.valueOf(count);
-        while(str.length() != 3)
+        while (str.length() != 3)
             str = "0" + str;
         return "S" + str;
     }
@@ -45,7 +45,7 @@ public class DanhSachSach implements Serializable, DanhSach {
             return;
         }
         xuatTieuDe();
-        for(int i = 0; i < listSach.length; i++) {
+        for (int i = 0; i < listSach.length; i++) {
             listSach[i].xuatThongTin();
         }
     }
@@ -56,7 +56,7 @@ public class DanhSachSach implements Serializable, DanhSach {
         System.out.println("3. Sach truyen");
         System.out.println("4. Sach ky nang song");
         System.out.println("0. Thoat");
-        
+
         switch (Check.takeInputChoice(0, 4)) {
             case 1 -> {
                 listSach = Arrays.copyOf(listSach, getSoLuong() + 1);
@@ -99,8 +99,14 @@ public class DanhSachSach implements Serializable, DanhSach {
         do {
             check = false;
             maTG = Check.takeStringInput("Nhap ma tac gia: ");
-            if(danhSachTacGia.timKiemTheoID(maTG) == null)
+            if (danhSachTacGia.timKiemTheoID(maTG) == null) {
                 Check.printError("Khong co ma tac gia nay");
+                check = true;
+            } else {
+                Check.printMessage("Nhap ma tac gia thanh cong");
+                check = false;
+            }
+
         } while (check);
         return maTG;
     }
@@ -111,8 +117,14 @@ public class DanhSachSach implements Serializable, DanhSach {
         do {
             check = false;
             maNXB = Check.takeStringInput("Nhap ma nha xuat ban: ");
-            if(dsNXB.timKiemTheoID(maNXB) == null)
+            if (dsNXB.timKiemTheoID(maNXB) == null) {
                 Check.printError("Khong co ma nha xuat ban nay");
+                check = true;
+            } else {
+                Check.printMessage("Nhap ma nha xuat thanh cong");
+                check = false;
+            }
+
         } while (check);
         return maNXB;
     }
@@ -127,21 +139,21 @@ public class DanhSachSach implements Serializable, DanhSach {
     }
 
     public void xoaSach() {
-        if(getSoLuong() == 0) {
+        if (getSoLuong() == 0) {
             Check.printError("Danh sach dang rong");
             return;
         }
 
         String maSach = Check.takeStringInput("Nhap ma sach can xoa: ");
         int index = timKiemTheoMa(maSach);
-        if(index == -1) {
+        if (index == -1) {
             Check.printError("Khong co ma sach nay");
         } else {
-            for(int i = index; i < listSach.length-1; i++) {
-                listSach[i] = listSach[i+1];
+            for (int i = index; i < listSach.length - 1; i++) {
+                listSach[i] = listSach[i + 1];
             }
-            listSach[listSach.length-1] = null;
-            listSach = Arrays.copyOf(listSach, listSach.length-1);
+            listSach[listSach.length - 1] = null;
+            listSach = Arrays.copyOf(listSach, listSach.length - 1);
         }
     }
 
@@ -150,12 +162,15 @@ public class DanhSachSach implements Serializable, DanhSach {
         Sach[] dsSach = new Sach[listSach.length];
 
         int gia;
-        try {gia = Integer.parseInt(tuKhoa);}
-        catch (NumberFormatException e){gia = Integer.MIN_VALUE;}
+        try {
+            gia = Integer.parseInt(tuKhoa);
+        } catch (NumberFormatException e) {
+            gia = Integer.MIN_VALUE;
+        }
 
         int index = 0;
-        for(Sach sach : listSach) {
-            if(sach.getMaSach().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
+        for (Sach sach : listSach) {
+            if (sach.getMaSach().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
                     sach.getTenSach().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
                     sach.getMaNhaXuatBan().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
                     sach.getMaTacGia().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
@@ -167,18 +182,18 @@ public class DanhSachSach implements Serializable, DanhSach {
         }
 
         System.out.println(Check.toBlueText("Tim kiem theo tu khoa: ") + Check.toGreenText(tuKhoa));
-        if(index == 0)
+        if (index == 0)
             Check.printError("Khong tim thay");
         else {
-            xuatTieuDe();
-            for(int i = 0; i < index; i++) {
+            // xuatTieuDe();
+            for (int i = 0; i < index; i++) {
                 dsSach[i].xuatThongTin();
             }
         }
     }
 
     public void menu(DanhSachTacGia danhSachTacGia, DanhSachNhaXuatBan dsNXB) {
-        while(true) {
+        while (true) {
             xuatDS();
             System.out.println("1. Them sach");
             System.out.println("2. Tim kiem trong bang");
@@ -193,7 +208,7 @@ public class DanhSachSach implements Serializable, DanhSach {
                 case 4 -> menuSua(danhSachTacGia, dsNXB);
                 case 0 -> out = true;
             }
-            if(out)
+            if (out)
                 break;
             Check.clearScreen();
         }
@@ -202,7 +217,7 @@ public class DanhSachSach implements Serializable, DanhSach {
     public void menuSua(DanhSachTacGia danhSachTacGia, DanhSachNhaXuatBan dsNXB) {
         String maSach = Check.takeStringInput("Nhap ma sach can sua: ");
         int index = timKiemTheoMa(maSach);
-        if(index == -1)
+        if (index == -1)
             Check.printError("Khong tim thay ma sach");
         else {
             boolean outChange = false;
@@ -223,9 +238,9 @@ public class DanhSachSach implements Serializable, DanhSach {
                     case 5 -> listSach[index].setMaNhaXuatBan(nhapMaNXB(dsNXB));
                     case 0 -> outChange = true;
                 }
-                if(!outChange)
+                if (!outChange)
                     Check.clearScreen();
-            } while(!outChange);
+            } while (!outChange);
         }
     }
 
@@ -240,4 +255,4 @@ public class DanhSachSach implements Serializable, DanhSach {
     public void setListSach(Sach[] listSach) {
         this.listSach = listSach;
     }
-} 
+}

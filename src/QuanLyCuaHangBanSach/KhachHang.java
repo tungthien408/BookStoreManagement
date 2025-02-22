@@ -19,27 +19,12 @@ public class KhachHang extends Nguoi implements Serializable {
     }
 
     // Các phương thức đặc thù cho khách hàng mua sách
-    public void tichDiem(int soTien) {
+    public void SetTichDiem(int soTien) {
         // Cứ 100,000đ tích 1 điểm
         this.diemTichLuy += soTien/100000;
     }
-
-    public int tinhChietKhau() {
-        // Mỗi 10 điểm được giảm 1% tối đa 10%
-        int phanTramGiam = diemTichLuy/10;
-        return Math.min(phanTramGiam, 10);
-    }
-
-    public String toString() {
-        return super.toString() + "-" + diemTichLuy;
-    }
-
-    // Getters and Setters
-    public int getDiemTichLuy() {
+    public int getTichDiem() {
         return diemTichLuy;
     }
 
-    public void setDiemTichLuy(int diemTichLuy) {
-        this.diemTichLuy = diemTichLuy;
-    }
 } 

@@ -10,16 +10,16 @@ public class BookShop implements Serializable {
         listNguoi = new ArrayList<>();
         taoNguoiQuanLy();
         Nguoi nvbh = new NhanVienBanHang(
-                "nvbn", "Doraemom", "TPHCM", "1234",
+                "nvbh", "Doraemom", "TPHCM", "1234",
                 "08/08/2000", "Nam", "231512", "123", 8000000);
         Nguoi nvtk = new NhanVienThuKho(
-                "nvtk", "Xuka", "Binh Duong", "4321",
-                "08/08/2000", "Nam", "4325456", "123", 7000000);
+                "nvtk", "Doramin", "Binh Duong", "4321",
+                "08/08/2000", "Nu", "4325456", "123", 7000000);
         Nguoi kh1 = new KhachHang(
-                "kh1", "Florention", "Ha Noi", "34234",
+                "kh1", "Nobita", "Ha Noi", "34234",
                 "08/08/2000", "Nam", "354235", "123");
         Nguoi kh2 = new KhachHang(
-                "kh2", "Richter", "Da Nang", "1235",
+                "kh2", "Chaien", "Da Nang", "1235",
                 "12/3/2000", "Nam", "42343", "123");
         listNguoi.add(nvbh);
         listNguoi.add(nvtk);
@@ -155,8 +155,7 @@ public class BookShop implements Serializable {
         if (choice.equals("KhachHang")) {
             Nguoi kh = new KhachHang(id, hoTen, diaChi, sdt, ns, gt, cmnd, pass);
             listNguoi.add(kh);
-        }
-        else {
+        } else {
             int mucLuong = Check.takeIntegerInput("Nhap muc luong: ");
             System.out.println("1. Nhan vien thu kho");
             System.out.println("2. Nhan vien ban hang");
@@ -180,9 +179,15 @@ public class BookShop implements Serializable {
         System.out.println("2. Nu");
         System.out.println("3. Khac");
         switch (Check.takeInputChoice(1, 3)) {
-            case 1 -> {gt = "Nam";}
-            case 2 -> {gt = "Nu";}
-            case 3 -> {gt = "Khac";}
+            case 1 -> {
+                gt = "Nam";
+            }
+            case 2 -> {
+                gt = "Nu";
+            }
+            case 3 -> {
+                gt = "Khac";
+            }
         }
         return gt;
     }
@@ -194,26 +199,26 @@ public class BookShop implements Serializable {
                 .orElse(null);
     }
 
-    //dk = "KhachHang" | "NhanVienThuKho" | "NhanVienBanHang" | "NhanVien"
+    // dk = "KhachHang" | "NhanVienThuKho" | "NhanVienBanHang" | "NhanVien"
     public Nguoi timKiemTheoID(String id, String dk) {
-        if(dk.equals("KhachHang"))
+        if (dk.equals("KhachHang"))
             return listNguoi.stream()
                     .filter(x -> x.getId().equals(id) && x instanceof KhachHang)
                     .findFirst()
                     .orElse(null);
-        else if(dk.equals("NhanVienThuKho"))
+        else if (dk.equals("NhanVienThuKho"))
             return listNguoi.stream()
                     .filter(x -> x.getId().equals(id) && x instanceof NhanVienThuKho)
                     .findFirst()
                     .orElse(null);
-        else if(dk.equals("NhanVienBanHang"))
+        else if (dk.equals("NhanVienBanHang"))
             return listNguoi.stream()
                     .filter(x -> x.getId().equals(id) && x instanceof NhanVienBanHang)
                     .findFirst()
                     .orElse(null);
         else
             return listNguoi.stream()
-                    .filter(x -> x.getId().equals(id) && 
+                    .filter(x -> x.getId().equals(id) &&
                             (x instanceof NhanVienBanHang || x instanceof NhanVienThuKho))
                     .findFirst()
                     .orElse(null);
@@ -222,7 +227,7 @@ public class BookShop implements Serializable {
     public void xoaNguoi(String choice) {
         String id = Check.takeStringInput("Nhap ID can xoa: ");
         Nguoi nguoi = timKiemTheoID(id, choice);
-        if(nguoi == null)
+        if (nguoi == null)
             Check.printError("Khong tim thay ID");
         else {
             listNguoi.remove(nguoi);
@@ -231,47 +236,38 @@ public class BookShop implements Serializable {
     }
 
     public void timKiemNguoi(String choice) {
-        String tuKhoa = Check.takeStringInput("Nhap tu khoa can tim: ");
+        String ID = Check.takeStringInput("Nhap ID can tim can tim: ");
         ArrayList<Nguoi> filter = new ArrayList<>();
-        for(Nguoi nguoi : listNguoi) {
-            if(choice.equals("KhachHang") && nguoi instanceof KhachHang ||
+        for (Nguoi nguoi : listNguoi) {
+            if (choice.equals("KhachHang") && nguoi instanceof KhachHang ||
                     choice.equals("NhanVien") && nguoi instanceof NhanVien) {
-                if(
-                    nguoi.getId().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
-                    nguoi.getHoTen().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
-                    nguoi.getDiaChi().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
-                    nguoi.getSDT().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
-                    nguoi.getNgaySinh().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
-                    nguoi.getGioiTinh().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
-                    nguoi.getCMND().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT))
-                ) {
+                if (nguoi.getId().toLowerCase(Locale.ROOT).contains(ID.toLowerCase(Locale.ROOT))) {
                     filter.add(nguoi);
                 }
             }
         }
 
-        System.out.println(Check.toBlueText("Tim kiem theo tu khoa: ") + Check.toGreenText(tuKhoa));
-        if(filter.isEmpty())
+        System.out.println(Check.toBlueText("Tim kiem theo ID: ") + Check.toGreenText(ID));
+        if (filter.isEmpty())
             Check.printError("Khong tim thay");
         else {
-            if(choice.equals("KhachHang"))
+            if (choice.equals("KhachHang"))
                 xuatDanhSachKhachHang();
             else
-                xuatDanhSachNhanVien();
-            for(Nguoi nguoi : filter)
-                nguoi.xuatThongTin();
+                for (Nguoi nguoi : filter)
+                    nguoi.xuatThongTin();
         }
     }
 
     public void suaNguoi(String choice) {
         String id = Check.takeStringInput("Nhap ID can sua: ");
         Nguoi nguoi = timKiemTheoID(id, choice);
-        if(nguoi == null)
+        if (nguoi == null)
             Check.printError("Khong tim thay ID");
         else {
             boolean out = false;
             do {
-                if(choice.equals("KhachHang"))
+                if (choice.equals("KhachHang"))
                     xuatDanhSachKhachHang();
                 else
                     xuatDanhSachNhanVien();
@@ -283,7 +279,7 @@ public class BookShop implements Serializable {
                 System.out.println("5. Sua gioi tinh");
                 System.out.println("6. Sua CMND");
                 System.out.println("7. Sua password");
-                if(nguoi instanceof NhanVien)
+                if (nguoi instanceof NhanVien)
                     System.out.println("8. Sua muc luong");
                 System.out.println("0. Thoat");
                 int max = (nguoi instanceof NhanVien) ? 8 : 7;
@@ -296,15 +292,15 @@ public class BookShop implements Serializable {
                     case 6 -> nguoi.setCMND(Check.takeStringInput("Nhap CMND moi: "));
                     case 7 -> nguoi.setPassword(Check.takeStringInput("Nhap password moi: "));
                     case 8 -> {
-                        if(nguoi instanceof NhanVien) {
+                        if (nguoi instanceof NhanVien) {
                             ((NhanVien) nguoi).setMucLuong(Check.takeIntegerInput("Nhap muc luong moi: "));
                         }
                     }
                     case 0 -> out = true;
                 }
-                if(!out)
+                if (!out)
                     Check.clearScreen();
-            } while(!out);
+            } while (!out);
         }
     }
-} 
+}

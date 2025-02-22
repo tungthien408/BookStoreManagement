@@ -11,63 +11,66 @@ public class DSPhieuXuat implements Serializable, DanhSach {
         dsPhieuXuat = new ArrayList<>();
         int count = 0;
         for (HoaDon hoaDon : danhSachHoaDon.getHoaDonArrayList()) {
-            if(hoaDon.getTinhTrang().equals("Da xac nhan")) {
+            if (hoaDon.getTinhTrang().equals("Da xac nhan")) {
                 DSChiTietPhieu dsctp = new DSChiTietPhieu();
                 DanhSachChiTietHoaDon dscthd = hoaDon.getDsChiTietHoaDon();
                 for (ChiTietHoaDon cthd : dscthd.getCthd()) {
-                    ChiTietPhieu obj = new ChiTietPhieu(cthd.getMaSach(), 
-                        cthd.getSoLuong(), cthd.getGia());
+                    ChiTietPhieu obj = new ChiTietPhieu(cthd.getMaSach(),
+                            cthd.getSoLuong(), cthd.getGia());
                     dsctp.add(obj);
                 }
-                if(count <= 4) {
-                    PhieuXuat phieuXuat = new PhieuXuat(getID(), hoaDon.getNgayLap(), 
-                        hoaDon.getMaNhanVien(), nguoi.getId(), dsctp, dsctp.tinhTongTien(), 
-                        hoaDon.getMaHoaDon());
+                if (count <= 4) {
+                    PhieuXuat phieuXuat = new PhieuXuat(getID(), hoaDon.getNgayLap(),
+                            hoaDon.getMaNhanVien(), nguoi.getId(), dsctp, dsctp.tinhTongTien(),
+                            hoaDon.getMaHoaDon());
                     dsPhieuXuat.add(phieuXuat);
-                    phieuXuat.xuatKho(nguoi, danhSachHoaDon);
-                }
-                else if(count == 5) {
-                    PhieuXuat phieuXuat = new PhieuXuat(getID(), hoaDon.getNgayLap(), 
-                        hoaDon.getMaNhanVien(), nguoi.getId(), dsctp, dsctp.tinhTongTien(), 
-                        hoaDon.getMaHoaDon());
+                    // phieuXuat.xuatKho(nguoi, danhSachHoaDon);
+                } else if (count == 5) {
+                    PhieuXuat phieuXuat = new PhieuXuat(getID(), hoaDon.getNgayLap(),
+                            hoaDon.getMaNhanVien(), nguoi.getId(), dsctp, dsctp.tinhTongTien(),
+                            hoaDon.getMaHoaDon());
                     dsPhieuXuat.add(phieuXuat);
                 }
                 count++;
             }
         }
 
-        count = 0;
-        for (HoaDon hoaDon : danhSachHoaDon.getHoaDonArrayList()) {
-            if(count <= 3) {
-                if(hoaDon.getTinhTrang().equals("Da xuat kho")) {
-                    hoaDon.setTinhTrang("Da nhan hang");
-                }
-            }
-            count++;
-        }
+        // count = 0;
+        // for (HoaDon hoaDon : danhSachHoaDon.getHoaDonArrayList()) {
+        //     if (count <= 3) {
+        //         if (hoaDon.getTinhTrang().equals("Da xuat kho")) {
+        //             hoaDon.setTinhTrang("Da nhan hang");
+        //         }
+        //     }
+        //     count++;
+        // }
+    }
+
+    public DSPhieuXuat(DanhSachSach danhSachSach) {
+        //TODO Auto-generated constructor stub
     }
 
     public String getID() {
         count++;
         String str = String.valueOf(count);
-        while(str.length() != 3)
+        while (str.length() != 3)
             str = "0" + str;
         return "PX" + str;
     }
 
     public void xuatTieuDe() {
         System.out.println(Check.toBlueText("Danh sach phieu xuat"));
-        System.out.printf("┌%-8s┬%-8s┬%-12s┬%-16s┬%-25s┬%-25s┬%-16s┐\n", 
-            Check.repeatStr("─", 8), Check.repeatStr("─", 8), Check.repeatStr("─", 12),
-            Check.repeatStr("─", 16), Check.repeatStr("─", 25),
-            Check.repeatStr("─", 25), Check.repeatStr("─", 16));
-        System.out.printf("│%-8s│%-8s│%-12s│%-16s│%-25s│%-25s│%-16s│\n", 
-            "Ma phieu", "Hoa don", "Ngay lap", "Tong tien",
-            "Ma NV ban hang", "Ma NV thu kho", "Tinh trang");
-        System.out.printf("├%-8s┼%-8s┼%-12s┼%-16s┼%-25s┼%-25s┼%-16s┤\n", 
-            Check.repeatStr("─", 8), Check.repeatStr("─", 8), Check.repeatStr("─", 12),
-            Check.repeatStr("─", 16), Check.repeatStr("─", 25),
-            Check.repeatStr("─", 25), Check.repeatStr("─", 16));
+        System.out.printf("┌%-8s┬%-8s┬%-12s┬%-16s┬%-25s┬%-25s┬%-16s┐\n",
+                Check.repeatStr("─", 8), Check.repeatStr("─", 8), Check.repeatStr("─", 12),
+                Check.repeatStr("─", 16), Check.repeatStr("─", 25),
+                Check.repeatStr("─", 25), Check.repeatStr("─", 16));
+        System.out.printf("│%-8s│%-8s│%-12s│%-16s│%-25s│%-25s│%-16s│\n",
+                "Ma phieu", "Hoa don", "Ngay lap", "Tong tien",
+                "Ma NV ban hang", "Ma NV thu kho", "Tinh trang");
+        System.out.printf("├%-8s┼%-8s┼%-12s┼%-16s┼%-25s┼%-25s┼%-16s┤\n",
+                Check.repeatStr("─", 8), Check.repeatStr("─", 8), Check.repeatStr("─", 12),
+                Check.repeatStr("─", 16), Check.repeatStr("─", 25),
+                Check.repeatStr("─", 25), Check.repeatStr("─", 16));
     }
 
     public void xuatDS() {
@@ -82,7 +85,7 @@ public class DSPhieuXuat implements Serializable, DanhSach {
 
     public void menu(Nguoi nguoi, DanhSachHoaDon danhSachHoaDon) {
         boolean thoatXemDSPhieu = false;
-        while(true) {
+        while (true) {
             xuatTieuDe();
             xuatDS();
             System.out.println(Check.toBlueText("Menu phieu xuat"));
@@ -90,7 +93,7 @@ public class DSPhieuXuat implements Serializable, DanhSach {
             System.out.println("2. Xoa phieu xuat");
             System.out.println("3. Tim kiem trong bang");
             System.out.println("0. Quay lai");
-            switch (Check.takeInputChoice(0,3)) {
+            switch (Check.takeInputChoice(0, 3)) {
                 case 1 -> xemChiTietPhieu(nguoi, danhSachHoaDon);
                 case 2 -> xoaPhieu();
                 case 3 -> timKiemTrongBang();
@@ -103,35 +106,48 @@ public class DSPhieuXuat implements Serializable, DanhSach {
     }
 
     public void xemChiTietPhieu(Nguoi nguoi, DanhSachHoaDon danhSachHoaDon) {
-        if(dsPhieuXuat.isEmpty())
+        if (dsPhieuXuat.isEmpty())
             Check.printError("Danh sach dang rong");
         else {
             String id = Check.takeStringInput("Nhap ID phieu can xem chi tiet: ");
             PhieuXuat obj = timKiemTheoID(id);
-            if(obj == null) {
+            if (obj == null) {
                 Check.printError("Khong co ID do trong danh sach");
                 return;
             }
             boolean out = false;
+            boolean flag = false;
             do {
                 obj.xemChiTietPhieu();
                 System.out.println("1. Xac nhan xuat kho");
                 System.out.println("0. Thoat");
                 switch (Check.takeInputChoice(0, 1)) {
-                    case 1 -> obj.xuatKho(nguoi, danhSachHoaDon);
+                    case 1 -> {
+                        if(flag == true){
+                            Check.printError("Da xuat kho roi");
+                            continue;
+                        }
+                        else{
+                            obj.xuatKho(nguoi, danhSachHoaDon);
+                        Check.printMessage("Xuat kho thanh cong");
+                        out = true;
+                        flag = true;
+                        }
+                        
+                    }
                     case 0 -> out = true;
                 }
-                if(!out)
+                if (!out)
                     Check.clearScreen();
-            } while(!out);
+            } while (!out);
         }
     }
 
     public PhieuXuat timKiemTheoID(String id) {
         return dsPhieuXuat.stream()
-            .filter(x -> x.getMaPhieu().equals(id))
-            .findFirst()
-            .orElse(null);
+                .filter(x -> x.getMaPhieu().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     public void xoaPhieu() {
@@ -141,9 +157,9 @@ public class DSPhieuXuat implements Serializable, DanhSach {
         }
         String idPhieu = Check.takeStringInput("Nhap vao id phieu can xoa: ");
         PhieuXuat phieu = dsPhieuXuat.stream()
-            .filter(x -> x.getMaPhieu().equals(idPhieu))
-            .findAny()
-            .orElse(null);
+                .filter(x -> x.getMaPhieu().equals(idPhieu))
+                .findAny()
+                .orElse(null);
         if (phieu == null)
             Check.printError("Khong co ma phieu do trong danh sach");
         else {
@@ -160,25 +176,27 @@ public class DSPhieuXuat implements Serializable, DanhSach {
         for (PhieuXuat phieuXuat : dsPhieuXuat) {
             try {
                 tongTien = Integer.parseInt(tuKhoa);
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
 
             boolean check = Check.subStrInStrIgnoreCase(phieuXuat.getNgayLap(), tuKhoa) ||
-                Check.subStrInStrIgnoreCase(phieuXuat.getMaNhanVien(), tuKhoa) ||
-                Check.subStrInStrIgnoreCase(phieuXuat.getMaNhanVienThuKho(), tuKhoa) ||
-                Check.subStrInStrIgnoreCase(phieuXuat.getTinhTrang(), tuKhoa) ||
-                phieuXuat.getTongTien() == tongTien;
-            if(check)
+                    Check.subStrInStrIgnoreCase(phieuXuat.getMaNhanVien(), tuKhoa) ||
+                    Check.subStrInStrIgnoreCase(phieuXuat.getMaNhanVienThuKho(), tuKhoa) ||
+                    Check.subStrInStrIgnoreCase(phieuXuat.getTinhTrang(), tuKhoa) ||
+                    Check.subStrInStrIgnoreCase(phieuXuat.getMaPhieu(), tuKhoa) ||
+                    phieuXuat.getTongTien() == tongTien;
+            if (check)
                 filter.add(phieuXuat);
         }
 
-        System.out.println(Check.toBlueText("Ket qua tim kiem theo tu khoa: ") + 
-            Check.toGreenText(tuKhoa));
-        if(filter.isEmpty())
+        System.out.println(Check.toBlueText("Ket qua tim kiem theo tu khoa: ") +
+                Check.toGreenText(tuKhoa));
+        if (filter.isEmpty())
             Check.printError("Khong tim thay");
         else {
             xuatTieuDe();
-            for(PhieuXuat phieuXuat : filter)
+            for (PhieuXuat phieuXuat : filter)
                 phieuXuat.inPhieu();
         }
     }
-} 
+}

@@ -15,18 +15,18 @@ public class DSPhieuNhap implements Serializable, DanhSach {
 
         DSChiTietPhieu ct1 = new DSChiTietPhieu();
         ct1.add(new ChiTietPhieu(s1.getMaSach(), 5, s1.getGiaBan()));
-        dsPhieuNhap.add(new PhieuNhap(getID(), "23/8/2023", "NXB001", "vu", ct1, ct1.tinhTongTien()));
+        dsPhieuNhap.add(new PhieuNhap(getID(), "23/8/2023", "NXB001", "nvbh1", ct1, ct1.tinhTongTien()));
 
         DSChiTietPhieu ct2 = new DSChiTietPhieu();
         ct2.add(new ChiTietPhieu(s2.getMaSach(), 6, s2.getGiaBan()));
         ct2.add(new ChiTietPhieu(s3.getMaSach(), 9, s3.getGiaBan()));
-        dsPhieuNhap.add(new PhieuNhap(getID(), "8/8/2023", "NXB001", "vu", ct2, ct2.tinhTongTien()));
+        dsPhieuNhap.add(new PhieuNhap(getID(), "8/8/2023", "NXB001", "nvbh1", ct2, ct2.tinhTongTien()));
     }
 
     public String getID() {
         count++;
         String str = String.valueOf(count);
-        while(str.length() != 3)
+        while (str.length() != 3)
             str = "0" + str;
         return "PN" + str;
     }
@@ -36,8 +36,8 @@ public class DSPhieuNhap implements Serializable, DanhSach {
                 Check.repeatStr("─", 16), Check.repeatStr("─", 16),
                 Check.repeatStr("─", 16), Check.repeatStr("─", 16),
                 Check.repeatStr("─", 16));
-        System.out.printf("│%-16s│%-16s│%-16s│%-16s│%-16s│\n", 
-            "Ma phieu", "Ngay lap", "Tong tien", "Ma nhan vien", "Ma NXB");
+        System.out.printf("│%-16s│%-16s│%-16s│%-16s│%-16s│\n",
+                "Ma phieu", "Ngay lap", "Tong tien", "Ma nhan vien", "Ma NXB");
         System.out.printf("├%-16s┼%-16s┼%-16s┼%-16s┼%-16s┤\n",
                 Check.repeatStr("─", 16), Check.repeatStr("─", 16),
                 Check.repeatStr("─", 16), Check.repeatStr("─", 16),
@@ -56,7 +56,7 @@ public class DSPhieuNhap implements Serializable, DanhSach {
 
     public void menu(DanhSachSach danhSachSach, Nguoi nguoi, BookShop bookShop, DanhSachNhaXuatBan dsNXB) {
         boolean thoatXemDSPhieu = false;
-        while(true) {
+        while (true) {
             xuatTieuDe();
             xuatDS();
             System.out.println("1. Xem chi tiet phieu nhap");
@@ -64,7 +64,7 @@ public class DSPhieuNhap implements Serializable, DanhSach {
             System.out.println("3. Xoa phieu nhap");
             System.out.println("4. Tim kiem trong bang");
             System.out.println("0. Quay lai");
-            switch (Check.takeInputChoice(0,4)) {
+            switch (Check.takeInputChoice(0, 4)) {
                 case 1 -> xemChiTietPhieu();
                 case 2 -> add(nguoi, danhSachSach, dsNXB);
                 case 3 -> xoaPhieu();
@@ -78,12 +78,12 @@ public class DSPhieuNhap implements Serializable, DanhSach {
     }
 
     public void xemChiTietPhieu() {
-        if(dsPhieuNhap.isEmpty())
+        if (dsPhieuNhap.isEmpty())
             Check.printError("Danh sach dang rong");
         else {
             String id = Check.takeStringInput("Nhap ID phieu can xem chi tiet: ");
             PhieuNhap obj = timKiemTheoID(id);
-            if(obj == null) {
+            if (obj == null) {
                 Check.printError("Khong co ID do trong danh sach");
                 return;
             }
@@ -93,9 +93,9 @@ public class DSPhieuNhap implements Serializable, DanhSach {
 
     public PhieuNhap timKiemTheoID(String id) {
         return dsPhieuNhap.stream()
-            .filter(x -> x.getMaPhieu().equals(id))
-            .findFirst()
-            .orElse(null);
+                .filter(x -> x.getMaPhieu().equals(id))
+                .findFirst()
+                .orElse(null);
     }
 
     public void xoaPhieu() {
@@ -105,9 +105,9 @@ public class DSPhieuNhap implements Serializable, DanhSach {
         }
         String idPhieu = Check.takeStringInput("Nhap vao id phieu can xoa: ");
         PhieuNhap phieu = dsPhieuNhap.stream()
-            .filter(x -> x.getMaPhieu().equals(idPhieu))
-            .findAny()
-            .orElse(null);
+                .filter(x -> x.getMaPhieu().equals(idPhieu))
+                .findAny()
+                .orElse(null);
         if (phieu == null)
             Check.printError("Khong co ma phieu do trong danh sach");
         else {
@@ -124,23 +124,25 @@ public class DSPhieuNhap implements Serializable, DanhSach {
         for (PhieuNhap phieuNhap : dsPhieuNhap) {
             try {
                 tongTien = Integer.parseInt(tuKhoa);
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
 
             boolean check = Check.subStrInStrIgnoreCase(phieuNhap.getNgayLap(), tuKhoa) ||
-                Check.subStrInStrIgnoreCase(phieuNhap.getMaNhanVien(), tuKhoa) ||
-                Check.subStrInStrIgnoreCase(phieuNhap.getMaNhaXuatBan(), tuKhoa) ||
-                phieuNhap.getTongTien() == tongTien;
-            if(check)
+                    Check.subStrInStrIgnoreCase(phieuNhap.getMaNhanVien(), tuKhoa) ||
+                    Check.subStrInStrIgnoreCase(phieuNhap.getMaNhaXuatBan(), tuKhoa) ||
+                    Check.subStrInStrIgnoreCase(phieuNhap.getMaPhieu(), tuKhoa) ||
+                    phieuNhap.getTongTien() == tongTien;
+            if (check)
                 filter.add(phieuNhap);
         }
 
-        System.out.println(Check.toBlueText("Ket qua tim kiem theo tu khoa: ") + 
-            Check.toGreenText(tuKhoa));
-        if(filter.isEmpty())
+        System.out.println(Check.toBlueText("Ket qua tim kiem theo tu khoa: ") +
+                Check.toGreenText(tuKhoa));
+        if (filter.isEmpty())
             Check.printError("Khong tim thay");
         else {
             xuatTieuDe();
-            for(PhieuNhap phieuNhap : filter)
+            for (PhieuNhap phieuNhap : filter)
                 phieuNhap.inPhieu();
         }
     }
@@ -151,34 +153,45 @@ public class DSPhieuNhap implements Serializable, DanhSach {
 
         DSChiTietPhieu dsChiTietPhieu = new DSChiTietPhieu();
         boolean finish = false;
+        boolean flag = false;
         do {
             danhSachSach.xuatDS();
             System.out.println("1. Nhap sach");
             System.out.println("2. Xac nhan nhap hang");
             switch (Check.takeInputChoice(1, 2)) {
+
                 case 1 -> {
+                    flag = true;
                     String maSach = Check.takeStringInput("Nhap ma sach: ");
                     int index = danhSachSach.timKiemTheoMa(maSach);
-                    if(index != -1) {
+                    if (index != -1) {
                         int sl = Check.takeIntegerInput("Nhap so luong: ");
                         ChiTietPhieu chiTietPhieu = dsChiTietPhieu.search(maSach);
-                        if(chiTietPhieu != null)
+                        if (chiTietPhieu != null)
                             chiTietPhieu.setSoLuong(chiTietPhieu.getSoLuong() + sl);
                         else
-                            dsChiTietPhieu.add(new ChiTietPhieu(maSach, sl, 
-                                danhSachSach.getListSach()[index].getGiaBan()));
-                    }
-                    else
+                            dsChiTietPhieu.add(new ChiTietPhieu(maSach, sl,
+                                    danhSachSach.getListSach()[index].getGiaBan()));
+                    } else {
                         Check.printError("Khong co sach nay");
+                        flag = false;
+                    }
+
                 }
-                case 2 -> finish = true;
+                case 2 -> {
+                    if (flag == true) {
+                        finish = true;
+                    } else {
+                        Check.printError("vui long nhap sach");
+                    }
+                }
             }
-            if(!finish)
+            if (!finish)
                 Check.clearScreen();
         } while (!finish);
 
-        dsPhieuNhap.add(new PhieuNhap(idPhieu, Check.getDateNow(), idNXB, nguoi.getId(), 
-            dsChiTietPhieu, dsChiTietPhieu.tinhTongTien()));
+        dsPhieuNhap.add(new PhieuNhap(idPhieu, Check.getDateNow(), idNXB, nguoi.getId(),
+                dsChiTietPhieu, dsChiTietPhieu.tinhTongTien()));
 
         for (int i = 0; i < dsChiTietPhieu.getSize(); i++) {
             ChiTietPhieu chiTietPhieu = dsChiTietPhieu.getChiTietPhieus()[i];
@@ -189,13 +202,13 @@ public class DSPhieuNhap implements Serializable, DanhSach {
 
     public String nhapNXB(DanhSachNhaXuatBan danhSachNhaXuatBan) {
         String idNXB;
-        while(true) {
+        while (true) {
             danhSachNhaXuatBan.xuatDS();
             idNXB = Check.takeStringInput("Nhap ma nha xuat ban: ");
-            if(danhSachNhaXuatBan.timKiemTheoID(idNXB) != null)
+            if (danhSachNhaXuatBan.timKiemTheoID(idNXB) != null)
                 return idNXB;
             else
                 Check.printError("Khong co nha xuat ban nay");
         }
     }
-} 
+}

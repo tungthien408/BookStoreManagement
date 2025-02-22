@@ -17,16 +17,4 @@ public class NhanVienBanHang extends NhanVien implements Serializable {
         System.out.printf("%-16s│%n", "Ban sach");
     }
 
-    // Các phương thức đặc thù cho nhân viên bán sách
-    public void lapHoaDonBanSach() {
-        // Code xử lý lập hóa đơn bán sách
-    }
-    
-    public void kiemTraTonKhoSach() {
-        // Code xử lý kiểm tra tồn kho sách
-    }
-    
-    public void tuVanSachChoKhachHang() {
-        // Code xử lý tư vấn sách cho khách hàng
-    }
 } 

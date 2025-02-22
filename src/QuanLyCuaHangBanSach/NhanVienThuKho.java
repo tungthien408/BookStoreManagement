@@ -1,4 +1,4 @@
-package QuanLyCuaHangBanSach;
+ package QuanLyCuaHangBanSach;
 
 import java.io.Serializable;
 
@@ -18,9 +18,6 @@ public class NhanVienThuKho extends NhanVien implements Serializable {
     }
 
     // Các phương thức đặc thù cho nhân viên thủ kho
-    public void kiemTraKho() {
-        // Code xử lý kiểm tra kho
-    }
 
     public void nhapKho() {
         // Code xử lý nhập kho
@@ -28,9 +25,5 @@ public class NhanVienThuKho extends NhanVien implements Serializable {
 
     public void xuatKho() {
         // Code xử lý xuất kho
-    }
-
-    public void kiemKeKho() {
-        // Code xử lý kiểm kê kho
     }
 }

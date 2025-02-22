@@ -19,7 +19,7 @@ public class DanhSachTacGia implements Serializable, DanhSach {
     public String getID() {
         count++;
         String str = String.valueOf(count);
-        while(str.length() != 3)
+        while (str.length() != 3)
             str = "0" + str;
         return "TG" + str;
     }
@@ -28,8 +28,8 @@ public class DanhSachTacGia implements Serializable, DanhSach {
         System.out.printf("┌%-20s┬%-20s┬%-20s┬%-20s┬%-20s┐%n",
                 Check.repeatStr("─", 20), Check.repeatStr("─", 20), Check.repeatStr("─", 20),
                 Check.repeatStr("─", 20), Check.repeatStr("─", 20));
-        System.out.printf("│%-20s│%-20s│%-20s│%-20s│%-20s│%n", 
-            "Ma tac gia", "Ten tac gia", "SDT", "Dia chi", "Email");
+        System.out.printf("│%-20s│%-20s│%-20s│%-20s│%-20s│%n",
+                "Ma tac gia", "Ten tac gia", "SDT", "Dia chi", "Email");
         System.out.printf("├%-20s┼%-20s┼%-20s┼%-20s┼%-20s┤%n",
                 Check.repeatStr("─", 20), Check.repeatStr("─", 20), Check.repeatStr("─", 20),
                 Check.repeatStr("─", 20), Check.repeatStr("─", 20));
@@ -82,6 +82,13 @@ public class DanhSachTacGia implements Serializable, DanhSach {
         }
         return null;
     }
+    // public int timKiemTheoID(String id) {
+    // for (int i = 0; i < listTacGia.length; i++) {
+    // if (listTacGia[i].getMaTacGia().equals(id))
+    // return i;
+    // }
+    // return null;
+    // }
 
     public void menuSuaTacGia() {
         String idSua = Check.takeStringInput("Nhap ma tac gia can sua: ");
@@ -139,12 +146,10 @@ public class DanhSachTacGia implements Serializable, DanhSach {
         TacGia[] filter = new TacGia[getSoLuong()];
         int length = 0;
         for (int i = 0; i < getSoLuong(); i++) {
-            if (
-                listTacGia[i].getTen().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
-                listTacGia[i].getDiaChi().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
-                listTacGia[i].getSDT().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
-                listTacGia[i].getEmail().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT))
-            ) {
+            if (listTacGia[i].getTen().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
+                    listTacGia[i].getDiaChi().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
+                    listTacGia[i].getSDT().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT)) ||
+                    listTacGia[i].getEmail().toLowerCase(Locale.ROOT).contains(tuKhoa.toLowerCase(Locale.ROOT))) {
                 filter[length++] = listTacGia[i];
             }
         }
@@ -154,7 +159,7 @@ public class DanhSachTacGia implements Serializable, DanhSach {
             Check.printError("Khong tim thay");
             return;
         }
-        xuatTieuDe();
+        // xuatTieuDe();
         for (int i = 0; i < length; i++) {
             filter[i].xuatThongTin();
         }
@@ -171,4 +176,4 @@ public class DanhSachTacGia implements Serializable, DanhSach {
     public void setListTacGia(TacGia[] listTacGia) {
         this.listTacGia = listTacGia;
     }
-} 
+}

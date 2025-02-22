@@ -13,15 +13,15 @@ public class Check implements Serializable {
     public static final String TEXT_BLUE = "\u001B[34m";
     public static final String TEXT_YELLOW = "\u001B[33m";
 
-    //Dùng để lặp lại chuỗi str với n lần
+    // Dùng để lặp lại chuỗi str với n lần
     static String repeatStr(String str, int n) {
         return String.join("", Collections.nCopies(n, str));
     }
 
-    //Nhận input float
+    // Nhận input float
     public static float takeFloatInput(String nhapGi) {
         Scanner sc = new Scanner(System.in);
-        while(true) {
+        while (true) {
             System.out.print(nhapGi);
             try {
                 return Float.parseFloat(sc.nextLine());
@@ -31,14 +31,14 @@ public class Check implements Serializable {
         }
     }
 
-    //Nhận input int
+    // Nhận input int
     public static int takeIntegerInput(String nhapGi) {
         Scanner sc = new Scanner(System.in);
-        while(true) {
+        while (true) {
             System.out.print(nhapGi);
             try {
                 int input = Integer.parseInt(sc.nextLine());
-                if(input <= 0)
+                if (input <= 0)
                     Check.printError("Khong chap nhan so <= 0");
                 else
                     return input;
@@ -47,16 +47,16 @@ public class Check implements Serializable {
             }
         }
     }
-    
+
     public static int takeSoLuongCanTao(String nhapGi) {
         int num;
-        while(true) {
+        while (true) {
             num = Check.takeIntegerInput(nhapGi);
-            if(num > 5) {
+            if (num > 5) {
                 Check.printMessage("So luong cua ban hoi nhieu");
                 System.out.println("1. Tiep tuc");
                 System.out.println("2. Nhap lai");
-                if(Check.takeInputChoice(1,2) == 1)
+                if (Check.takeInputChoice(1, 2) == 1)
                     return num;
                 else
                     continue;
@@ -66,16 +66,16 @@ public class Check implements Serializable {
         return num;
     }
 
-    //Nhận input String
+    // Nhận input String
     public static String takeStringInput(String nhapGi) {
         Scanner sc = new Scanner(System.in);
-        while(true) {
+        while (true) {
             System.out.print(nhapGi);
             try {
                 String input = sc.nextLine();
-                if(input.isEmpty())
+                if (input.isEmpty())
                     Check.printError("Ban chua nhap gi het");
-                else if(input.length() > 14)
+                else if (input.length() > 14)
                     Check.printError("Chieu dai chuoi vuot qua 14");
                 else
                     return input;
@@ -85,22 +85,22 @@ public class Check implements Serializable {
         }
     }
 
-    //Nhận lựa chọn với khoảng từ min tới max [min, max]
+    // Nhận lựa chọn với khoảng từ min tới max [min, max]
     public static int takeInputChoice(int min, int max) {
         String choice;
         Scanner sc = new Scanner(System.in);
         int sln = 0;
-        while(true) {
-            if(sln == 0)
+        while (true) {
+            if (sln == 0)
                 System.out.print("Nhap lua chon: ");
-            else if(sln < 2)
+            else if (sln < 2)
                 System.out.print("Nhap lai lua chon: ");
             else
                 System.out.print("Hay nhin lai lua chon roi nhap: ");
             choice = sc.nextLine();
             try {
                 int num = Integer.parseInt(choice);
-                if(num >= min && num <= max)
+                if (num >= min && num <= max)
                     return num;
                 else {
                     Check.printError("Lua chon khong hop le");
@@ -113,33 +113,34 @@ public class Check implements Serializable {
         }
     }
 
-    //Nhận input ngày tháng
+    // Nhận input ngày tháng
     public static String takeDateInput(String nhapGi) {
         String date;
-        while(true) {
+        while (true) {
             date = takeStringInput(nhapGi);
-            if(checkDate(date))
+            if (checkDate(date))
                 return date;
             else
                 Check.printError("Ngay thang khong hop le");
         }
     }
 
-    //Nhận input số điện thoại
+    // Nhận input số điện thoại
     public static String takePhoneNumberInput(String nhapGi) {
         String phoneNumber;
-        while(true) {
+        while (true) {
             phoneNumber = takeStringInput(nhapGi);
-            if(phoneNumber.matches("\\d+"))
+            if (phoneNumber.matches("\\d+"))
                 return phoneNumber;
             else
                 Check.printError("So dien thoai khong hop le");
         }
     }
 
-    //Lưu object vào file
+    // Lưu object vào file
     public static void save(Object obj, String fileName) {
         try {
+            Check.printMessage("Save file thanh cong");
             FileOutputStream f = new FileOutputStream(fileName);
             ObjectOutputStream oStream = new ObjectOutputStream(f);
             oStream.writeObject(obj);
@@ -149,26 +150,28 @@ public class Check implements Serializable {
         }
     }
 
-    //Load object từ file
+    // Load object từ file
     public static Object load(Object obj, String fileName) {
         try {
             FileInputStream f = new FileInputStream(fileName);
             ObjectInputStream inStream = new ObjectInputStream(f);
             obj = inStream.readObject();
             inStream.close();
+            Check.printMessage("Load file len co may thoi gian thanh cong");
             return obj;
         } catch (IOException | ClassNotFoundException e) {
+            Check.printError("Co may thoi gian co van de");
             return null;
         }
     }
 
-    //Lấy ngày hiện tại
+    // Lấy ngày hiện tại
     public static String getDateNow() {
         LocalDate date = LocalDate.now();
         return date.getDayOfMonth() + "/" + date.getMonthValue() + "/" + date.getYear();
     }
 
-    //Dùng để clear console
+    // Dùng để clear console
     public static void clearScreen() {
         Check.printMessage("Nhap bat ky de tiep tuc");
         Scanner cn = new Scanner(System.in);
@@ -176,27 +179,29 @@ public class Check implements Serializable {
         System.out.printf("%5s", repeatStr("\n", 5));
     }
 
-    //Hiển thị tin nhắn với text màu xanh
+    // Hiển thị tin nhắn với text màu xanh
     public static void printMessage(String message) {
-        System.out.printf("%30s " + TEXT_GREEN + " *** %s *** " + TEXT_RESET + " %30s%n", 
-            Check.repeatStr(" ", 30), message, Check.repeatStr(" ", 30));
+        System.out.printf("%30s " + TEXT_GREEN + " *** %s *** " + TEXT_RESET + " %30s%n",
+                Check.repeatStr(" ", 30), message, Check.repeatStr(" ", 30));
     }
 
-    //Hiển thị lỗi với text màu đỏ
+    // Hiển thị lỗi với text màu đỏ
     public static void printError(String message) {
-        System.out.printf("%30s " + TEXT_RED + " *** %s *** " + TEXT_RESET + " %30s%n", 
-            Check.repeatStr(" ", 30), message, Check.repeatStr(" ", 30));
+        System.out.printf("%30s " + TEXT_RED + " *** %s *** " + TEXT_RESET + " %30s%n",
+                Check.repeatStr(" ", 30), message, Check.repeatStr(" ", 30));
     }
 
     public static boolean checkDate(String date) {
         try {
-            String []part = date.split("/");
+            String[] part = date.split("/");
             int day = Integer.parseInt(part[0]);
             int month = Integer.parseInt(part[1]);
             int year = Integer.parseInt(part[2]);
-            if(day <= 0 || day > 31)
+            if (day <= 0 || day > 31)
                 return false;
-            if(month <= 0 || month >= 13)
+            if (month <= 0 || month >= 13)
+                return false;
+            if (month == 2 && day > 29)
                 return false;
             return year > 0 && year < 10000;
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
@@ -233,4 +238,4 @@ public class Check implements Serializable {
     public static boolean subStrInStrIgnoreCase(String str, String subStr) {
         return str.toLowerCase(Locale.ROOT).contains(subStr.toLowerCase(Locale.ROOT));
     }
-} 
+}

@@ -1,7 +1,5 @@
 package QuanLyCuaHangBanSach;
 
-import java.io.File;
-
 public class Main {
     public static void main(String[] args) {
         BookShop bookShop = new BookShop();
@@ -36,8 +34,11 @@ public class Main {
         if (dsPhieuNhap == null)
             dsPhieuNhap = new DSPhieuNhap(danhSachSach);
 
+        // dsPhieuXuat = (DSPhieuXuat) Check.load(dsPhieuXuat, "danhsachphieuXuat.txt");
+        // if (dsPhieuXuat == null)
+        // dsPhieuXuat = new DSPhieuXuat(danhSachSach);
+
         while (true) {
-            Check.clearScreen();
             System.out.println(Check.toBlueText("CHUONG TRINH QUAN LY CUA HANG SACH"));
             System.out.println("1. Dang nhap");
             System.out.println("2. Dang ky");
@@ -54,6 +55,7 @@ public class Main {
                         if (nguoi instanceof QuanLy) {
                             boolean logout = false;
                             do {
+                                Check.printMessage("Welcome to the bookstore " + nguoi.getHoTen());
                                 System.out.println(Check.toBlueText("MENU QUAN LY"));
                                 System.out.println("1. Quan ly nhan vien");
                                 System.out.println("2. Quan ly khach hang");
@@ -76,6 +78,7 @@ public class Main {
                             boolean logout = false;
                             dsPhieuXuat = new DSPhieuXuat(nguoi, danhSachHoaDon);
                             do {
+                                Check.printMessage("Welcome to the bookstore " + nguoi.getHoTen());
                                 System.out.println(Check.toBlueText("MENU THU KHO"));
                                 System.out.println("1. Xem danh sach phieu nhap");
                                 System.out.println("2. Xem danh sach phieu xuat");
@@ -91,6 +94,7 @@ public class Main {
                         } else if (nguoi instanceof NhanVienBanHang) {
                             boolean logout = false;
                             do {
+                                Check.printMessage("Welcome to the bookstore " + nguoi.getHoTen());
                                 System.out.println(Check.toBlueText("MENU BAN HANG"));
                                 System.out.println("1. Xem danh sach sach");
                                 System.out.println("2. Xem danh sach khach hang");
@@ -108,6 +112,7 @@ public class Main {
                         } else {
                             boolean logout = false;
                             do {
+                                Check.printMessage("Welcome to the bookstore " + nguoi.getHoTen());
                                 System.out.println(Check.toBlueText("MENU KHACH HANG"));
                                 System.out.println("1. Xem danh sach sach");
                                 System.out.println("2. Xem danh sach hoa don");
@@ -137,5 +142,6 @@ public class Main {
         Check.save(danhSachNhaXuatBan, "danhsachnhaxuatban.txt");
         Check.save(danhSachHoaDon, "danhsachhoadon.txt");
         Check.save(dsPhieuNhap, "danhsachphieunhap.txt");
+        // Check.save(dsPhieuXuat, "danhsachphieuxuat.txt");
     }
 }

@@ -12,6 +12,10 @@ public class DanhSachChiTietHoaDon implements Serializable {
             .findFirst()
             .orElse(null);
     }
+    public ChiTietHoaDon timKiemTheoMaHoaDon1(String id){
+        return cthd.stream().filter(x -> x.getMaSach().equals(id)).findFirst().orElse(null);
+
+    }
 
     public String nhapMaSach(DanhSachSach danhSachSach) {
         do {

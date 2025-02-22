@@ -120,7 +120,7 @@ public class DanhSachNhaXuatBan implements Serializable, DanhSach {
         if(listFilter.isEmpty())
             Check.printError("Khong tim duoc tu khoa nay trong danh sach");
         else {
-            xuatTieuDe();
+            // xuatTieuDe();
             for(NhaXuatBan nhaXuatBan : listFilter)
                 nhaXuatBan.xuatThongTin();
         }
