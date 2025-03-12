@@ -13,6 +13,11 @@ public class ChiTietPhieuDTO implements Serializable {
         setDonGia(donGia);
     }
 
+    public void inChiTietPhieu() {
+        System.out.printf("│%-16s│%-16s│%-16s│\n", maSach, soLuong, donGia);
+    }
+
+
     public String getMaSach() {
         return maSach;
     }
@@ -36,4 +41,4 @@ public class ChiTietPhieuDTO implements Serializable {
     public void setDonGia(int donGia) {
         this.donGia = donGia;
     }
-} 
+}

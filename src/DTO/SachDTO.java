@@ -36,6 +36,26 @@ public abstract class SachDTO implements Serializable {
         this.soLuong = soLuong;
     }
 
+    public void nhapThongTin() {
+        this.tenSach = Check.takeStringInput("Nhap ten sach: ");
+        this.luaTuoi = Check.takeStringInput("Nhap lua tuoi phu hop: ");
+        this.giaBan = Check.takeIntegerInput("Nhap gia ban: ");
+        this.theLoai = Check.takeStringInput("Nhap the loai: ");
+        this.soLuong = Check.takeIntegerInput("Nhap so luong: ");
+    }
+    
+    public void xuatThongTin() {
+        System.out.format("│%-15s│%-18s│%-15s│%-10s│%-15s│%-15s│%-15s│%-15s│%n",
+            maSach, tenSach, maTacGia, luaTuoi, giaBan, maNhaXuatBan, soLuong);
+    }
+
+    public boolean mua(int soLuongMua) {
+        if(soLuongMua > soLuong)
+            return false;
+        soLuong -= soLuongMua;
+        return true;
+    }
+
     // Getters and Setters
     public String getMaSach() {
         return maSach;

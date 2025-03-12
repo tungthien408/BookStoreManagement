@@ -24,6 +24,19 @@ public class TacGiaDTO implements Serializable {
         this.diaChi = diaChi;
         this.email = email;
     }
+    public void nhapThongTin(String maTacGia) {
+        this.maTacGia = maTacGia;
+        this.ten = Check.takeStringInput("Nhap ten tac gia: ");
+        this.sdt = Check.takeStringInput("Nhap so dien thoai: ");
+        this.diaChi = Check.takeStringInput("Nhap dia chi: ");
+        this.email = Check.takeStringInput("Nhap email: ");
+    }
+    
+    public void xuatThongTin() {
+        System.out.printf("│%-20s│%-20s│%-20s│%-20s│%-20s│%n", 
+            maTacGia, ten, sdt, diaChi, email);
+    }
+
 
     // Getters and Setters
     public String getMaTacGia() {

@@ -5,17 +5,17 @@ import java.io.Serializable;
 public class PhieuDTO implements Serializable {
     protected String maPhieu;
     protected String ngayLap;
-    protected String maNhanVien;
-    protected DSChiTietPhieu dsChiTietPhieu;
+    protected String SDTNhanVien;
+    protected DSChiTietPhieuDTO dsChiTietPhieu;
     protected int tongTien;
 
-    public PhieuDTO(String maPhieu, String ngayLap, DSChiTietPhieu dsChiTietPhieu, 
-                 int tongTien, String maNhanVien) {
+    public PhieuDTO(String maPhieu, String ngayLap, DSChiTietPhieuDTO dsChiTietPhieu, 
+                 int tongTien, String SDTNhanVien) {
         this.maPhieu = maPhieu;
         this.ngayLap = ngayLap;
         this.dsChiTietPhieu = dsChiTietPhieu;
         this.tongTien = tongTien;
-        this.maNhanVien = maNhanVien;
+        this.SDTNhanVien = SDTNhanVien;
     }
 
     // Getters and Setters
@@ -43,19 +43,19 @@ public class PhieuDTO implements Serializable {
         this.tongTien = tongTien;
     }
 
-    public DSChiTietPhieu getDsChiTietPhieu() {
+    public DSChiTietPhieuDTO getDsChiTietPhieu() {
         return dsChiTietPhieu;
     }
 
-    public void setDsChiTietPhieu(DSChiTietPhieu dsChiTietPhieu) {
+    public void setDsChiTietPhieu(DSChiTietPhieuDTO dsChiTietPhieu) {
         this.dsChiTietPhieu = dsChiTietPhieu;
     }
 
-    public String getMaNhanVien() {
-        return maNhanVien;
+    public String getSDTNhanVien() {
+        return SDTNhanVien;
     }
 
-    public void setMaNhanVien(String maNhanVien) {
-        this.maNhanVien = maNhanVien;
+    public void setSDTNhanVien(String SDTNhanVien) {
+        this.SDTNhanVien = SDTNhanVien;
     }
 } 

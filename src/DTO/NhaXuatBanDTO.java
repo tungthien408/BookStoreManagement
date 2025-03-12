@@ -24,6 +24,11 @@ public class NhaXuatBanDTO implements Serializable {
         this.email = email;
         this.maNXB = maNXB;
     }
+    public void xuatThongTin() {
+        System.out.printf("│%-20s│%-20s│%-20s│%-20s│%-20s│ \n", 
+            maNXB, ten, diaChi, sdt, email);
+    }
+
 
     // Getters and Setters
     public String getTen() {
