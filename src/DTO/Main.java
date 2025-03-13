@@ -37,10 +37,10 @@ public class Main {
         while (true) {
             System.out.println(Check.toBlueText("CHUONG TRINH QUAN LY CUA HANG SACH"));
             System.out.println("1. Dang nhap");
-            System.out.println("2. Dang ky");
+            // System.out.println("2. Dang ky");
             System.out.println("0. Thoat");
             boolean out = false;
-            switch (Check.takeInputChoice(0, 2)) {
+            switch (Check.takeInputChoice(0, 1)) {
                 case 1 -> {
                     NguoiDTO nguoi = bookShop.login();
                     if (nguoi == null)
@@ -124,7 +124,7 @@ public class Main {
                         }
                     }
                 }
-                case 2 -> bookShop.taoNguoi("KhachHang");
+                // case 2 -> bookShop.taoNguoi("KhachHang");
                 case 0 -> out = true;
             }
             if (out)

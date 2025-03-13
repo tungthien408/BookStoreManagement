@@ -6,12 +6,12 @@ import java.util.*;
 public class BookShopDTO implements Serializable {
     ArrayList<NhanVienDTO> listNV;
     ArrayList<KhachHangDTO> listKH;
-    ArrayList<NguoiDTO> listNguoi;
+    // ArrayList<NguoiDTO> listNguoi;
 
     public BookShopDTO() {
         listNV = new ArrayList<>();
         listKH = new ArrayList<>();
-        listNguoi = new ArrayList<>();
+        // listNguoi = new ArrayList<>();
         taoNguoiQuanLy();
         // NguoiDTO nvbh = new NhanVienBanHangDTO(
         // );
@@ -42,7 +42,7 @@ public class BookShopDTO implements Serializable {
     NhanVienDTO quanLy = new QuanLyDTO(
     "Dang Thai Tu", "Fuck u",
     "123", "13/2/2005", "nam",
-    "113", "123", "admin", 15000000);
+    "113", "123", "QuanLy", 15000000);
     listNV.add(quanLy);
     }
 
@@ -96,10 +96,32 @@ public class BookShopDTO implements Serializable {
             System.out.println("0. Thoat");
             boolean out = false;
             switch (Check.takeInputChoice(0, 4)) {
-                case 1 -> taoNguoi("NhanVien");
-                case 2 -> xoaNguoi("NhanVien");
-                case 3 -> timKiemNguoi("NhanVien");
-                case 4 -> suaNguoi("NhanVien");
+                case 1 -> create("NhanVien");
+                case 2 -> delete("NhanVien");
+                case 3 -> find("NhanVien");
+                case 4 -> repair("NhanVien");
+                case 0 -> out = true;
+            }
+            if (out)
+                break;
+            Check.clearScreen();
+        }
+    }
+
+    public void menuDanhSachQuanLy() {
+        while (true) {
+            xuatDanhSachNhanVien();
+            System.out.println("1. Them Quan Ly");
+            System.out.println("2. Xoa Quan Ly");
+            System.out.println("3. Tim kiem Quan Ly");
+            System.out.println("4. Sua thong tin Quan Ly");
+            System.out.println("0. Thoat");
+            boolean out = false;
+            switch (Check.takeInputChoice(0, 4)) {
+                case 1 -> create("QuanLy");
+                case 2 -> delete("QuanLy");
+                case 3 -> find("QuanLy");
+                case 4 -> repair("QuanLy");
                 case 0 -> out = true;
             }
             if (out)
@@ -118,10 +140,10 @@ public class BookShopDTO implements Serializable {
             System.out.println("0. Thoat");
             boolean out = false;
             switch (Check.takeInputChoice(0, 4)) {
-                case 1 -> taoNguoi("KhachHang");
-                case 2 -> xoaNguoi("KhachHang");
-                case 3 -> timKiemNguoi("KhachHang");
-                case 4 -> suaNguoi("KhachHang");
+                case 1 -> create("KhachHang");
+                case 2 -> delete("KhachHang");
+                case 3 -> find("KhachHang");
+                case 4 -> repair("KhachHang");
                 case 0 -> out = true;
             }
             if (out)
@@ -130,46 +152,51 @@ public class BookShopDTO implements Serializable {
         }
     }
 
-    public void taoNguoi(String choice) {
-        String sdt;
+
+    public void create(String choice) {
+        String SDT;
         while (true) {
-            sdt = Check.takeStringInput("Nhap SDT: ");
-            if (timKiemTheoSDT(sdt) != null) {
-                Check.printError("SDT nay da co vui long chon SDT khac");
+            SDT = Check.takeStringInput("Nhap SDT: ");
+            if (timKiemTheoSDT(SDT) != null) {
+                Check.printError("ID nay da co vui long chon SDT khac");
             } else {
                 break;
             }
         }
-
-        String hoTen = Check.takeStringInput("Nhap ho ten: ");
-        // String sdt = Check.takePhoneNumberInput("Nhap so dien thoai: ");
-
         if (choice.equals("KhachHang")) {
-            NguoiDTO kh = new KhachHangDTO(hoTen, sdt, '0');
-            listNguoi.add(kh);
-        } else {
+            String hoTen = Check.takeStringInput("Nhap ho ten: ");
+            KhachHangDTO kh = new KhachHangDTO(hoTen,SDT,'0');
+            listKH.add(kh);
+        }
+
+       
+        
+        if (choice.equals("NhanVienBanHang")){
+            String hoTen = Check.takeStringInput("Nhap ho ten: ");
             String diaChi = Check.takeStringInput("Nhap dia chi: ");
-            // String id = Check.takePhoneNumberInput("Nhap id: ");
             String ns = Check.takeDateInput("Nhap ngay sinh: ");
             String gt = chonGioiTinh();
             String cmnd = Check.takeStringInput("Nhap CMND: ");
             String pass = Check.takeStringInput("Nhap password: ");
-            // String chucvu = Check.takeStringInput("Nhap password: ");
             int mucLuong = Check.takeIntegerInput("Nhap muc luong: ");
-            System.out.println("1. Nhan vien thu kho");
-            System.out.println("2. Nhan vien ban hang");
-            switch (Check.takeInputChoice(1, 2)) {
-                case 1 -> {
-                NguoiDTO nhanVienThuKho = new QuanLyDTO( hoTen, diaChi, sdt, ns, gt,cmnd, pass,"QuanLy", mucLuong);
-                listNguoi.add(nhanVienThuKho);
-                }
-                case 2 -> {
-                    NguoiDTO nhanVienBanHang = new NhanVienBanHangDTO(hoTen, diaChi, sdt, ns, gt, cmnd, pass,"NhanVienBanHang",mucLuong);
-                    listNguoi.add(nhanVienBanHang);
-                }
-            }
+            NhanVienDTO nhanVienBanHang = new NhanVienBanHangDTO(hoTen, diaChi, SDT, ns, gt, cmnd, pass,"Nhan Vien Ban Hang",mucLuong);
+            listNV.add(nhanVienBanHang);
+
+        }
+        if (choice.equals("QuanLy")){
+            String hoTen = Check.takeStringInput("Nhap ho ten: ");
+            String diaChi = Check.takeStringInput("Nhap dia chi: ");
+            String ns = Check.takeDateInput("Nhap ngay sinh: ");
+            String gt = chonGioiTinh();
+            String cmnd = Check.takeStringInput("Nhap CMND: ");
+            String pass = Check.takeStringInput("Nhap password: ");
+            int mucLuong = Check.takeIntegerInput("Nhap muc luong: ");
+            NhanVienDTO QuanLy = new NhanVienBanHangDTO(hoTen, diaChi, SDT, ns, gt, cmnd, pass,"Quan Ly",mucLuong);
+            listNV.add(QuanLy);
+
         }
     }
+
 
     private String chonGioiTinh() {
         String gt = "";
@@ -191,50 +218,62 @@ public class BookShopDTO implements Serializable {
         return gt;
     }
 
-    public NguoiDTO timKiemTheoSDT(String id) {
-        return listNV.stream()
-                .filter(x -> x.getSDT().equals(id))
+    public NguoiDTO timKiemTheoSDT(String SDT) {
+
+        if( listKH.stream()
+                .filter(x -> x.getSDT().equals(SDT))
+                .findAny()
+                .orElse(null) != null)
+            return  listKH.stream()
+                .filter(x -> x.getSDT().equals(SDT))
                 .findAny()
                 .orElse(null);
+        else{
+            return  listNV.stream()
+            .filter(x -> x.getSDT().equals(SDT))
+            .findAny()
+            .orElse(null);
+        }
     }
 
-    // dk = "KhachHang" | "NhanVienThuKho" | "NhanVienBanHang" | "NhanVien"
-    public NguoiDTO timKiemTheoSDT(String id, String dk) {
+    public NguoiDTO timKiemTheoSDT(String SDT, String dk) {
         if (dk.equals("QuanLy"))
             return listNV.stream()
-                    .filter(x -> x.getSDT().equals(id) && x instanceof QuanLyDTO)
+                    .filter(x -> x.getSDT().equals(SDT) && x instanceof QuanLyDTO)
                     .findFirst()
                     .orElse(null);
         else if (dk.equals("NhanVienBanHang"))
             return listNV.stream()
-                    .filter(x -> x.getSDT().equals(id) && x instanceof NhanVienBanHangDTO)
+                    .filter(x -> x.getSDT().equals(SDT) && x instanceof NhanVienBanHangDTO)
                     .findFirst()
                     .orElse(null);
         else
-            return listNV.stream()
-                    .filter(x -> x.getSDT().equals(id) &&
-                            (x instanceof NhanVienBanHangDTO))
+            return listKH.stream()
+                    .filter(x -> x.getSDT().equals(SDT) &&
+                            (x instanceof KhachHangDTO))
                     .findFirst()
                     .orElse(null);
     }
-    // delete nv
-    public void xoaNguoi(String choice) {
+    // delete nv,kh
+    public void delete(String choice) {
         String sdt = Check.takeStringInput("Nhap sdt can xoa: ");
         NguoiDTO nguoi = timKiemTheoSDT(sdt, choice);
         if (nguoi == null)
             Check.printError("Khong tim thay sdt");
         else {
             listNV.remove(nguoi);
+            listKH.remove(nguoi);
             Check.printMessage("Xoa thanh cong");
         }
     }
 
     public void timKiemNguoi(String choice) {
         String sdt = Check.takeStringInput("Nhap sdt can tim can tim: ");
-        ArrayList<NguoiDTO> filter = new ArrayList<>();
-        for (NguoiDTO nguoi : listNV) {
-            if (choice.equals("QuanLy") && nguoi instanceof NhanVienDTO ||
-                    choice.equals("NhanVien") && nguoi instanceof NhanVienDTO) {
+        ArrayList<NhanVienDTO> filter = new ArrayList<>();
+        // ông trùm nên tìm được QL vs NVBH
+        for (NhanVienDTO nguoi : listNV) {
+            if (choice.equals("QuanLy") && nguoi instanceof QuanLyDTO ||
+                    choice.equals("NhanVien") && nguoi instanceof NhanVienBanHangDTO) {
                 if (nguoi.getSDT().toLowerCase(Locale.ROOT).contains(sdt.toLowerCase(Locale.ROOT))) {
                     filter.add(nguoi);
                 }
@@ -252,8 +291,48 @@ public class BookShopDTO implements Serializable {
                     nguoi.xuatThongTin();
         }
     }
+    public void find(String choice) {
+        String sdt = Check.takeStringInput("Nhap sdt can tim can tim: ");
+        ArrayList<NhanVienDTO> filter = new ArrayList<>();
+        ArrayList<KhachHangDTO> filter1 = new ArrayList<>();
+        if(choice.equals("KhachHang")){
+            for (KhachHangDTO nguoi : listKH) {
+                if (choice.equals("KhachHang")) {
+                    if (nguoi.getSDT().toLowerCase(Locale.ROOT).contains(sdt.toLowerCase(Locale.ROOT))) {
+                        filter1.add(nguoi);
+                    }
+                }
+            }
+    
+            System.out.println(Check.toBlueText("Tim kiem theo sdt: ") + Check.toGreenText(sdt));
+            if (filter.isEmpty())
+                Check.printError("Khong tim thay");
+            else {
+                    for (KhachHangDTO nguoi : filter1)
+                        nguoi.xuatThongTin();
+            }
+        }
+        // ông trùm nên tìm được QL vs NVBH
+        for (NhanVienDTO nguoi : listNV) {
+            if (choice.equals("QuanLy") && nguoi instanceof QuanLyDTO ||
+                    choice.equals("NhanVien") && nguoi instanceof NhanVienBanHangDTO) {
+                if (nguoi.getSDT().toLowerCase(Locale.ROOT).contains(sdt.toLowerCase(Locale.ROOT))) {
+                    filter.add(nguoi);
+                }
+            }
+        }
 
-    public void suaNguoi(String choice) {
+        System.out.println(Check.toBlueText("Tim kiem theo sdt: ") + Check.toGreenText(sdt));
+        if (filter.isEmpty())
+            Check.printError("Khong tim thay");
+        else {
+                for (NhanVienDTO nguoi : filter)
+                    nguoi.xuatThongTin();
+        }
+    }
+   
+
+    public void repair(String choice) {
         String sdt = Check.takeStringInput("Nhap sdt can sua: ");
         NguoiDTO nguoi = timKiemTheoSDT(sdt, choice);
         if (nguoi == null)
@@ -261,22 +340,24 @@ public class BookShopDTO implements Serializable {
         else {
             boolean out = false;
             do {
-                if (choice.equals("NhanVien"))
+                 if(choice.equals("NhanVien"))
                     xuatDanhSachNhanVien();
-                else
+                    System.out.println("1. Sua ho ten");
+                    System.out.println("2. Sua so dien thoai");
+                    System.out.println("3. Sua dia chi");
+                    System.out.println("4. Sua ngay sinh");
+                    System.out.println("5. Sua gioi tinh");
+                    System.out.println("6. Sua CMND");
+                    System.out.println("7. Sua password");
+                    System.out.println("8. Sua muc luong");
+                    System.out.println("9. Sua chuc vu");
+                    System.out.println("0. Thoat");    
+                if(choice.equals("NhanVien"))
                     xuatDanhSachKhachHang();
-                nguoi.xuatThongTin();
-                System.out.println("1. Sua ho ten");
-                System.out.println("3. Sua so dien thoai");
+                    System.out.println("1. Sua ho ten");
+                    System.out.println("2. Sua so dien thoai");
 
-                if (nguoi instanceof NhanVienDTO)
-                    System.out.println("2. Sua dia chi");
-                System.out.println("4. Sua ngay sinh");
-                System.out.println("5. Sua gioi tinh");
-                System.out.println("6. Sua CMND");
-                System.out.println("7. Sua password");
-                System.out.println("8. Sua muc luong");
-                System.out.println("0. Thoat");
+
                 int max = (nguoi instanceof NhanVienDTO) ? 9 : 2;
                 switch (Check.takeInputChoice(0, max)) {
                     case 1 -> nguoi.setHoTen(Check.takeStringInput("Nhap ho ten moi: "));
@@ -287,7 +368,7 @@ public class BookShopDTO implements Serializable {
                     case 6 -> ((NhanVienDTO) nguoi).setCMND(Check.takeStringInput("Nhap CMND moi: "));
                     case 7 -> ((NhanVienDTO) nguoi).setPassword(Check.takeStringInput("Nhap password moi: "));
                     case 8 -> ((NhanVienDTO) nguoi).setMucLuong(Check.takeIntegerInput("Nhap muc luong moi: "));
-                    case 9 -> ((NhanVienDTO) nguoi).setChucVu(Check.takeStringInput("Nhap muc luong moi: "));
+                    case 9 -> ((NhanVienDTO) nguoi).setChucVu(Check.takeStringInput("chuc vụ mới : "));
                     case 0 -> out = true;
                 }
                 if (!out)
