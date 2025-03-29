@@ -1,6 +1,6 @@
-package src.DAO;
+package DAO;
 
-import src.DTO.PhieuNhapDTO;
+import DTO.PhieuNhapDTO;
 import Service.Data;
 import Service.Lib;
 

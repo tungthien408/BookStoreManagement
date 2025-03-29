@@ -1,4 +1,4 @@
-package src.DTO;
+package DTO;
 
 public class NhanVienDTO {
     private String maNV;

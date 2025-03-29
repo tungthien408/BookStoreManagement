@@ -1,6 +1,6 @@
-package src.DAO;
+package DAO;
 
-import src.DTO.ChiTietHoaDonDTO;
+import DTO.ChiTietHoaDonDTO;
 import Service.Data;
 
 import java.sql.*;

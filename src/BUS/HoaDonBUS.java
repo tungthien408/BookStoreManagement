@@ -1,7 +1,7 @@
-package src.BUS;
+package BUS;
 
-import src.DAO.HoaDonDAO;
-import src.DTO.HoaDonDTO;
+import DAO.HoaDonDAO;
+import DTO.HoaDonDTO;
 import java.sql.SQLException;
 import java.util.List;
 

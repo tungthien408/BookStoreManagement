@@ -1,6 +1,6 @@
-package src.DAO;
+package DAO;
 
-import src.DTO.SachDTO;
+import DTO.SachDTO;
 import Service.Data;
 
 import java.sql.*;

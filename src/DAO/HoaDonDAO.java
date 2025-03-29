@@ -1,7 +1,7 @@
-package src.DAO;
+package DAO;
 
-import src.DTO.ChiTietHoaDonDTO;
-import src.DTO.HoaDonDTO;
+import DTO.ChiTietHoaDonDTO;
+import DTO.HoaDonDTO;
 import Service.Data;
 import Service.Lib;
 

@@ -1,7 +1,12 @@
-package src.GUI;
+package GUI;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.LayoutManager;
+
+import javax.swing.BorderFactory;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 public class Tool {
 	public Tool() {}

@@ -1,6 +1,6 @@
 // Giao diện của menu
 
-package src.GUI;
+package GUI;
 
 import java.awt.*;
 import java.awt.event.MouseAdapter;

@@ -1,10 +1,10 @@
-package src.BUS;
+package BUS;
 
 import java.sql.SQLException;
 import java.util.List;
-import src.DAO.TacGiaDAO;
+import DAO.TacGiaDAO;
 
-import src.DTO.TacGiaDTO;
+import DTO.TacGiaDTO;
 
 public class TacGiaBUS {
     TacGiaDAO TacGiaDAO = new TacGiaDAO();

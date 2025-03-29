@@ -1,6 +1,6 @@
-package src.DAO;
+package DAO;
 
-import src.DTO.NhanVienDTO;
+import DTO.NhanVienDTO;
 import Service.Data;
 import java.sql.*;
 import java.util.ArrayList;

@@ -1,5 +1,4 @@
-package src.DTO;
-
+package DTO;
 
 public class NXBDTO {
     private String maNXB;

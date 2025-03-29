@@ -1,9 +1,9 @@
-package src.BUS;
+package BUS;
 
 import java.sql.SQLException;
 import java.util.List;
-import src.DAO.KhachHangDAO;
-import src.DTO.KhachHangDTO;
+import DAO.KhachHangDAO;
+import DTO.KhachHangDTO;
 
 public class KhachHangBUS {
     private KhachHangDAO khachHangDAO;
