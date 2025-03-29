@@ -23,6 +23,7 @@ public class Tool {
 			layout = new FlowLayout();
 		}
 		JPanel panel = new JPanel(layout);
+		panel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 		panel.setPreferredSize(new Dimension(width, height));
 		return panel;
 	}
