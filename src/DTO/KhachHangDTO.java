@@ -1,4 +1,4 @@
-package DTO;
+package src.DTO;
 import java.io.Serializable;
 
 public class KhachHangDTO implements Serializable {

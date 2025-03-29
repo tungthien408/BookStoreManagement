@@ -1,7 +1,7 @@
-package BUS;
+package src.BUS;
 
-import DAO.PhieuNhapDAO;
-import DTO.PhieuNhapDTO;
+import src.DAO.PhieuNhapDAO;
+import src.DTO.PhieuNhapDTO;
 import java.sql.SQLException;
 import java.util.List;
 

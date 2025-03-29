@@ -1,10 +1,10 @@
-package BUS;
+package src.BUS;
 
 import java.sql.SQLException;
 import java.util.List;
 
-import DAO.NhanVienDAO;
-import DTO.NhanVienDTO;
+import src.DAO.NhanVienDAO;
+import src.DTO.NhanVienDTO;
 
 public class NhanVienBUS {
     private NhanVienDAO nhanVienDAO = new NhanVienDAO();

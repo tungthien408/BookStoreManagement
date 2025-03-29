@@ -1,6 +1,6 @@
-package DAO;
+package src.DAO;
 
-import DTO.ChiTietHoaDonDTO;
+import src.DTO.ChiTietHoaDonDTO;
 import Service.Data;
 
 import java.sql.*;
@@ -25,32 +25,32 @@ public class ChiTietHoaDonDAO {
         }
     }
 
-    // Lấy danh sách chi tiết hóa đơn theo mã hóa đơn
-    public List<ChiTietHoaDonDTO> getChiTietHoaDonByMaHD(String maHD) throws SQLException {
-        List<ChiTietHoaDonDTO> dsCTHD = new ArrayList<>();
-        String query = """
-            SELECT MASACH, MAHD, SoLuong, Gia 
-            FROM chitiethoadon 
-            WHERE MAHD = ?
-        """;
+    // // Lấy danh sách chi tiết hóa đơn theo mã hóa đơn
+    // public List<ChiTietHoaDonDTO> getChiTietHoaDonByMaHD(String maHD) throws SQLException {
+    //     List<ChiTietHoaDonDTO> dsCTHD = new ArrayList<>();
+    //     String query = """
+    //         SELECT MASACH, MAHD, SoLuong, Gia 
+    //         FROM chitiethoadon 
+    //         WHERE MAHD = ?
+    //     """;
 
-        try (Connection conn = Data.getConnection();
-                PreparedStatement stmt = conn.prepareStatement(query)) {
-            stmt.setString(1, maHD);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    ChiTietHoaDonDTO cthd = new ChiTietHoaDonDTO(
-                        rs.getString("MASACH"),
-                        rs.getString("MAHD"),
-                        rs.getInt("SoLuong"),
-                        rs.getInt("Gia")
-                    );
-                    dsCTHD.add(cthd);
-                }
-            }
-        }
-        return dsCTHD;
-    }
+    //     try (Connection conn = Data.getConnection();
+    //             PreparedStatement stmt = conn.prepareStatement(query)) {
+    //         stmt.setString(1, maHD);
+    //         try (ResultSet rs = stmt.executeQuery()) {
+    //             while (rs.next()) {
+    //                 ChiTietHoaDonDTO cthd = new ChiTietHoaDonDTO(
+    //                     rs.getString("MASACH"),
+    //                     rs.getString("MAHD"),
+    //                     rs.getInt("SoLuong"),
+    //                     rs.getInt("Gia")
+    //                 );
+    //                 dsCTHD.add(cthd);
+    //             }
+    //         }
+    //     }
+    //     return dsCTHD;
+    // }
     
 
     // Lấy danh sách tất cả chi tiết hóa đơn

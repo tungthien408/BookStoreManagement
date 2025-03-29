@@ -1,4 +1,4 @@
-package DTO;
+package src.DTO;
 public class TacGiaDTO {
     private String maTG;
     private String tenTG;

@@ -1,6 +1,6 @@
-package DAO;
+package src.DAO;
 
-import DTO.KhachHangDTO;
+import src.DTO.KhachHangDTO;
 import Service.Data;
 
 import java.sql.*;

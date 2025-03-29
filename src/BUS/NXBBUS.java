@@ -1,12 +1,12 @@
-package BUS;
+package src.BUS;
 
 import java.sql.SQLException;
 
 import java.util.List;
 
-import DAO.NXBDAO;
+import src.DAO.NXBDAO;
 
-import DTO.NXBDTO;
+import src.DTO.NXBDTO;
 
 public class NXBBUS {
         NXBDAO NXBDAO = new NXBDAO();

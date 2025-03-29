@@ -1,6 +1,6 @@
-package DAO;
+package src.DAO;
 
-import DTO.NXBDTO;
+import src.DTO.NXBDTO;
 import Service.Data;
 
 import java.sql.*;
