@@ -1,30 +1,37 @@
 package DTO;
 
-import java.io.Serializable;
-
-public class ChiTietHoaDonDTO implements Serializable {
+public class ChiTietHoaDonDTO {
     private String maSach;
+    private String maHD;
     private int soLuong;
     private int gia;
 
-    public ChiTietHoaDonDTO() {
-        this.maSach = null;
-        this.soLuong = 0;
-        this.gia = 0;
-    }
+    // Constructor mặc định
+    public ChiTietHoaDonDTO() {}
 
-    public ChiTietHoaDonDTO(String maSach, int soLuong, int gia) {
+    // Constructor có tham số
+    public ChiTietHoaDonDTO(String maSach, String maHD, int soLuong, int gia) {
         this.maSach = maSach;
+        this.maHD = maHD;
         this.soLuong = soLuong;
         this.gia = gia;
     }
 
+    // Getter và Setter
     public String getMaSach() {
         return maSach;
     }
 
     public void setMaSach(String maSach) {
         this.maSach = maSach;
+    }
+
+    public String getMaHD() {
+        return maHD;
+    }
+
+    public void setMaHD(String maHD) {
+        this.maHD = maHD;
     }
 
     public int getSoLuong() {
@@ -42,4 +49,5 @@ public class ChiTietHoaDonDTO implements Serializable {
     public void setGia(int gia) {
         this.gia = gia;
     }
-} 
+
+}

@@ -1,77 +1,55 @@
 package DTO;
 
-import java.io.Serializable;
+import java.util.Date;
 
-public class HoaDonDTO implements Serializable {
-    private String maHoaDon;
-    private String sdtNhanVien;
-    private String sdtKhachHang;
-    private String ngayLap;
+public class HoaDonDTO {
+    private String maHD;
+    private String maNV;
+    private String sdt;
+    private Date ngayBan;
     private int tongTien;
-    private DanhSachChiTietHoaDonDTO dsChiTietHoaDon;
-    private String tinhTrang;
-    
+
     public HoaDonDTO() {
-        this.maHoaDon = null;
-        this.tongTien = 0;
-        this.dsChiTietHoaDon = null;
     }
 
-    public HoaDonDTO(String maHoaDon, String sdtNhanVien, String sdtKhachHang, 
-                  String ngayLap, int tongTien, DanhSachChiTietHoaDonDTO dsChiTietHoaDon, 
-                  String tinhTrang) {
-        this.maHoaDon = maHoaDon;
-        this.sdtNhanVien = sdtNhanVien;
-        this.sdtKhachHang = sdtKhachHang;
-        this.ngayLap = ngayLap;
+    public HoaDonDTO(String maHD, String maNV, String sdt, Date ngayBan, int tongTien) {
+        this.maHD = maHD;
+        this.maNV = maNV;
+        this.sdt = sdt;
+        this.ngayBan = ngayBan;
         this.tongTien = tongTien;
-        this.dsChiTietHoaDon = dsChiTietHoaDon;
-        this.tinhTrang = tinhTrang;
     }
 
-    public void xuatThongTin() {
-        String tinhTrangColor = null;
-        if(getTinhTrang().equals("Dang cho xac nhan"))
-            tinhTrangColor = Check.toBlueText(getTinhTrang());
-        else if(getTinhTrang().equals("Da xac nhan") || getTinhTrang().equals("Da xuat kho"))
-            tinhTrangColor = Check.toYellowText(getTinhTrang());
-        else if(getTinhTrang().equals("Da nhan hang"))
-            tinhTrangColor = Check.toGreenText(getTinhTrang());
-        System.out.printf("│%-20s│%-20s│%-20s│%-10s│%-15s│%-25s \n", 
-            maHoaDon, sdtNhanVien, sdtKhachHang, ngayLap, tongTien, tinhTrangColor);
+    public String getMaHD() {
+        return maHD;
     }
 
-    // Getters and Setters
-    public String getMaHoaDon() {
-        return maHoaDon;
+    public void setMaHD(String maHD) {
+        this.maHD = maHD;
     }
 
-    public void setMaHoaDon(String maHoaDon) {
-        this.maHoaDon = maHoaDon;
+    public String getMaNV() {
+        return maNV;
     }
 
-    public String getSDTNhanVien() {
-        return sdtNhanVien;
+    public void setMaNV(String maNV) {
+        this.maNV = maNV;
     }
 
-    public void setSDTNhanVien(String sdtNhanVien) {
-        this.sdtNhanVien = sdtNhanVien;
+    public String getSdt() {
+        return sdt;
     }
 
-    public String getSDTKhachHang() {
-        return sdtKhachHang;
+    public void setSdt(String sdt) {
+        this.sdt = sdt;
     }
 
-    public void setSDTKhachHang(String sdtKhachHang) {
-        this.sdtKhachHang = sdtKhachHang;
+    public Date getNgayBan() {
+        return ngayBan;
     }
 
-    public String getNgayLap() {
-        return ngayLap;
-    }
-
-    public void setNgayLap(String ngayLap) {
-        this.ngayLap = ngayLap;
+    public void setNgayBan(Date ngayBan) {
+        this.ngayBan = ngayBan;
     }
 
     public int getTongTien() {
@@ -82,19 +60,4 @@ public class HoaDonDTO implements Serializable {
         this.tongTien = tongTien;
     }
 
-    public DanhSachChiTietHoaDonDTO getDsChiTietHoaDon() {
-        return dsChiTietHoaDon;
-    }
-
-    public void setDsChiTietHoaDon(DanhSachChiTietHoaDonDTO dsChiTietHoaDon) {
-        this.dsChiTietHoaDon = dsChiTietHoaDon;
-    }
-
-    public String getTinhTrang() {
-        return tinhTrang;
-    }
-
-    public void setTinhTrang(String tinhTrang) {
-        this.tinhTrang = tinhTrang;
-    }
-} 
+}

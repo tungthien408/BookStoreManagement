@@ -1,23 +1,64 @@
 package DTO;
 
-public class PhieuNhapDTO extends PhieuDTO {
-    private String maNhaXuatBan;
+import java.sql.Date;
 
-    public PhieuNhapDTO(String maPhieu, String ngayLap, String maNhaXuatBan, 
-                     String SDTNhanVien, DSChiTietPhieuDTO dsChiTietPhieu, int tongTien) {
-        super(maPhieu, ngayLap, dsChiTietPhieu, tongTien, SDTNhanVien);
-        this.maNhaXuatBan = maNhaXuatBan;
+public class PhieuNhapDTO {
+    private String maPN;
+    private String maNV;
+    private Date ngayNhap;
+    private double tongTien;
+    private String maNXB;
+
+    // Constructor không tham số
+    public PhieuNhapDTO() {}
+
+    // Constructor có tham số
+    public PhieuNhapDTO(String maPN, String maNV, Date ngayNhap, double tongTien, String maNXB) {
+        this.maPN = maPN;
+        this.maNV = maNV;
+        this.ngayNhap = ngayNhap;
+        this.tongTien = tongTien;
+        this.maNXB = maNXB;
     }
 
-    public String getMaNhaXuatBan() {
-        return maNhaXuatBan;
+    // Getter và Setter
+    public String getMaPN() {
+        return maPN;
     }
 
-    public void setMaNhaXuatBan(String maNhaXuatBan) {
-        this.maNhaXuatBan = maNhaXuatBan;
+    public void setMaPN(String maPN) {
+        this.maPN = maPN;
     }
-    public void inPhieu() {
-        System.out.printf("│%-16s│%-16s│%-16s", maPhieu, ngayLap, tongTien);
-        System.out.printf("│%-16s│%-16s│\n", SDTNhanVien, maNhaXuatBan);
+
+    public String getMaNV() {
+        return maNV;
     }
-} 
+
+    public void setMaNV(String maNV) {
+        this.maNV = maNV;
+    }
+
+    public Date getNgayNhap() {
+        return ngayNhap;
+    }
+
+    public void setNgayNhap(Date ngayNhap) {
+        this.ngayNhap = ngayNhap;
+    }
+
+    public double getTongTien() {
+        return tongTien;
+    }
+
+    public void setTongTien(double tongTien) {
+        this.tongTien = tongTien;
+    }
+
+    public String getMaNXB() {
+        return maNXB;
+    }
+
+    public void setMaNXB(String maNXB) {
+        this.maNXB = maNXB;
+    }
+}
