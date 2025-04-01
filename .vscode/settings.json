@@ -1,5 +1,5 @@
 {
   "java.debug.settings.onBuildFailureProceed": true,
-  "files.autoSave": "afterDelay",
+  "files.autoSave": "off",
   "editor.defaultFormatter": "esbenp.prettier-vscode"
 }

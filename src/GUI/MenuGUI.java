@@ -28,8 +28,18 @@ public class MenuGUI {
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(10, 10, 10, 10);
         c.gridx = 0;
+        c.gridy = 0;
         c.weightx = 0.5;
+        c.weighty = 1.5;
         c.fill = GridBagConstraints.HORIZONTAL;
+
+        JPanel panel_logo = new JPanel(new BorderLayout());
+        panel_logo.setBackground(Color.GREEN);
+        JLabel label_logo = new JLabel("Logo will be here");
+        panel_logo.add(label_logo, BorderLayout.CENTER);
+        sideMenu.add(panel_logo, c);
+
+        c.weighty = 0;
 
         for (int i = 0; i < length; i++) {
             switch (i) {
@@ -82,7 +92,7 @@ public class MenuGUI {
 
         // Tạo từng module cho thanh menu bên trái
         for (int i = 0; i < length; i++) {
-            c.gridy = i;
+            c.gridy = i + 1;
             final int func = i;
 
             JPanel panel = new JPanel(new BorderLayout());
