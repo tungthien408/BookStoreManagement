@@ -21,7 +21,8 @@ import javax.swing.table.JTableHeader;
 
 public class Tool {
 	public Tool() {}
-	public JFrame createFrame(String title, int width, int height, LayoutManager layout) {
+	public JFrame createFrame(String title, int width, LayoutManager layout) {
+		int height = (int)(width * 0.625);
 		JFrame frame = new JFrame(title);
 		if (layout == null) {
 			layout = new FlowLayout();

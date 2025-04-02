@@ -17,8 +17,8 @@ public class MenuGUI {
         Tool tool = new Tool();
         int length = array_function.length;
 
-        JFrame frame = tool.createFrame("Book Shop Management", 1600, 1000, null);
-        JPanel mainPanel = tool.createPanel(1600, 1000, new BorderLayout());
+        JFrame frame = tool.createFrame("Book Shop Management", 1200, null);
+        JPanel mainPanel = tool.createPanel(1200, (int)(1200*0.625), new BorderLayout());
         panel_content = new JPanel[length];
 
         JPanel sideMenu = new JPanel(new GridBagLayout()); // GridBagLayout() -> layout linh động nhất nhưng phức tạp nhất trong java swing
