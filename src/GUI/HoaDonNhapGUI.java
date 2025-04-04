@@ -1,17 +1,48 @@
 package GUI;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 
 public class HoaDonNhapGUI {
     Tool tool = new Tool();
     JPanel panel;
+    int width = 1200;
+    int width_sideMenu = 151;
+    int height = (int)(width * 0.625);
+
     public HoaDonNhapGUI() {
-        panel = tool.createPanel(1600, 0, new GridBagLayout());
+        panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         // TODO: Design graphic
-        // panel.setBackground(new Color(46, 204, 113));
+
+        // Fake data
         String tableContent[][] = {
             {"PN001", "NV001", "2023-01-01", "500000", "NXB001"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
+            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
             {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
             {"PN003", "NV003", "2023-01-03", "700000", "NXB003"},
             {"PN004", "NV004", "2023-01-04", "800000", "NXB004"},
@@ -33,11 +64,22 @@ public class HoaDonNhapGUI {
             {"PN020", "NV020", "2023-01-20", "2400000", "NXB020"}
         };
         String column[] = {"Mã phiếu nhập", "Mã nhân viên", "Ngày nhập", "Tổng tiền", "Mã NXB"};
+
+        // Bảng
         JTable table = tool.createTable(tableContent, column);
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(1000, 400));
-        scrollPane.setLocation(50, 50);
-        panel.add(scrollPane);
+        scrollPane.setPreferredSize(new Dimension(758, 640));
+
+        // Tạo khoảng cách xung quanh bảng
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(50, 40, 10, 60)); // Top, Left, Bottom, Right
+        
+        // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
+        JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        wrapperPanel.add(scrollPane);
+        panel.add(wrapperPanel, BorderLayout.WEST);
+
+        // TODO: button field
+        // JPanel btn_panel = tool.createPanel(width, 0, new GridBagLayout());
     }
     public JPanel getPanel() {
         return this.panel;

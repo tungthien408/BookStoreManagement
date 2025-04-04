@@ -1,3 +1,8 @@
+/**
+ * Cung cấp những hàm cần thiết để thiết kế giao diện hệ thống dễ dàng hơn.
+ * @author Dương Tùng Thiện
+ */
+
 package GUI;
 
 import java.awt.Color;
@@ -15,6 +20,7 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
@@ -50,7 +56,7 @@ public class Tool {
 
 		table.setRowHeight(30);
 
-		DefaultTableCellRenderer ob = new DefaultTableCellRenderer();
+		DefaultTableCellRenderer ob = new DefaultTableCellRenderer(); // Mục đích: Căn nội dung của bảng về giữa
 		ob.setHorizontalAlignment(SwingConstants.CENTER);
 		for (int i = 0; i < table.getColumnCount(); i++) {
 			table.getColumnModel().getColumn(i).setCellRenderer(ob);
@@ -66,7 +72,7 @@ public class Tool {
 	}
 
 	public JButton createButton(int width, int height, String text, ImageIcon icon, Color bg, Color fg, ActionListener event) {
-		// TODO
+		// TODO: Thiếu việc gán event vào nút
 		JButton button = (icon != null) ? new JButton(text, icon) : new JButton(text);
 		button.setPreferredSize(new Dimension(width, height));
 		button.setBackground(bg);
@@ -92,5 +98,14 @@ public class Tool {
 		return button;
 	}
 
-	// find things
+	// search panel
+	// public JTextField createSearchPanel(ArrayList <String> comboboxList) {
+	// 	JTextField textField = new JTextField(5);
+	// 	return textField;
+	// }
+
+	public JTextField createSearchPanel() {
+		JTextField textField = new JTextField(5);
+		return textField;
+	}
 }
