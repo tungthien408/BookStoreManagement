@@ -1,8 +1,8 @@
 package DAO;
 
 import DTO.PhieuNhapDTO;
-import Service.Data;
-import Service.Lib;
+import src.main.Service.Data;
+import src.main.Service.Lib;
 
 import java.sql.*;
 import java.util.ArrayList;
