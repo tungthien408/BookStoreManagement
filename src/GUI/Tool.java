@@ -104,7 +104,7 @@ public class Tool {
 	// 	return textField;
 	// }
 
-	public JTextField createSearchPanel() {
+	public JTextField createSearchTextField() {
 		JTextField textField = new JTextField(5);
 		return textField;
 	}

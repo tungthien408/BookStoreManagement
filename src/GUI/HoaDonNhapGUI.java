@@ -18,6 +18,9 @@ public class HoaDonNhapGUI {
 
     public HoaDonNhapGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
+        JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        // JTextField searchField = tool.createSearchTextField();
+        // searchField.setPreferredSize(new Dimension(100, 30));
         // TODO: Design graphic
 
         // Fake data
@@ -74,9 +77,9 @@ public class HoaDonNhapGUI {
         scrollPane.setBorder(BorderFactory.createEmptyBorder(50, 40, 10, 60)); // Top, Left, Bottom, Right
         
         // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
-        JPanel wrapperPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        wrapperPanel.add(scrollPane);
-        panel.add(wrapperPanel, BorderLayout.WEST);
+        JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelTable.add(scrollPane);
+        panel.add(panelTable, BorderLayout.WEST);
 
         // TODO: button field
         // JPanel btn_panel = tool.createPanel(width, 0, new GridBagLayout());
