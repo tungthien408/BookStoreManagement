@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "GUI.Main",
+            "projectName": "BookStoreManagement"
+        },
+        {
             "type": "java+",
             "request": "launch",
             "name": "Launch Java App"
