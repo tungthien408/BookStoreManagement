@@ -1,6 +1,7 @@
 package GUI;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
@@ -18,7 +19,7 @@ public class HoaDonNhapGUI {
 
     public HoaDonNhapGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
-        JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        // JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         // JTextField searchField = tool.createSearchTextField();
         // searchField.setPreferredSize(new Dimension(100, 30));
         // TODO: Design graphic
@@ -71,7 +72,7 @@ public class HoaDonNhapGUI {
         // Bảng
         JTable table = tool.createTable(tableContent, column);
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(758, 640));
+        scrollPane.setPreferredSize(new Dimension(850, 640));
 
         // Tạo khoảng cách xung quanh bảng
         scrollPane.setBorder(BorderFactory.createEmptyBorder(50, 40, 10, 60)); // Top, Left, Bottom, Right
@@ -81,9 +82,28 @@ public class HoaDonNhapGUI {
         panelTable.add(scrollPane);
         panel.add(panelTable, BorderLayout.WEST);
 
+        String [] btn_txt = {"Chi tiết", "Nhập Excel", "Xuất Excel"};
+        JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelBtn.add(tool.createButtonHorizontal(btn_txt, new Color(21, 96, 130), Color.WHITE));
+        panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
+        panel.add(panelBtn, BorderLayout.CENTER);
+
+        
         // TODO: button field
         // JPanel btn_panel = tool.createPanel(width, 0, new GridBagLayout());
+        
+        // Tạo thanh tìm kiếm 
+
+        panelBtn = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        // panelSearch.add(tool.createSearchTextField(50,50)); 
+        // panel.add(panelSearch);
+        panelBtn.add(tool.createSearchTextField(100,50));
+        panel.add(panelBtn, BorderLayout.NORTH);
+        //  panel.add(panelBtn);
     }
+    
+    
     public JPanel getPanel() {
         return this.panel;
     } 
