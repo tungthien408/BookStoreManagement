@@ -92,13 +92,13 @@ public class HoaDonBanGUI {
       
         // Tạo thanh tìm kiếm 
 
-        JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        // JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        // panelSearch.add(tool.createSearchTextField(50,50)); 
-        // panel.add(panelSearch);
-        panelSearch.add(tool.createSearchTextField(100,50));
-        panel.add(panelSearch, BorderLayout.NORTH);
-        //  panel.add(panelBtn);
+        // JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // // JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        // // panelSearch.add(tool.createSearchTextField(50,50)); 
+        // // panel.add(panelSearch);
+        // panelSearch.add(tool.createSearchTextField(100,50));
+        // panel.add(panelSearch, BorderLayout.NORTH);
+        // //  panel.add(panelBtn);
     }
     
     

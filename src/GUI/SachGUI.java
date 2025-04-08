@@ -4,15 +4,21 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
 
 import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 
 public class SachGUI {
     Tool tool = new Tool();
-    JPanel panel;
+    JPanel panel, panelDetail, panelImg, panel_detail;
+    JTextField txt_name, txt_nxb, txt_author, txt_category, txt_quantity;
     int width = 1200;
     int width_sideMenu = 151;
     int height = (int)(width * 0.625);
@@ -90,16 +96,82 @@ public class SachGUI {
         panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
         panel.add(panelBtn, BorderLayout.CENTER);
 
+        // Chi tiết sản phẩm
+        panelDetail = tool.createPanel(850, 300, new GridBagLayout());
+        panelImg = new JPanel(null);
+        panel_detail = new JPanel(new GridBagLayout());
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 0.5;
+        c.weighty = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(5, 5, 5, 5);
+
+        // add image inside panelImg
+        panelDetail.add(panelImg, c);
+
+        String txt_label[] = {"Tên", "Nhà xuất bản", "Tác giả", "Thể loại", "Số lượng"};
+        
+        txt_name = new JTextField();
+        txt_nxb = new JTextField();
+        txt_author = new JTextField();
+        txt_category = new JTextField();
+        txt_quantity = new JTextField();
+        
+        JTextField txt_array[] = {txt_name, txt_nxb, txt_author, txt_category, txt_quantity};
+
+        for (int i = 0; i < txt_array.length; i++) {
+            // txt_array[i] = new JTextField();
+            txt_array[i].setPreferredSize(new Dimension(182, 30));
+            txt_array[i].setEditable(false);
+        }
+
+        for (int i = 0; i < 3; i++) {
+            c.gridy += 1;
+            JLabel label = new JLabel(txt_label[i]);
+            panel_detail.add(label, c);
+            c.gridy += 1;
+            panel_detail.add(txt_array[i], c);
+        }
+
+        c.fill = GridBagConstraints.VERTICAL;
+        c.gridx = 1;
+        c.gridy = 0;
+        panelDetail.add(panel_detail, c);
+        c.fill = GridBagConstraints.HORIZONTAL;
+
+        panel_detail = new JPanel(new GridBagLayout());
+
+        for (int i = 3; i < txt_array.length; i++) {
+            c.gridy += 1;
+            JLabel label = new JLabel(txt_label[i]);
+            panel_detail.add(label, c);
+            c.gridy += 1;
+            panel_detail.add(txt_array[i], c);
+        }
+
+
+        c.fill = GridBagConstraints.VERTICAL;
+        c.gridy = 0;
+        c.gridx = 2;
+        panelDetail.add(panel_detail, c);
+        c.fill = GridBagConstraints.HORIZONTAL;
+
+        JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        wrappedPanel.add(panelDetail);
+        panel.add(wrappedPanel, BorderLayout.SOUTH);
       
         // Tạo thanh tìm kiếm 
 
-        JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        // JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        // panelSearch.add(tool.createSearchTextField(50,50)); 
-        // panel.add(panelSearch);
-        panelSearch.add(tool.createSearchTextField(100,50));
-        panel.add(panelSearch, BorderLayout.NORTH);
-        //  panel.add(panelBtn);
+        // JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        // // JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEADING));
+        // // panelSearch.add(tool.createSearchTextField(50,50)); 
+        // // panel.add(panelSearch);
+        // panelSearch.add(tool.createSearchTextField(100,50));
+        // panel.add(panelSearch, BorderLayout.NORTH);
+        // //  panel.add(panelBtn);
     }
     
     

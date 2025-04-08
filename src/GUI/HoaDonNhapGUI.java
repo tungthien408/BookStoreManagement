@@ -92,13 +92,13 @@ public class HoaDonNhapGUI {
       
         // Tạo thanh tìm kiếm 
 
-        JPanel panelSearch1 = new JPanel(null);
-        panelSearch1.setPreferredSize(new Dimension(70,70)); // đủ lớn
+        // JPanel panelSearch1 = new JPanel(null);
+        // panelSearch1.setPreferredSize(new Dimension(70,70)); // đủ lớn
 
-        // JTextField searchField = tool.createSearchTextField(50, 50);
-        panelSearch1.add(tool.createSearchTextField(50, 50));
+        // // JTextField searchField = tool.createSearchTextField(50, 50);
+        // panelSearch1.add(tool.createSearchTextField(50, 50));
 
-        panel.add(panelSearch1, BorderLayout.NORTH);
+        // panel.add(panelSearch1, BorderLayout.NORTH);
 
                 
 
