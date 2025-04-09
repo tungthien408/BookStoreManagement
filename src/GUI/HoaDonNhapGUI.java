@@ -75,32 +75,33 @@ public class HoaDonNhapGUI {
         scrollPane.setPreferredSize(new Dimension(850, 640));
 
         // Tạo khoảng cách xung quanh bảng
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(50, 40, 10, 60)); // Top, Left, Bottom, Right
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(50, 40, 10, 10)); // Top, Left, Bottom, Right
         
         // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelTable.add(scrollPane);
         panel.add(panelTable, BorderLayout.WEST);
 
+        // Panel chứa button
         String [] btn_txt = {"Chi tiết", "Nhập Excel", "Xuất Excel"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonHorizontal(btn_txt, new Color(21, 96, 130), Color.WHITE));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
         panel.add(panelBtn, BorderLayout.CENTER);
 
-        
-        // TODO: button field
-        // JPanel btn_panel = tool.createPanel(width, 0, new GridBagLayout());
-        
+      
         // Tạo thanh tìm kiếm 
 
-        panelBtn = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        // JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEADING));
-        // panelSearch.add(tool.createSearchTextField(50,50)); 
-        // panel.add(panelSearch);
-        panelBtn.add(tool.createSearchTextField(100,50));
-        panel.add(panelBtn, BorderLayout.NORTH);
-        //  panel.add(panelBtn);
+        // JPanel panelSearch1 = new JPanel(null);
+        // panelSearch1.setPreferredSize(new Dimension(70,70)); // đủ lớn
+
+        // // JTextField searchField = tool.createSearchTextField(50, 50);
+        // panelSearch1.add(tool.createSearchTextField(50, 50));
+
+        // panel.add(panelSearch1, BorderLayout.NORTH);
+
+                
+
     }
     
     

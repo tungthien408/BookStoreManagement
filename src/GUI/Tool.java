@@ -80,7 +80,7 @@ public class Tool {
 		JPanel panel = new JPanel(new GridBagLayout());
 		GridBagConstraints c = new GridBagConstraints(); // Để các nút có thể được thêm ngay phía dưới
 
-		c.insets = new Insets(10, 10, 10, 10);
+		c.insets = new Insets(10, 0, 10, 10);
         c.gridx = 0;
         c.gridy = 0;
         c.weightx = 0.5;
@@ -162,12 +162,11 @@ public class Tool {
 		return panel;
 	}
 
-
 	// Chưa hoàn thiện, Tú đang làm
 	public JTextField createSearchTextField(int x, int y) {
 		JTextField textField = new JTextField(15);
 		// textField.setPreferredSize(new Dimension(width, height));
-		textField.setBounds(x, y, 30, 100);
+		textField.setBounds(x, y, 150, 30);
 		textField.setBackground(new Color(246,198,173));
 		return textField;
 	}
