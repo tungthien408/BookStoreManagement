@@ -1,6 +1,6 @@
 /**
  * Cung cấp những hàm cần thiết để thiết kế giao diện hệ thống dễ dàng hơn.
- * @author Dương Tùng Thiện
+ * @author Dương Tùng Thiện, Dang Thai Tu
  */
 
 package GUI;
@@ -163,15 +163,6 @@ public class Tool {
 		return panel;
 	}
 
-
-	// // Chưa hoàn thiện, Tú đang làm
-	// public JTextField createSearchTextField(int x, int y) {
-	// 	JTextField textField = new JTextField(15);
-	// 	// textField.setPreferredSize(new Dimension(width, height));
-	// 	textField.setBounds(x, y, 30, 300);
-	// 	textField.setBackground(new Color(246,198,173));
-	// 	return textField;
-	// }
 	public JPanel createSearchTextField(int x, int y,String[] list) {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
