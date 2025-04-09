@@ -5,6 +5,20 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "type": "java",
+            "name": "LoginGUI",
+            "request": "launch",
+            "mainClass": "GUI.LoginGUI",
+            "projectName": "ProjectBanLaptop"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "GUI.Main",
+            "projectName": "ProjectBanLaptop"
+        },
+        {
             "type": "java+",
             "request": "launch",
             "name": "Launch Java App"

@@ -22,18 +22,22 @@ public class MenuGUI {
     // ArrayList <JPanel> panel_content = new ArrayList<>();
     JPanel panel_content[];
     JPanel menuContent;
-    // Hàm khởi tạo giao diện menu
+    private static final Color MENU_BACKGROUND = new Color(21, 96, 130);
+    private static final Color MENU_HOVER = new Color(15, 76, 104);
+
     public MenuGUI() {
         Tool tool = new Tool();
         int length = array_function.length;
+        int width = 1200;
+        int height = (int)(width * 0.625);
 
         JFrame frame = tool.createFrame("Book Shop Management", 1200, null);
-        JPanel mainPanel = tool.createPanel(1200, (int)(1200*0.625), new BorderLayout());
+        JPanel mainPanel = tool.createPanel(width, height, new BorderLayout());
         panel_content = new JPanel[length];
 
         JPanel sideMenu = new JPanel(new GridBagLayout()); // GridBagLayout() -> layout linh động nhất nhưng phức tạp nhất trong java swing
         sideMenu.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); // xóa padding với margin mặc định của panel
-        sideMenu.setBackground(new Color(21, 96, 130));
+        sideMenu.setBackground(MENU_BACKGROUND);
         
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(10, 10, 10, 10);
@@ -110,17 +114,17 @@ public class MenuGUI {
             label.setForeground(Color.WHITE);
             label.setFont(new Font("Arial", Font.PLAIN, 20));
             panel.add(label, BorderLayout.CENTER);
-            panel.setBackground(new Color(21, 96, 130));
+            panel.setBackground(MENU_BACKGROUND);
 
             panel.addMouseListener(new MouseAdapter() {
                 @Override
                 public void mouseEntered(MouseEvent e) {
-                    panel.setBackground(new Color(15, 76, 104));
+                    panel.setBackground(MENU_HOVER);
                 }
 
                 @Override
                 public void mouseExited(MouseEvent e) {
-                    panel.setBackground(new Color(21, 96, 130));
+                    panel.setBackground(MENU_BACKGROUND);
                 }
 
                 @Override
@@ -138,14 +142,14 @@ public class MenuGUI {
 
                 @Override
                 public void mouseReleased(MouseEvent e) {
-                    panel.setBackground(new Color(21, 96, 130));
+                    panel.setBackground(MENU_BACKGROUND);
                 }
             });
             sideMenu.add(panel, c);
         }
 
         mainPanel.add(sideMenu, BorderLayout.WEST);
-        mainPanel.add(menuContent, BorderLayout.AFTER_LAST_LINE);
+        mainPanel.add(menuContent, BorderLayout.CENTER);
         frame.add(mainPanel);
 
 
