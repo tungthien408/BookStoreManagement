@@ -9,6 +9,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -98,8 +100,15 @@ public class SachGUI {
 
         // Chi tiết sản phẩm
         panelDetail = tool.createPanel(850, 300, new GridBagLayout());
-        panelImg = new JPanel(null);
         panel_detail = new JPanel(new GridBagLayout());
+
+        // Image
+        JLabel label_img = new JLabel();
+        ImageIcon img = new ImageIcon("images/Book/the_little_prince.jpeg");
+        label_img.setIcon(img);
+
+        panelImg = new JPanel();
+        panelImg.add(label_img);
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -161,9 +170,15 @@ public class SachGUI {
 
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
+        wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
         panel.add(wrappedPanel, BorderLayout.SOUTH);
       
         // Tạo thanh tìm kiếm 
+        String [] searchOptions = {"Mã nhân viên", "Mã khách hàng"};
+        JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelSearch.add(Box.createHorizontalStrut(25));
+        panelSearch.add(tool.createSearchTextField(0, 0,searchOptions));
+        panel.add(panelSearch, BorderLayout.NORTH);
     }
     
     
