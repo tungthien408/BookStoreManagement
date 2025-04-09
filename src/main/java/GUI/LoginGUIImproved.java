@@ -2,7 +2,7 @@ package GUI;
 import javax.swing.*;
 import java.awt.*;
 
-public class LoginGUI {
+public class LoginGUIImproved {
     public static void main(String[] args) {
         JFrame frame = new JFrame("Login");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,29 +47,6 @@ public class LoginGUI {
         panel1.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         panel1.add(loginPanel, BorderLayout.CENTER);
         
-        JLabel usernameLabel = new JLabel("Username:");
-        usernameLabel.setForeground(Color.WHITE);
-        usernameLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        loginPanel.add(usernameLabel);
-        
-        JTextField usernameField = new JTextField();
-        usernameField.setFont(new Font("Arial", Font.PLAIN, 14));
-        loginPanel.add(usernameField);
-        
-        JLabel passwordLabel = new JLabel("Password:");
-        passwordLabel.setForeground(Color.WHITE);
-        passwordLabel.setFont(new Font("Arial", Font.BOLD, 14));
-        loginPanel.add(passwordLabel);
-        
-        JPasswordField passwordField = new JPasswordField();
-        passwordField.setFont(new Font("Arial", Font.PLAIN, 14));
-        loginPanel.add(passwordField);
-        
-        JButton loginButton = new JButton("Login");
-        loginButton.setFont(new Font("Arial", Font.BOLD, 14));
-        loginButton.setBackground(new Color(52, 152, 219));
-        loginButton.setForeground(Color.WHITE);
-        loginPanel.add(loginButton);
         frame.setVisible(true);
     }
 }

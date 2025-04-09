@@ -17,9 +17,11 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -168,8 +170,10 @@ public class Tool {
         
         JTextField textField = new JTextField(15);
         textField.setPreferredSize(new Dimension(150, 30));
-        textField.setBackground(new Color(246, 198, 173));
+        textField.setBackground(new Color(202, 220, 252));
+		// textField.setForeground(new Color(192, 79, 21));
         JComboBox<String> comboBox = new JComboBox<>(list);
+		comboBox.setBackground(new Color(202, 220, 252));
         comboBox.setPreferredSize(new Dimension(120, 30));
         
         // Thêm sự kiện tìm kiếm
@@ -188,5 +192,65 @@ public class Tool {
         return searchPanel;
     }
 	
+	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label) {
+		final int TEXTFIELD_CAPACITY = 3;
+		JPanel panelDetail = createPanel(850, 300, new GridBagLayout());
+        JPanel panel_detail = new JPanel(new GridBagLayout());
 
+        // Image
+        JLabel label_img = new JLabel();
+        ImageIcon img = new ImageIcon("images/Book/the_little_prince.jpeg");
+        label_img.setIcon(img);
+
+        JPanel panelImg = new JPanel();
+        panelImg.add(label_img);
+
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 0.5;
+        c.weighty = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.insets = new Insets(5, 5, 5, 5);
+
+        // add image inside panelImg
+        panelDetail.add(panelImg, c);
+        
+        for (int i = 0; i < txt_array.length; i++) {
+            txt_array[i] = new JTextField();
+			txt_array[i].setBackground(new Color(202, 220, 252));
+			// txt_array[i].setForeground(new Color(192, 79, 21));
+            txt_array[i].setPreferredSize(new Dimension(182, 30));
+            txt_array[i].setEditable(false);
+        }
+
+		int count = 0;
+
+		while (count < txt_array.length) {
+			int index = count;
+			count = ((count + TEXTFIELD_CAPACITY) < txt_array.length) ? count + TEXTFIELD_CAPACITY : txt_array.length;
+			for (int i = index; i < count; i++) {
+				c.gridy += 1;
+				JLabel label = new JLabel(txt_label[i]);
+				panel_detail.add(label, c);
+				c.gridy += 1;
+				panel_detail.add(txt_array[i], c);
+			}	
+
+			c.fill = GridBagConstraints.VERTICAL;
+			c.gridx++;
+			c.gridy = 0;
+			panelDetail.add(panel_detail, c);
+			c.fill = GridBagConstraints.HORIZONTAL;
+	
+			panel_detail = new JPanel(new GridBagLayout());
+	
+		}
+
+        JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        wrappedPanel.add(panelDetail);
+        wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
+
+		return panelDetail;
+	}
 }

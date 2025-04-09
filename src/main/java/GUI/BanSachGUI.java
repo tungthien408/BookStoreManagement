@@ -14,7 +14,7 @@ public class BanSachGUI {
 
     public BanSachGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new GridBagLayout());
-        panel.setBackground(new Color(52, 152, 219));
+        panel.setBackground(new Color(202, 220, 252));
         // TODO: Design graphic
     }
     public JPanel getPanel() {

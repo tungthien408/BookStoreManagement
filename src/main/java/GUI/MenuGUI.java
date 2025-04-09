@@ -22,7 +22,7 @@ public class MenuGUI {
     // ArrayList <JPanel> panel_content = new ArrayList<>();
     JPanel panel_content[];
     JPanel menuContent;
-    private static final Color MENU_BACKGROUND = new Color(21, 96, 130);
+    private static final Color MENU_BACKGROUND = new Color(0, 36, 107);
     private static final Color MENU_HOVER = new Color(15, 76, 104);
 
     public MenuGUI() {

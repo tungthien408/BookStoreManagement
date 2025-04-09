@@ -4,14 +4,9 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -19,7 +14,7 @@ import javax.swing.JTextField;
 
 public class SachGUI {
     Tool tool = new Tool();
-    JPanel panel, panelDetail, panelImg, panel_detail;
+    JPanel panel, panelDetail;
     JTextField txt_name, txt_nxb, txt_author, txt_category, txt_quantity;
     int width = 1200;
     int width_sideMenu = 151;
@@ -27,6 +22,7 @@ public class SachGUI {
 
     public SachGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
+        panel.setBackground(new Color(202, 220, 252));
         // JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         // JTextField searchField = tool.createSearchTextField();
         // searchField.setPreferredSize(new Dimension(100, 30));
@@ -94,79 +90,15 @@ public class SachGUI {
         // Panel chứa button
         String [] btn_txt = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBtn.add(tool.createButtonHorizontal(btn_txt, new Color(21, 96, 130), Color.WHITE));
+        panelBtn.add(tool.createButtonHorizontal(btn_txt, new Color(0, 36, 107), Color.WHITE));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
         panel.add(panelBtn, BorderLayout.CENTER);
 
         // Chi tiết sản phẩm
-        panelDetail = tool.createPanel(850, 300, new GridBagLayout());
-        panel_detail = new JPanel(new GridBagLayout());
 
-        // Image
-        JLabel label_img = new JLabel();
-        ImageIcon img = new ImageIcon("images/Book/the_little_prince.jpeg");
-        label_img.setIcon(img);
-
-        panelImg = new JPanel();
-        panelImg.add(label_img);
-
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        c.weightx = 0.5;
-        c.weighty = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(5, 5, 5, 5);
-
-        // add image inside panelImg
-        panelDetail.add(panelImg, c);
-
-        String txt_label[] = {"Tên", "Nhà xuất bản", "Tác giả", "Thể loại", "Số lượng"};
-        
-        txt_name = new JTextField();
-        txt_nxb = new JTextField();
-        txt_author = new JTextField();
-        txt_category = new JTextField();
-        txt_quantity = new JTextField();
-        
         JTextField txt_array[] = {txt_name, txt_nxb, txt_author, txt_category, txt_quantity};
-
-        for (int i = 0; i < txt_array.length; i++) {
-            // txt_array[i] = new JTextField();
-            txt_array[i].setPreferredSize(new Dimension(182, 30));
-            txt_array[i].setEditable(false);
-        }
-
-        for (int i = 0; i < 3; i++) {
-            c.gridy += 1;
-            JLabel label = new JLabel(txt_label[i]);
-            panel_detail.add(label, c);
-            c.gridy += 1;
-            panel_detail.add(txt_array[i], c);
-        }
-
-        c.fill = GridBagConstraints.VERTICAL;
-        c.gridx = 1;
-        c.gridy = 0;
-        panelDetail.add(panel_detail, c);
-        c.fill = GridBagConstraints.HORIZONTAL;
-
-        panel_detail = new JPanel(new GridBagLayout());
-
-        for (int i = 3; i < txt_array.length; i++) {
-            c.gridy += 1;
-            JLabel label = new JLabel(txt_label[i]);
-            panel_detail.add(label, c);
-            c.gridy += 1;
-            panel_detail.add(txt_array[i], c);
-        }
-
-
-        c.fill = GridBagConstraints.VERTICAL;
-        c.gridy = 0;
-        c.gridx = 2;
-        panelDetail.add(panel_detail, c);
-        c.fill = GridBagConstraints.HORIZONTAL;
+        String txt_label[] = {"Tên", "Nhà xuất bản", "Tác giả", "Thể loại", "Số lượng"};
+        panelDetail = tool.createDetailPanel(txt_array, txt_label);
 
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
