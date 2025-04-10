@@ -98,7 +98,7 @@ public class SachGUI {
 
         JTextField txt_array[] = {txt_name, txt_nxb, txt_author, txt_category, txt_quantity};
         String txt_label[] = {"Tên", "Nhà xuất bản", "Tác giả", "Thể loại", "Số lượng"};
-        panelDetail = tool.createDetailPanel(txt_array, txt_label,850,300,0.5);
+        panelDetail = tool.createDetailPanel(txt_array, txt_label,850,300,0.5, 3);
 
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);

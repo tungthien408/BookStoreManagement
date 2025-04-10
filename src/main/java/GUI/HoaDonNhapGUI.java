@@ -76,7 +76,7 @@ public class HoaDonNhapGUI {
         scrollPane.setPreferredSize(new Dimension(850, 640));
 
         // Tạo khoảng cách xung quanh bảng
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(50, 40, 10, 60)); // Top, Left, Bottom, Right
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(50, 40, 10, 10)); // Top, Left, Bottom, Right
         
         // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));

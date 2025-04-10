@@ -19,7 +19,7 @@ public class BanSachGUI {
     private static final int WIDTH = 1200;
     private static final int SIDE_MENU_WIDTH = 151;
     private static final int HEIGHT = (int) (WIDTH * 0.625);
-    private static final String[] COLUMN_HEADERS = {"Mã hóa đơn", "Mã nhân viên", "SĐT Khách", "Ngày bán", "Tổng tiền"};
+    private static final String[] COLUMN_HEADERS = {"Mã sách", "Tên sách", "Số lượng", "Đơn giá"};
 
     public BanSachGUI() {
         initializeMainPanel();
@@ -87,7 +87,7 @@ public class BanSachGUI {
     private JPanel createDetailPanel2() {
         JTextField[] textFields = {txtName, txtQuantity};
         String[] labels = {"Tên", "Số lượng"};
-        JPanel detailPanel = tool.createDetailPanel(textFields, labels, 380, 300, 0);
+        JPanel detailPanel = tool.createDetailPanel(textFields, labels, 380, 300, 0, 2);
         
         JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         wrapper.add(detailPanel);

@@ -195,8 +195,8 @@ public class Tool {
         return searchPanel;
     }
 	
-	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label,int width,int height, double weightx) {
-		final int TEXTFIELD_CAPACITY = 3;
+	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label,int width,int height, double weightx, final int TEXTFIELD_CAPACITY) {
+		// final int TEXTFIELD_CAPACITY = 3;
 		JPanel panelDetail = createPanel(width, height, new GridBagLayout());
         JPanel panel_detail = new JPanel(new GridBagLayout());
 
@@ -256,6 +256,7 @@ public class Tool {
 
 		return panelDetail;
 	}
+	
 	public JPanel createJTextField(JTextField[] txt_array, String[] txt_label) {
 		final int TEXTFIELD_CAPACITY = 5;
 		JPanel panelDetail = createPanel(400, 250, new GridBagLayout());
