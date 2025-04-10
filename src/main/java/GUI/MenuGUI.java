@@ -40,7 +40,7 @@ public class MenuGUI {
         sideMenu.setBackground(MENU_BACKGROUND);
         
         GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(10, 10, 10, 10);
+        c.insets = new Insets(10, 20, 10, 20);
         c.gridx = 0;
         c.gridy = 0;
         c.weightx = 0.5;
@@ -112,7 +112,7 @@ public class MenuGUI {
             JPanel panel = new JPanel(new BorderLayout());
             JLabel label = new JLabel(array_function[i], SwingConstants.CENTER);
             label.setForeground(Color.WHITE);
-            label.setFont(new Font("Arial", Font.PLAIN, 20));
+            label.setFont(new Font("Arial", Font.PLAIN, 18));
             panel.add(label, BorderLayout.CENTER);
             panel.setBackground(MENU_BACKGROUND);
 

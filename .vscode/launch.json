@@ -8,6 +8,13 @@
             "type": "java",
             "name": "LoginGUI",
             "request": "launch",
+            "mainClass": "GUI.LoginGUI",
+            "projectName": "BookStoreManagement"
+        },
+        {
+            "type": "java",
+            "name": "LoginGUI",
+            "request": "launch",
             "mainClass": "src.main.java.GUI.LoginGUI",
             "projectName": "BookStoreManagement_2ceef9c4"
         },

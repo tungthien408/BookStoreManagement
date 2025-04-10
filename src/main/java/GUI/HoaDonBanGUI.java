@@ -20,11 +20,17 @@ public class HoaDonBanGUI {
 
     public HoaDonBanGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
-        // JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        // JTextField searchField = tool.createSearchTextField();
-        // searchField.setPreferredSize(new Dimension(100, 30));
-        // TODO: Design graphic
 
+        panel.add(createHoaDonBanTable(), BorderLayout.WEST);
+
+        // Panel chứa button
+        panel.add(createPanelButton(), BorderLayout.CENTER);
+
+        // Tạo thanh tìm kiếm 
+        panel.add(createSearchPanel(), BorderLayout.NORTH);
+    }
+
+    private JPanel createHoaDonBanTable() {
         // Fake data
         String tableContent[][] = {
             {"HD001", "NV001", "0123456789", "2023-01-01", "500000"},
@@ -81,25 +87,24 @@ public class HoaDonBanGUI {
         // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelTable.add(scrollPane);
-        panel.add(panelTable, BorderLayout.WEST);
-
-        // Panel chứa button
+        return panelTable;        
+    }
+    
+    private JPanel createPanelButton() {
         String [] btn_txt = {"Chi tiết", "Nhập Excel", "Xuất Excel"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonHorizontal(btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
-        panel.add(panelBtn, BorderLayout.CENTER);
+        return panelBtn;
+    }
 
-      
-        // Tạo thanh tìm kiếm 
-        String [] searchOptions = {"Mã nhân viên", "Mã khách hàng"};
+    private JPanel createSearchPanel() {
+        String [] searchOptions = {"Mã hóa đơn", "Mã nhân viên", "Mã khách hàng"};
         JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelSearch.add(Box.createHorizontalStrut(33));
         panelSearch.add(tool.createSearchTextField(0, 0,searchOptions));
-        panel.add(panelSearch, BorderLayout.NORTH);
+        return panelSearch;
     }
-    
-    
     public JPanel getPanel() {
         return this.panel;
     }

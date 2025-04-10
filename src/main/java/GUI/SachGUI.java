@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -23,11 +24,24 @@ public class SachGUI {
     public SachGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel.setBackground(new Color(202, 220, 252));
-        // JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        // JTextField searchField = tool.createSearchTextField();
-        // searchField.setPreferredSize(new Dimension(100, 30));
-        // TODO: Design graphic
 
+        // Table 
+        panel.add(createBookTable(), BorderLayout.WEST);
+
+        // Panel chứa button
+        panel.add(createPanelButton(), BorderLayout.CENTER);
+
+        // Chi tiết sản phẩm
+
+        JTextField txt_array[] = {txt_name, txt_nxb, txt_author, txt_category, txt_quantity};
+        String txt_label[] = {"Tên", "Nhà xuất bản", "Tác giả", "Thể loại", "Số lượng"};
+        panel.add(createDetailPanel(txt_array, txt_label), BorderLayout.SOUTH);
+      
+        // Tạo thanh tìm kiếm 
+        panel.add(createSearchPanel(), BorderLayout.NORTH);
+    }
+
+    private JPanel createBookTable() {
         // Fake data
         String tableContent[][] = {
             {"S001", "Book A", "Fiction", "10", "100", "A001", "NXB001"},
@@ -85,35 +99,34 @@ public class SachGUI {
         // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelTable.add(scrollPane);
-        panel.add(panelTable, BorderLayout.WEST);
+        return panelTable;
+    }
 
-        // Panel chứa button
+    private JPanel createPanelButton() {
         String [] btn_txt = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonHorizontal(btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
-        panel.add(panelBtn, BorderLayout.CENTER);
-
-        // Chi tiết sản phẩm
-
-        JTextField txt_array[] = {txt_name, txt_nxb, txt_author, txt_category, txt_quantity};
-        String txt_label[] = {"Tên", "Nhà xuất bản", "Tác giả", "Thể loại", "Số lượng"};
-        panelDetail = tool.createDetailPanel(txt_array, txt_label,850,300,0.5, 3);
+        return panelBtn;
+    }
+    
+    private JPanel createDetailPanel(JTextField txt_array[], String txt_label[]) {
+        panelDetail = tool.createDetailPanel(txt_array, txt_label, new ImageIcon("images/Book/the_little_prince.jpg"), 850,300,0.5, 3);
 
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
-        panel.add(wrappedPanel, BorderLayout.SOUTH);
-      
-        // Tạo thanh tìm kiếm 
+        return wrappedPanel;
+    }
+    
+    private JPanel createSearchPanel() {
         String [] searchOptions = {"Mã nhân viên", "Mã khách hàng"};
         JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelSearch.add(Box.createHorizontalStrut(25));
         panelSearch.add(tool.createSearchTextField(0, 0,searchOptions));
-        panel.add(panelSearch, BorderLayout.NORTH);
+        return panelSearch;
     }
-    
-    
+
     public JPanel getPanel() {
         return this.panel;
     } 

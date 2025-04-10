@@ -87,7 +87,7 @@ public class BanSachGUI {
     private JPanel createDetailPanel2() {
         JTextField[] textFields = {txtName, txtQuantity};
         String[] labels = {"Tên", "Số lượng"};
-        JPanel detailPanel = tool.createDetailPanel(textFields, labels, 380, 300, 0, 2);
+        JPanel detailPanel = tool.createDetailPanel(textFields, labels, null, 380, 300, 0, 2);
         
         JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         wrapper.add(detailPanel);

@@ -195,18 +195,10 @@ public class Tool {
         return searchPanel;
     }
 	
-	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label,int width,int height, double weightx, final int TEXTFIELD_CAPACITY) {
+	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label, ImageIcon img, int width,int height, double weightx, final int TEXTFIELD_CAPACITY) {
 		// final int TEXTFIELD_CAPACITY = 3;
 		JPanel panelDetail = createPanel(width, height, new GridBagLayout());
         JPanel panel_detail = new JPanel(new GridBagLayout());
-
-        // Image
-        JLabel label_img = new JLabel();
-        ImageIcon img = new ImageIcon("images/Book/the_little_prince.jpeg");
-        label_img.setIcon(img);
-
-        JPanel panelImg = new JPanel();
-        panelImg.add(label_img);
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
@@ -216,8 +208,17 @@ public class Tool {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(5, 0, 5, 0);
 
-        // add image inside panelImg
-        panelDetail.add(panelImg, c);
+		// Image
+		if (img != null) {
+			JLabel label_img = new JLabel();
+			label_img.setIcon(img);
+
+			JPanel panelImg = new JPanel();
+			panelImg.add(label_img);
+			// add image inside panelImg
+			panelDetail.add(panelImg, c);
+		}
+		
         
         for (int i = 0; i < txt_array.length; i++) {
             txt_array[i] = new JTextField();
