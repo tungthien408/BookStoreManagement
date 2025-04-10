@@ -90,7 +90,7 @@ public class SachGUI {
         // Panel chứa button
         String [] btn_txt = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBtn.add(tool.createButtonHorizontal(btn_txt, new Color(0, 36, 107), Color.WHITE));
+        panelBtn.add(tool.createButtonHorizontal(btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
         panel.add(panelBtn, BorderLayout.CENTER);
 
@@ -98,7 +98,7 @@ public class SachGUI {
 
         JTextField txt_array[] = {txt_name, txt_nxb, txt_author, txt_category, txt_quantity};
         String txt_label[] = {"Tên", "Nhà xuất bản", "Tác giả", "Thể loại", "Số lượng"};
-        panelDetail = tool.createDetailPanel(txt_array, txt_label);
+        panelDetail = tool.createDetailPanel(txt_array, txt_label,850,300,0.5);
 
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);

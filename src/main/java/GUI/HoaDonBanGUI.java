@@ -6,6 +6,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -85,12 +86,17 @@ public class HoaDonBanGUI {
         // Panel chứa button
         String [] btn_txt = {"Chi tiết", "Nhập Excel", "Xuất Excel"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBtn.add(tool.createButtonHorizontal(btn_txt, new Color(0, 36, 107), Color.WHITE));
+        panelBtn.add(tool.createButtonHorizontal(btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
         panel.add(panelBtn, BorderLayout.CENTER);
 
       
-        // Tạo thanh tìm kiếm: Tus lamf ddi
+        // Tạo thanh tìm kiếm 
+        String [] searchOptions = {"Mã nhân viên", "Mã khách hàng"};
+        JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelSearch.add(Box.createHorizontalStrut(33));
+        panelSearch.add(tool.createSearchTextField(0, 0,searchOptions));
+        panel.add(panelSearch, BorderLayout.NORTH);
     }
     
     

@@ -76,7 +76,7 @@ public class Tool {
 	}
 
 	// Hàm này bị thiếu việc xử lý sự kiện Event, đầy đủ của nó phải là public JPanel createButtonHorizontal(String texts[], Color bg, Color fg, ActionListener event)
-	public JPanel createButtonHorizontal(String texts[], Color bg, Color fg) {
+	public JPanel createButtonHorizontal(String texts[], Color bg, Color fg,String xy) {
 		// TODO: Thiếu việc gán event vào nút
 		int btn_width = 130;
 		int btn_height = 30;
@@ -91,7 +91,10 @@ public class Tool {
         c.fill = GridBagConstraints.HORIZONTAL;
 
 		for (int i = 0; i < texts.length ; i++) {
-			c.gridy += 1; 
+			if(xy=="y")
+				c.gridy += 1; 
+			if(xy=="x")
+				c.gridx += 1; 
 			JButton button = new JButton(texts[i]);
 			button.setFocusable(false);
 			button.setPreferredSize(new Dimension(btn_width, btn_height));
@@ -168,8 +171,8 @@ public class Tool {
 	public JPanel createSearchTextField(int x, int y,String[] list) {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
-        JTextField textField = new JTextField(15);
-        textField.setPreferredSize(new Dimension(150, 30));
+        JTextField textField = new JTextField(20);
+        textField.setPreferredSize(new Dimension(120, 30));
         textField.setBackground(new Color(202, 220, 252));
 		// textField.setForeground(new Color(192, 79, 21));
         JComboBox<String> comboBox = new JComboBox<>(list);
@@ -192,9 +195,9 @@ public class Tool {
         return searchPanel;
     }
 	
-	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label) {
+	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label,int width,int height, double weightx) {
 		final int TEXTFIELD_CAPACITY = 3;
-		JPanel panelDetail = createPanel(850, 300, new GridBagLayout());
+		JPanel panelDetail = createPanel(width, height, new GridBagLayout());
         JPanel panel_detail = new JPanel(new GridBagLayout());
 
         // Image
@@ -208,10 +211,10 @@ public class Tool {
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
-        c.weightx = 0.5;
+        c.weightx = weightx;
         c.weighty = 0;
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(5, 5, 5, 5);
+        c.insets = new Insets(5, 0, 5, 0);
 
         // add image inside panelImg
         panelDetail.add(panelImg, c);
@@ -220,7 +223,7 @@ public class Tool {
             txt_array[i] = new JTextField();
 			txt_array[i].setBackground(new Color(202, 220, 252));
 			// txt_array[i].setForeground(new Color(192, 79, 21));
-            txt_array[i].setPreferredSize(new Dimension(182, 30));
+            txt_array[i].setPreferredSize(new Dimension(182, 30));//182
             txt_array[i].setEditable(false);
         }
 
@@ -251,6 +254,63 @@ public class Tool {
         wrappedPanel.add(panelDetail);
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
 
+		return panelDetail;
+	}
+	public JPanel createJTextField(JTextField[] txt_array, String[] txt_label) {
+		final int TEXTFIELD_CAPACITY = 5;
+		JPanel panelDetail = createPanel(400, 250, new GridBagLayout());
+		JPanel panel_detail = new JPanel(new GridBagLayout());
+	
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;  // Cột bắt đầu
+		c.gridy = 0;  // Dòng bắt đầu
+		c.weightx = 0.5;
+		c.weighty = 0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(5, 5, 5, 5);  // Khoảng cách xung quanh
+	
+		// Khởi tạo các ô nhập liệu
+		for (int i = 0; i < txt_array.length; i++) {
+			txt_array[i] = new JTextField();
+			txt_array[i].setBackground(new Color(202, 220, 252));
+			txt_array[i].setPreferredSize(new Dimension(182, 30));
+			txt_array[i].setEditable(false);  // Không cho chỉnh sửa
+		}
+	
+		int count = 0;
+	
+		while (count < txt_array.length) {
+			int index = count;
+			count = ((count + TEXTFIELD_CAPACITY) < txt_array.length) ? count + TEXTFIELD_CAPACITY : txt_array.length;
+			
+			for (int i = index; i < count; i++) {
+				// Đặt lại vị trí cột cho mỗi cặp nhãn-ô nhập liệu
+				c.gridx = 0;
+				// Thêm nhãn
+				JLabel label = new JLabel(txt_label[i]);
+				panel_detail.add(label, c);
+				
+				// Chuyển sang cột tiếp theo trên cùng dòng cho ô nhập liệu
+				c.gridx = 1;
+				panel_detail.add(txt_array[i], c);
+				
+				// Chuyển xuống dòng tiếp theo cho cặp tiếp theo
+				c.gridy++;
+			}   
+	
+			c.fill = GridBagConstraints.VERTICAL;
+			c.gridx = 0;  // Đặt lại về cột đầu tiên
+			c.gridy = 0;  // Đặt lại về dòng đầu tiên
+			panelDetail.add(panel_detail, c);
+			c.fill = GridBagConstraints.HORIZONTAL;
+	
+			panel_detail = new JPanel(new GridBagLayout());
+		}
+	
+		JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		wrappedPanel.add(panelDetail);
+		wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
+	
 		return panelDetail;
 	}
 }
