@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -58,7 +59,7 @@ public class BanSachGUI {
         contentPanel.add(createDetailPanel2());
 
         // Bảng 2 (dưới cùng)
-        JScrollPane tableScrollPane2 = createTableScrollPane(getSampleData(), 600, 250);
+        JScrollPane tableScrollPane2 = createTableScrollPane(getSampleData(), 500, 250);
         JPanel tablePanel2 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         tablePanel2.add(tableScrollPane2);
         contentPanel.add(tablePanel2);
@@ -87,7 +88,7 @@ public class BanSachGUI {
     private JPanel createDetailPanel2() {
         JTextField[] textFields = {txtName, txtQuantity};
         String[] labels = {"Tên", "Số lượng"};
-        JPanel detailPanel = tool.createDetailPanel(textFields, labels, null, 380, 300, 0, 2);
+        JPanel detailPanel = tool.createDetailPanel(textFields, labels, new ImageIcon("images/Book/the_little_prince.jpg"), 380, 300,  1, 2, true);
         
         JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         wrapper.add(detailPanel);
@@ -97,7 +98,7 @@ public class BanSachGUI {
     private JPanel createButtonPanel() {
         String[] buttonTexts = {"Thêm", "Xóa", "Thanh toán"};
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.add(tool.createButtonHorizontal(buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
+        buttonPanel.add(tool.createButtonPanel(buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 110, 95));
         return buttonPanel;
     }

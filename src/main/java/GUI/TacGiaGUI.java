@@ -71,13 +71,13 @@ public class TacGiaGUI {
     private JPanel createPanelButton() {
         String [] btn_txt = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBtn.add(tool.createButtonHorizontal(btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
+        panelBtn.add(tool.createButtonPanel(btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
         return panelBtn;
     }
 
     private JPanel createPanelDetail(JTextField[] txt_array, String [] txt_label) {
-        panelDetail = tool.createDetailPanel(txt_array, txt_label, null,850,300,0.5, 4);
+        panelDetail = tool.createDetailPanel(txt_array, txt_label, null,850,300, 1, 4, false);
 
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);

@@ -91,7 +91,7 @@ public class HoaDonNhapGUI {
     private JPanel createPanelButton() {
         String [] btn_txt = {"Chi tiết", "Nhập Excel", "Xuất Excel"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBtn.add(tool.createButtonHorizontal(btn_txt, new Color(0, 36, 107),  Color.WHITE,"y"));
+        panelBtn.add(tool.createButtonPanel(btn_txt, new Color(0, 36, 107),  Color.WHITE,"y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
         return panelBtn;
     }

@@ -76,7 +76,7 @@ public class Tool {
 	}
 
 	// Hàm này bị thiếu việc xử lý sự kiện Event, đầy đủ của nó phải là public JPanel createButtonHorizontal(String texts[], Color bg, Color fg, ActionListener event)
-	public JPanel createButtonHorizontal(String texts[], Color bg, Color fg,String xy) {
+	public JPanel createButtonPanel(String texts[], Color bg, Color fg, String xy) {
 		// TODO: Thiếu việc gán event vào nút
 		int btn_width = 130;
 		int btn_height = 30;
@@ -91,55 +91,10 @@ public class Tool {
         c.fill = GridBagConstraints.HORIZONTAL;
 
 		for (int i = 0; i < texts.length ; i++) {
-			if(xy=="y")
+			if(xy == "y")
 				c.gridy += 1; 
 			if(xy=="x")
 				c.gridx += 1; 
-			JButton button = new JButton(texts[i]);
-			button.setFocusable(false);
-			button.setPreferredSize(new Dimension(btn_width, btn_height));
-			button.setBackground(bg);
-			button.setForeground(fg);
-	
-			button.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseEntered(MouseEvent e) {
-						if (bg != null) button.setBackground(bg.darker());
-					}
-	
-					@Override
-					public void mouseExited(MouseEvent e) {
-						button.setBackground(bg);
-					}
-	
-					@Override
-					public void mouseReleased(MouseEvent e) {
-						button.setBackground(bg);
-					}
-				});
-			panel.add(button, c);		
-		}
-
-		return panel;
-	}
-
-	// Hàm này bị thiếu việc xử lý sự kiện Event, đầy đủ của nó phải là public JPanel createButtonVertical(String texts[], Color bg, Color fg, ActionListener event)
-	public JPanel createButtonVertical(String texts[], Color bg, Color fg) {
-		// TODO: Thiếu việc gán event vào nút
-		int btn_width = 130;
-		int btn_height = 30;
-		JPanel panel = new JPanel(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints();
-
-		c.insets = new Insets(10, 10, 10, 10);
-        c.gridx = 0;
-        c.gridy = 0;
-        c.weightx = 0.5;
-        c.weighty = 0;
-        c.fill = GridBagConstraints.VERTICAL;
-
-		for (int i = 0; i < texts.length ; i++) {
-			c.gridx += 1; 
 			JButton button = new JButton(texts[i]);
 			button.setFocusable(false);
 			button.setPreferredSize(new Dimension(btn_width, btn_height));
@@ -195,18 +150,18 @@ public class Tool {
         return searchPanel;
     }
 	
-	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label, ImageIcon img, int width,int height, double weightx, final int TEXTFIELD_CAPACITY) {
+	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label, ImageIcon img, int width,int height, double weightx, final int TEXTFIELD_CAPACITY, boolean newLine) {
 		// final int TEXTFIELD_CAPACITY = 3;
 		JPanel panelDetail = createPanel(width, height, new GridBagLayout());
         JPanel panel_detail = new JPanel(new GridBagLayout());
 
         GridBagConstraints c = new GridBagConstraints();
         c.gridx = 0;
-        c.gridy = 0;
+		c.gridy = 0;
         c.weightx = weightx;
         c.weighty = 0;
         c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(5, 0, 5, 0);
+        c.insets = new Insets(5, 0, 5, 10);
 
 		// Image
 		if (img != null) {
@@ -237,8 +192,14 @@ public class Tool {
 				c.gridy += 1;
 				JLabel label = new JLabel(txt_label[i]);
 				panel_detail.add(label, c);
-				c.gridy += 1;
-				panel_detail.add(txt_array[i], c);
+				if (newLine == true) {
+					c.gridy += 1;
+					panel_detail.add(txt_array[i], c);
+				} else {
+					c.gridx += 1;
+					panel_detail.add(txt_array[i], c);
+					c.gridx--;	
+				}
 			}	
 
 			c.fill = GridBagConstraints.VERTICAL;
