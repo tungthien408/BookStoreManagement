@@ -134,7 +134,6 @@ public class NhapSachGUI {
         return buttonPanel;
     }
 
-
     private JPanel createSearchPanel() {
         String[] searchOptions = {"Mã nhân viên", "Mã khách hàng"};
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -142,7 +141,6 @@ public class NhapSachGUI {
         searchPanel.add(tool.createSearchTextField(300, 30, searchOptions));
         return searchPanel;
     }
-
 
     public JPanel getPanel() {
         return this.panel;
