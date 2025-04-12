@@ -10,4 +10,11 @@
         <maven.compiler.release>24</maven.compiler.release>
         <exec.mainClass>com.mycompany.bookstoremanagement.BookStoreManagement</exec.mainClass>
     </properties>
+        <dependencies>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.33</version> <!-- Cập nhật phiên bản mới nhất -->
+        </dependency>
+    </dependencies>
 </project>

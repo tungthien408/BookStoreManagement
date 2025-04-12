@@ -6,6 +6,34 @@
     "configurations": [
         {
             "type": "java",
+            "name": "LoginGUIImproved",
+            "request": "launch",
+            "mainClass": "src.main.java.GUI.LoginGUIImproved",
+            "projectName": "BookStoreManagement_2ceef9c4"
+        },
+        {
+            "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "src.main.java.GUI.Main",
+            "projectName": "BookStoreManagement_2ceef9c4"
+        },
+        {
+            "type": "java",
+            "name": "slide1",
+            "request": "launch",
+            "mainClass": "slide1",
+            "projectName": "BookStoreManagement_2ceef9c4"
+        },
+        {
+            "type": "java",
+            "name": "KhachHangGUI",
+            "request": "launch",
+            "mainClass": "GUI.KhachHangGUI",
+            "projectName": "ProjectBanLaptop"
+        },
+        {
+            "type": "java",
             "name": "LoginGUI",
             "request": "launch",
             "mainClass": "GUI.LoginGUI",

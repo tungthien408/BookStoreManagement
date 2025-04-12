@@ -176,11 +176,11 @@ public class Tool {
 		
         
         for (int i = 0; i < txt_array.length; i++) {
-            txt_array[i] = new JTextField();
+             txt_array[i] = new JTextField();
 			txt_array[i].setBackground(new Color(202, 220, 252));
 			// txt_array[i].setForeground(new Color(192, 79, 21));
             txt_array[i].setPreferredSize(new Dimension(182, 30));//182
-            txt_array[i].setEditable(false);
+            // txt_array[i].setEditable(false);
         }
 
 		int count = 0;
@@ -275,5 +275,35 @@ public class Tool {
 		wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
 	
 		return panelDetail;
+	}
+	public JPanel createButtonPanel1(JButton[] button, Color bg, Color fg, String xy) {
+		// TODO: Thiếu việc gán event vào nút
+		int btn_width = 130;
+		int btn_height = 30;
+		JPanel panel = new JPanel(new GridBagLayout());
+		GridBagConstraints c = new GridBagConstraints(); // Để các nút có thể được thêm ngay phía dưới
+
+		c.insets = new Insets(10, 10, 10, 10);
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 0.5;
+        c.weighty = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
+
+		for (int i = 0; i < button.length ; i++) {
+			if(xy == "y")
+				c.gridy += 1; 
+			if(xy=="x")
+				c.gridx += 1; 
+			// JButton button = new JButton(texts[i]);
+			button[i].setFocusable(false);
+			button[i].setPreferredSize(new Dimension(btn_width, btn_height));
+			button[i].setBackground(bg);
+			button[i].setForeground(fg);
+	
+			panel.add(button[i], c);		
+		}
+
+		return panel;
 	}
 }
