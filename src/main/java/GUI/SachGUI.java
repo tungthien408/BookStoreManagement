@@ -24,24 +24,23 @@ public class SachGUI {
     public SachGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel.setBackground(new Color(202, 220, 252));
+        JTextField txt_array[] = {txt_name, txt_nxb, txt_author, txt_category, txt_quantity};
+        String txt_label[] = {"Tên", "Nhà xuất bản", "Tác giả", "Thể loại", "Số lượng"};
 
         // Table 
-        panel.add(createBookTable(), BorderLayout.WEST);
+        panel.add(createBookTable(txt_array), BorderLayout.WEST);
 
         // Panel chứa button
         panel.add(createPanelButton(), BorderLayout.CENTER);
 
         // Chi tiết sản phẩm
-
-        JTextField txt_array[] = {txt_name, txt_nxb, txt_author, txt_category, txt_quantity};
-        String txt_label[] = {"Tên", "Nhà xuất bản", "Tác giả", "Thể loại", "Số lượng"};
         panel.add(createDetailPanel(txt_array, txt_label), BorderLayout.SOUTH);
       
         // Tạo thanh tìm kiếm 
         panel.add(createSearchPanel(), BorderLayout.NORTH);
     }
 
-    private JPanel createBookTable() {
+    private JPanel createBookTable(JTextField txt_array[]) {
         // Fake data
         String tableContent[][] = {
             {"S001", "Book A", "Fiction", "10", "100", "A001"},
@@ -92,6 +91,27 @@ public class SachGUI {
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(850, 340));
 
+        // Hiển thị dữ liệu khi chọn một dòng trong bảng
+        // __________________________ AI Code __________________________
+        
+            // Add a ListSelectionListener to the table
+            table.getSelectionModel().addListSelectionListener(event -> {
+                // Check if a row is selected
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow != -1) {
+                    // Update the JTextFields with the selected row's data
+                    for (int i = 0; i < txt_array.length; i++) {
+                        Object value = table.getValueAt(selectedRow, i);
+                        if (value != null) {
+                            txt_array[i].setText(value.toString());
+                        } else {
+                            txt_array[i].setText(""); // Clear the field if the value is null
+                        }
+                    }
+                }
+            });
+
+        // __________________________ AI Code __________________________
         // Tạo khoảng cách xung quanh bảng
         scrollPane.setBorder(BorderFactory.createEmptyBorder(50, 40, 10, 10)); // Top, Left, Bottom, Right
         

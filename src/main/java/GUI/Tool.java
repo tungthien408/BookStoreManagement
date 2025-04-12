@@ -27,6 +27,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 public class Tool {
@@ -56,8 +57,8 @@ public class Tool {
 	}
 
 	public JTable createTable(String tableContent[][], String nameField[]) {
-		JTable table = new JTable(tableContent, nameField);
-
+		DefaultTableModel tableModel = new DefaultTableModel(tableContent, nameField);
+		JTable table = new JTable(tableModel);
 		table.setRowHeight(30);
 
 		DefaultTableCellRenderer ob = new DefaultTableCellRenderer(); // Mục đích: Căn nội dung của bảng về giữa
@@ -72,6 +73,12 @@ public class Tool {
 
 		JTableHeader header = table.getTableHeader();
 		header.setFont(new Font("Arial", Font.BOLD, 18));
+
+		table.setSelectionBackground(new Color(202, 220, 252));
+		// table.setRowSelectionAllowed(true);
+		// table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		// table.isRowSelected(row);
+
 		return table;
 	}
 
