@@ -313,4 +313,23 @@ public class Tool {
 
 		return panel;
 	}
+
+	    // Phương thức xóa các trường nhập liệu
+		public void clearFields(JTextField[] txt_array) {
+			for (JTextField txt : txt_array) {
+				txt.setText("");
+			}
+		}
+		public void clearButtons(JButton[] buttons)
+		{
+			for (JButton bt : buttons) {
+				bt.setBackground( new Color(0, 36, 107));
+			}
+		}
+		public void Editable(JTextField[] txt_array,boolean TF){
+
+			for (JTextField txt : txt_array) {
+				txt.setEditable(TF);
+			}
+		}
 }

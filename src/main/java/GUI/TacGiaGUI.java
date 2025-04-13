@@ -37,9 +37,9 @@ public class TacGiaGUI {
     private int lastSelectedRow = -1; // Lưu dòng được chọn trước đó
     private boolean update = false;
     private boolean add = false;
+    private boolean delete = false;
     int count = 0;
     public String getID() {
-        count++;
         String str = String.valueOf(count);
         while (str.length() != 3)
             str = "0" + str;
@@ -84,7 +84,7 @@ public class TacGiaGUI {
                 });
                 String maTG = tacGiaList.get(tacGiaList.size() - 1).getMaTG();
                 String numericPart = maTG.substring(2);
-                count = Integer.parseInt(numericPart);
+                count = Integer.parseInt(numericPart)+1;
             }
 
 
@@ -103,12 +103,18 @@ public class TacGiaGUI {
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                tool.clearFields(txt_array);
+                tool.clearButtons(buttons);
+                add=false;
                 int selectedRow = table.getSelectedRow();
 
                 // Nếu click vào cùng một dòng đã chọn trước đó
                 if (selectedRow == lastSelectedRow && selectedRow >= 0) {
                     // Hủy chọn dòng
                     table.clearSelection();
+                    update=false;
+                    delete=false;
+
 
                     // Reset dữ liệu trong các ô nhập
                     for (JTextField txt : txt_array) {
@@ -126,6 +132,15 @@ public class TacGiaGUI {
 
                     for (JTextField txt : txt_array) {
                         txt.setEditable(false);
+                    }
+                    if(update==true){
+                        tool.Editable(txt_array, true);
+                        txt_array[0].setEditable(false);
+                        buttons[1].setBackground(Color.RED);
+                    }
+                    if(delete==true){
+                        tool.Editable(txt_array, false);
+                        buttons[2].setBackground(Color.RED);
                     }
 
                     lastSelectedRow = selectedRow;
@@ -193,6 +208,10 @@ public class TacGiaGUI {
                     tacGia.getDiaChi(),
                     tacGia.getSdt()
                 });
+                String maTG = tacGiaList.get(tacGiaList.size() - 1).getMaTG();
+                String numericPart = maTG.substring(2);
+                count = Integer.parseInt(numericPart)+1;
+                
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -202,26 +221,26 @@ public class TacGiaGUI {
 
     // Phương thức thêm tác giả
     private void addTacGia() {
-        if(add==false){
-            txt_array[0].setText(getID());
-            txt_array[1].setText("");
-            txt_array[2].setText("");
-            txt_array[3].setText("");
 
+        table.clearSelection();
+        update=false;
+        delete=false;
+        if(add==false){
+            tool.clearFields(txt_array);
+            tool.clearButtons(buttons);
+            tool.Editable(txt_array,true);
+            txt_array[0].setText(getID());
+            buttons[0].setBackground(Color.RED);
+            txt_array[0].setEditable(false);
             add=true;
         }
         else{
             try {
                 TacGiaDTO tacGia = new TacGiaDTO();
-                txt_array[0].setEditable(false);
-                txt_array[1].setEditable(true);
-                txt_array[2].setEditable(true);
-                txt_array[3].setEditable(true);
                 tacGia.setMaTG(txt_array[0].getText().trim());
                 tacGia.setTenTG(txt_array[1].getText().trim());
                 tacGia.setDiaChi(txt_array[2].getText().trim());
                 tacGia.setSdt(txt_array[3].getText().trim());
-                // System.out.println(txt_phone+"..."+txt_name+"..."+txt_address+"..."+txt_phone);
 
                 // Kiểm tra dữ liệu đầu vào
                 if (tacGia.getMaTG().isEmpty() || tacGia.getTenTG().isEmpty()) {
@@ -232,7 +251,9 @@ public class TacGiaGUI {
                 if (tacGiaBUS.addTacGia(tacGia)) {
                     JOptionPane.showMessageDialog(null, "Thêm tác giả thành công!");
                     refreshTable();
-                    clearFields();
+                    tool.clearFields(txt_array);
+                    tool.clearButtons(buttons);
+                    add=false;
                 } else {
                     JOptionPane.showMessageDialog(null, "Thêm tác giả thất bại!");
                 }
@@ -240,18 +261,28 @@ public class TacGiaGUI {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Lỗi khi thêm tác giả: " + e.getMessage());
             }
+            buttons[0].setBackground( new Color(0, 36, 107));
+           
         }
-        update = false;
     }
 
     // Phương thức sửa tác giả
     private void updateTacGia() {
+        if(add==true){
+            tool.clearFields(txt_array);
+        }
+        add=false;
+        delete=false;
         if(update==false){
+            tool.clearButtons(buttons);
+            tool.Editable(txt_array,true);
+            tool.clearButtons(buttons);
+
+            buttons[1].setBackground(Color.RED);
             txt_array[0].setEditable(false);
-            txt_array[1].setEditable(true);
-            txt_array[2].setEditable(true);
-            txt_array[3].setEditable(true);
             update=true;
+      
+           
         }
         else{
         try {
@@ -268,7 +299,12 @@ public class TacGiaGUI {
 
             if (tacGiaBUS.updateTacGia(tacGia)) {
                 JOptionPane.showMessageDialog(null, "Sửa tác giả thành công!");
+                tool.clearFields(txt_array);
+                tool.clearButtons(buttons);
                 refreshTable();
+                update=false;
+                
+ 
             } else {
                 JOptionPane.showMessageDialog(null, "Sửa tác giả thất bại!");
             }
@@ -276,43 +312,47 @@ public class TacGiaGUI {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi sửa tác giả: " + e.getMessage());
         }
-        update=false;
     }
-    add = false;
     }
 
     // Phương thức xóa tác giả
     private void deleteTacGia() {
-        try {
-            String maTG = txt_array[0].getText().trim();
-            if (maTG.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Vui lòng chọn tác giả để xóa!");
-                return;
-            }
-
-            int confirm = JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa tác giả này?", "Xác nhận", JOptionPane.YES_NO_OPTION);
-            if (confirm == JOptionPane.YES_OPTION) {
+        if(add==true){
+            tool.clearFields(txt_array);
+        }
+        add=false;
+        update=false;
+        if(delete==false){
+            tool.clearButtons(buttons);
+            tool.Editable(txt_array,false);
+            tool.clearButtons(buttons);
+            buttons[2].setBackground(Color.RED);
+            delete=true;
+      
+           
+        }
+        else{
+            try {
+                String maTG = txt_array[0].getText().trim();
+                if (maTG.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn tác giả để xóa!");
+                    return;
+                }
                 if (tacGiaBUS.deleteTacGia(maTG)) {
                     JOptionPane.showMessageDialog(null, "Xóa tác giả thành công!");
                     refreshTable();
-                    clearFields();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Xóa tác giả thất bại!");
+                    tool.clearFields(txt_array);
+                    tool.clearButtons(buttons);
+                    delete=false;
                 }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi xóa tác giả: " + e.getMessage());
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    JOptionPane.showMessageDialog(null, "Lỗi khi xóa tác giả: " + e.getMessage());
+                }
         }
     }
 
-    // Phương thức xóa các trường nhập liệu
-    private void clearFields() {
-        txt_array[0].setText("");
-        txt_array[1].setText("");
-        txt_array[2].setText("");
-        txt_array[3].setText("");
-    }
+
 
     public JPanel getPanel() {
         return this.panel;
