@@ -22,6 +22,7 @@ import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTable;
 import javax.swing.JTextField;
@@ -271,6 +272,7 @@ public class Tool {
 			txt.setText("");
 		}
 	}
+	
 	public void clearButtons(JButton[] buttons)
 	{
 		for (JButton bt : buttons) {
@@ -279,10 +281,32 @@ public class Tool {
 			bt.setVisible(true);
 		}
 	}
+	
 	public void Editable(JTextField[] txt_array,boolean TF){
 
 		for (JTextField txt : txt_array) {
 			txt.setEditable(TF);
 		}
+	}
+
+	public boolean checkPhoneNumber(String num) {
+		if (!num.matches("\\d{10}")) {
+			JOptionPane.showMessageDialog(null, "Số điện thoại phải có 10 ký tự số");
+			return false;
+		}
+		if (!num.matches("^(02|03|05|07|08|09)\\d{8}$")) { // 09, 08, 07, 05, 03, 02
+			JOptionPane.showMessageDialog(null, "Đầu số điện thoại không thuộc các nhà mạng ở Việt Nam");
+			return false;
+		}
+		return true;
+	}
+
+	public boolean checkIdNumber(String num) {
+		String regex = "^(0)(01|02|04|06|08|10|11|12|14|15|17|19|20|22|24|25|26|27|30|31|33|34|35|36|37|38|40|42|44|45|46|48|49|51|52|54|56|58|60|62|64|66|67|68|70|72|74|75|77|79|80|82|83|84|86|87|89|91|92|93|94|95|96)[0-3]\\d{2}\\d{6}";
+		if (!num.matches(regex)) {
+			JOptionPane.showMessageDialog(null, "Số CCCD không hợp lệ");
+			return false;
+		}
+		return true;
 	}
 }

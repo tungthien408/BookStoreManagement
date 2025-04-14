@@ -26,6 +26,7 @@ import DTO.TacGiaDTO;
 public class TacGiaGUI {
     Tool tool = new Tool();
     JPanel panel, panelDetail;
+    List<TacGiaDTO> tacGiaList;
     JTextField[] txt_array = new JTextField[4];
     // txt_authorId, txt_name, txt_address, txt_phone;
     int width = 1200;
@@ -68,7 +69,7 @@ public class TacGiaGUI {
 
         // Lấy dữ liệu từ cơ sở dữ liệu
         try {
-            List<TacGiaDTO> tacGiaList = tacGiaBUS.getAllTacGia();
+            tacGiaList = tacGiaBUS.getAllTacGia();
             for (TacGiaDTO tacGia : tacGiaList) {
                 model.addRow(new Object[]{
                     tacGia.getMaTG(),
@@ -235,9 +236,7 @@ public class TacGiaGUI {
                 tacGia.setDiaChi(txt_array[2].getText().trim());
                 tacGia.setSdt(txt_array[3].getText().trim());
 
-                // Kiểm tra dữ liệu đầu vào
-                if (tacGia.getMaTG().isEmpty() || tacGia.getTenTG().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Mã và tên tác giả không được để trống!");
+                if (!checkValidate(tacGia)) {
                     return;
                 }
 
@@ -293,6 +292,10 @@ public class TacGiaGUI {
 
                 if (tacGia.getMaTG().isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Vui lòng chọn tác giả để sửa!");
+                    return;
+                }
+
+                if (!checkValidate(tacGia)) {
                     return;
                 }
 
@@ -365,6 +368,36 @@ public class TacGiaGUI {
         tool.clearFields(txt_array);
         tool.Editable(txt_array,false);
         selectedRow = -1;
+    }
+
+    private boolean checkValidate(TacGiaDTO tacGia) {
+        // Kiểm tra dữ liệu đầu vào
+        if (tacGia.getMaTG().isEmpty() || tacGia.getTenTG().isEmpty() || tacGia.getDiaChi().isEmpty() || tacGia.getSdt().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ các trường thông tin");
+            return false;
+        }
+
+        if (tacGia.getTenTG().length() > 100) {
+            JOptionPane.showMessageDialog(null, "Tên tác giả không được nhiều hơn 100 ký tự");
+            return false;
+        }
+
+        if (tacGia.getDiaChi().length() > 255) {
+            JOptionPane.showMessageDialog(null, "Địa chỉ tác giả không được nhiều hơn 255 ký tự");
+            return false;
+        }
+
+        if (!tool.checkPhoneNumber(tacGia.getSdt())) {
+            return false;
+        }
+
+        for (TacGiaDTO tg : tacGiaList) {
+            if (!tg.getMaTG().equals(tacGia.getMaTG()) && tg.getSdt().equals(tacGia.getSdt())) {
+                JOptionPane.showMessageDialog(null, "Số điện thoại đã được sử dụng");
+                return false;                            
+            }
+        }
+        return true;
     }
 
     public JPanel getPanel() {
