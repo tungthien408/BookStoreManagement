@@ -283,35 +283,4 @@ public class Tool {
 			txt.setEditable(TF);
 		}
 	}
-
-	public JPanel createButtonPanel1(JButton[] button, Color bg, Color fg, String xy) {
-		// TODO: Thiếu việc gán event vào nút
-		int btn_width = 130;
-		int btn_height = 30;
-		JPanel panel = new JPanel(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints(); // Để các nút có thể được thêm ngay phía dưới
-
-		c.insets = new Insets(10, 10, 10, 10);
-        c.gridx = 0;
-        c.gridy = 0;
-        c.weightx = 0.5;
-        c.weighty = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-
-		for (int i = 0; i < button.length ; i++) {
-			if (xy.equals("y"))
-				c.gridy += 1; 
-			else c.gridx += 1; 
-			button[i].setFocusable(false);
-			button[i].setPreferredSize(new Dimension(btn_width, btn_height));
-			button[i].setBackground(bg);
-			button[i].setForeground(fg);
-	
-			panel.add(button[i], c);		
-		}
-
-		return panel;
-	}
-
-
 }
