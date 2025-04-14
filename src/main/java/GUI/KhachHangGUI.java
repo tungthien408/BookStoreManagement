@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -14,8 +15,9 @@ import javax.swing.JTextField;
 
 public class KhachHangGUI {
     Tool tool = new Tool();
+    JButton btn [] = new JButton[4];
     JPanel panel, panelDetail;
-    JTextField txt_customerPhone, txt_name, txt_score;
+    JTextField txt_array[] = new JTextField[3];
     int width = 1200;
     int width_sideMenu = 151;
     int height = (int)(width * 0.625);
@@ -30,8 +32,6 @@ public class KhachHangGUI {
         panel.add(createPanelButton(), BorderLayout.CENTER);
 
         // Chi tiết sản phẩm
-
-        JTextField txt_array[] = {txt_customerPhone, txt_name, txt_score};
         String txt_label[] = {"Số điện thoại", "Tên", "Điểm tích lũy"};
         panel.add(createDetailPanel(txt_array, txt_label), BorderLayout.SOUTH);
       
@@ -60,9 +60,9 @@ public class KhachHangGUI {
     }
 
     private JPanel createPanelButton() {
-        String [] btn_txt = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel"};
+        String [] btn_txt = {"Sửa", "Nhập Excel", "Xuất Excel", "Hủy"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBtn.add(tool.createButtonPanel(btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
+        panelBtn.add(tool.createButtonPanel(btn, btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
         return panelBtn;
     }

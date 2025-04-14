@@ -7,12 +7,14 @@ import java.awt.FlowLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
 public class HoaDonBanGUI {
     Tool tool = new Tool();
+    JButton button[] = new JButton[3];
     JPanel panel;
     int width = 1200;
     int width_sideMenu = 151;
@@ -93,7 +95,7 @@ public class HoaDonBanGUI {
     private JPanel createPanelButton() {
         String [] btn_txt = {"Chi tiết", "Nhập Excel", "Xuất Excel"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBtn.add(tool.createButtonPanel(btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
+        panelBtn.add(tool.createButtonPanel(button, btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
         return panelBtn;
     }

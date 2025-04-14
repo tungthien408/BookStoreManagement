@@ -8,6 +8,7 @@ import java.awt.FlowLayout;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -15,11 +16,13 @@ import javax.swing.JTextField;
 
 public class NhapSachGUI {
     Tool tool = new Tool();
+    JButton btn[] = new JButton[3];
     JPanel panel;
     int width = 1200;
     int width_sideMenu = 151;
     int height = (int)(width * 0.625);
-    JTextField txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total, txt_name, txt_quantity;
+    JTextField txt_array_1[] = new JTextField[5];
+    JTextField txt_array_2[] = new JTextField[2];
 
     public NhapSachGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
@@ -73,15 +76,13 @@ public class NhapSachGUI {
         panel.add(createTable(650, 10,tableContent_book, nameField_book), BorderLayout.WEST);
 
         // detail (top right)
-        JTextField txt_array_top[] = {txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total};
         String txt_label_top[] = {"Mã phiếu nhập", "Mã NV", "NXB", "Ngày nhập", "Tổng tiền"};
-        panel.add(createDetailPanel(400, 30, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
+        panel.add(createDetailPanel(400, 30, txt_array_1, txt_label_top, null), BorderLayout.CENTER);
         
         JPanel paymentPanel = tool.createPanel(width - width_sideMenu, (int)(height * 0.55), new BorderLayout());
-        JTextField txt_array[] = {txt_name, txt_quantity};
         String[] txt_label = {"Tên sách", "Số lượng"};
         // detail (bottom right)
-        paymentPanel.add(createDetailPanel(500, 10, txt_array, txt_label, new ImageIcon("images/Book/the_little_prince.jpg")), BorderLayout.WEST);
+        paymentPanel.add(createDetailPanel(500, 10, txt_array_2, txt_label, new ImageIcon("images/Book/the_little_prince.jpg")), BorderLayout.WEST);
         
         // buttons
         paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
@@ -129,7 +130,7 @@ public class NhapSachGUI {
     private JPanel createButtonPanel() {
         String[] buttonTexts = {"Thêm", "Xóa", "Thanh toán"};
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.add(tool.createButtonPanel(buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
+        buttonPanel.add(tool.createButtonPanel(btn, buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 110, 25));
         return buttonPanel;
     }

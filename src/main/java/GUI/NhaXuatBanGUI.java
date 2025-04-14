@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -14,8 +15,9 @@ import javax.swing.JTextField;
 
 public class NhaXuatBanGUI {
     Tool tool = new Tool();
+    JButton btn[] = new JButton[6];
     JPanel panel, panelDetail;
-    JTextField txt_nxbId, txt_name, txt_address, txt_phone;
+    JTextField txt_array[] = new JTextField[4];
     int width = 1200;
     int width_sideMenu = 151;
     int height = (int)(width * 0.625);
@@ -32,7 +34,6 @@ public class NhaXuatBanGUI {
 
         // Chi tiết sản phẩm
 
-        JTextField txt_array[] = {txt_nxbId, txt_name, txt_address, txt_phone};
         String txt_label[] = {"Mã NXB", "Tên NXB", "Địa chỉ", "Số điện thoại"};
         panel.add(createDetailPanel(txt_array, txt_label), BorderLayout.SOUTH);
       
@@ -66,10 +67,13 @@ public class NhaXuatBanGUI {
     }
     
     private JPanel createPanelButton() {
-        String [] btn_txt = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel"};
+        String [] btn_txt = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Hủy"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBtn.add(tool.createButtonPanel(btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
-        panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
+        panelBtn.add(tool.createButtonPanel(btn, btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
+        panelBtn.setBorder(BorderFactory.createEmptyBorder(25, 0, 0, 0));
+
+        // TODO: assign event for buttons
+        
         return panelBtn;
     }
 

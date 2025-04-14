@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -14,8 +15,9 @@ import javax.swing.JTextField;
 
 public class NhanVienGUI {
     Tool tool = new Tool();
+    JButton btn[] = new JButton[6];
     JPanel panel, panelDetail;
-    JTextField txt_employeeId, txt_name, txt_gender, txt_address, txt_phone, txt_role;
+    JTextField []txt_array = new JTextField[6];
     int width = 1200;
     int width_sideMenu = 151;
     int height = (int)(width * 0.625);
@@ -29,7 +31,6 @@ public class NhanVienGUI {
         panel.add(createPanelButton(), BorderLayout.CENTER);
 
         // Chi tiết sản phẩm
-        JTextField txt_array[] = {txt_employeeId, txt_name, txt_gender, txt_address, txt_phone, txt_role};
         String txt_label[] = {"Mã NV", "Tên", "Giới tính", "Địa chỉ", "Số điện thoại", "Chức vụ"};
         panel.add(createPanelDetail(txt_array, txt_label), BorderLayout.SOUTH);
       
@@ -58,10 +59,10 @@ public class NhanVienGUI {
 
     private JPanel createPanelButton() {
         // Panel chứa button
-        String [] btn_txt = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel"};
+        String [] btn_txt = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Hủy"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBtn.add(tool.createButtonPanel(btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
-        panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
+        panelBtn.add(tool.createButtonPanel(btn, btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
+        panelBtn.setBorder(BorderFactory.createEmptyBorder(25, 0, 0, 0));
         return panelBtn;
     }
 

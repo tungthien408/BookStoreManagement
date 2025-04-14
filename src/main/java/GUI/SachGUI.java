@@ -8,6 +8,7 @@ import java.awt.FlowLayout;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -15,8 +16,9 @@ import javax.swing.JTextField;
 
 public class SachGUI {
     Tool tool = new Tool();
+    JButton btn[] = new JButton[6];
     JPanel panel, panelDetail;
-    JTextField txt_name, txt_nxb, txt_author, txt_category, txt_quantity;
+    JTextField txt_array[] = new JTextField[5];
     int width = 1200;
     int width_sideMenu = 151;
     int height = (int)(width * 0.625);
@@ -24,7 +26,6 @@ public class SachGUI {
     public SachGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel.setBackground(new Color(202, 220, 252));
-        JTextField txt_array[] = {txt_name, txt_nxb, txt_author, txt_category, txt_quantity};
         String txt_label[] = {"Tên", "Nhà xuất bản", "Tác giả", "Thể loại", "Số lượng"};
 
         // Table 
@@ -122,10 +123,10 @@ public class SachGUI {
     }
 
     private JPanel createPanelButton() {
-        String [] btn_txt = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel"};
+        String [] btn_txt = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Thoát"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBtn.add(tool.createButtonPanel(btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
-        panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
+        panelBtn.add(tool.createButtonPanel(btn, btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
+        panelBtn.setBorder(BorderFactory.createEmptyBorder(25, 0, 0, 0));
         return panelBtn;
     }
     

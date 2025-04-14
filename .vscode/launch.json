@@ -6,6 +6,13 @@
     "configurations": [
         {
             "type": "java",
+            "name": "Main",
+            "request": "launch",
+            "mainClass": "GUI.Main",
+            "projectName": "BookStoreManagement"
+        },
+        {
+            "type": "java",
             "name": "LoginGUIImproved",
             "request": "launch",
             "mainClass": "src.main.java.GUI.LoginGUIImproved",

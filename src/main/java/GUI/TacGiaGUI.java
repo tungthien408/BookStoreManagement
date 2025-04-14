@@ -7,6 +7,7 @@ import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.time.chrono.JapaneseChronology;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -30,10 +31,11 @@ public class TacGiaGUI {
     int width = 1200;
     int width_sideMenu = 151;
     int height = (int) (width * 0.625);
-    JButton[] buttons = new JButton[5];
+    JButton[] buttons = new JButton[6];
     JTable table;
     TacGiaBUS tacGiaBUS = new TacGiaBUS(); // Khởi tạo TacGiaBUS
 
+    private int selectedRow = -1;
     private int lastSelectedRow = -1; // Lưu dòng được chọn trước đó
     private boolean update = false;
     private boolean add = false;
@@ -53,13 +55,6 @@ public class TacGiaGUI {
 
         // Panel chứa button
         panel.add(createPanelButton(), BorderLayout.CENTER);
-
-        // Chi tiết sản phẩm
-        txt_array[0] = new JTextField(20);
-        txt_array[1] = new JTextField(20);
-        txt_array[2] = new JTextField(20);
-        txt_array[3] = new JTextField(20);
-        // JTextField txt_array[] = {txt_authorId, txt_name, txt_address, txt_phone};
         String txt_label[] = {"Mã tác giả", "Tên tác giả", "Địa chỉ", "Số điện thoại"};
         panel.add(createPanelDetail(txt_array, txt_label), BorderLayout.SOUTH);
 
@@ -106,7 +101,7 @@ public class TacGiaGUI {
                 tool.clearFields(txt_array);
                 tool.clearButtons(buttons);
                 add=false;
-                int selectedRow = table.getSelectedRow();
+                selectedRow = table.getSelectedRow();
 
                 // Nếu click vào cùng một dòng đã chọn trước đó
                 if (selectedRow == lastSelectedRow && selectedRow >= 0) {
@@ -125,22 +120,16 @@ public class TacGiaGUI {
                     lastSelectedRow = -1; // Reset chỉ số dòng
                 } else if (selectedRow >= 0) {
                     // Click vào dòng mới
-                    txt_array[0].setText((String) table.getValueAt(selectedRow, 0));
-                    txt_array[1].setText((String) table.getValueAt(selectedRow, 1));
-                    txt_array[2].setText((String) table.getValueAt(selectedRow, 2));
-                    txt_array[3].setText((String) table.getValueAt(selectedRow, 3));
-
-                    for (JTextField txt : txt_array) {
-                        txt.setEditable(false);
+                    for (int i = 0; i < txt_array.length; i++) {
+                        txt_array[i].setText((String) table.getValueAt(selectedRow, i));
+                        txt_array[i].setEditable(false);
                     }
                     if(update==true){
                         tool.Editable(txt_array, true);
                         txt_array[0].setEditable(false);
-                        buttons[1].setBackground(Color.RED);
                     }
                     if(delete==true){
                         tool.Editable(txt_array, false);
-                        buttons[2].setBackground(Color.RED);
                     }
 
                     lastSelectedRow = selectedRow;
@@ -160,20 +149,17 @@ public class TacGiaGUI {
 
     private JPanel createPanelButton() {
         // Khai báo và khởi tạo mảng JButton[]
-        buttons[0] = new JButton("Thêm");
-        buttons[1] = new JButton("Sửa");
-        buttons[2] = new JButton("Xóa");
-        buttons[3] = new JButton("Nhập Excel");
-        buttons[4] = new JButton("Xuất Excel");
+        String [] txt_btn = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel" ,"Hủy"};
+        JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelBtn.setBorder(BorderFactory.createEmptyBorder(25, 0, 0, 0));
+        panelBtn.add(tool.createButtonPanel(buttons, txt_btn, new Color(0, 36, 107), Color.WHITE, "y"));
 
         // Gắn sự kiện cho các nút
         buttons[0].addActionListener(e -> addTacGia());
         buttons[1].addActionListener(e -> updateTacGia());
         buttons[2].addActionListener(e -> deleteTacGia());
+        buttons[5].addActionListener(e -> cancel());
 
-        JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBtn.add(tool.createButtonPanel1(buttons, new Color(0, 36, 107), Color.WHITE, "y"));
-        panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
         return panelBtn;
     }
 
@@ -221,7 +207,6 @@ public class TacGiaGUI {
 
     // Phương thức thêm tác giả
     private void addTacGia() {
-
         table.clearSelection();
         update=false;
         delete=false;
@@ -230,11 +215,19 @@ public class TacGiaGUI {
             tool.clearButtons(buttons);
             tool.Editable(txt_array,true);
             txt_array[0].setText(getID());
-            buttons[0].setBackground(Color.RED);
+            buttons[0].setBackground(new Color(202, 220, 252));
+            buttons[0].setForeground(Color.BLACK);
+            buttons[5].setBackground(Color.RED);
+
+            for (int i = 0, length = buttons.length - 1; i < length; i++) {
+                if (i != 0) {
+                    buttons[i].setVisible(false);
+                }
+            }
             txt_array[0].setEditable(false);
             add=true;
         }
-        else{
+        else {
             try {
                 TacGiaDTO tacGia = new TacGiaDTO();
                 tacGia.setMaTG(txt_array[0].getText().trim());
@@ -250,10 +243,7 @@ public class TacGiaGUI {
 
                 if (tacGiaBUS.addTacGia(tacGia)) {
                     JOptionPane.showMessageDialog(null, "Thêm tác giả thành công!");
-                    refreshTable();
-                    tool.clearFields(txt_array);
-                    tool.clearButtons(buttons);
-                    add=false;
+                    cancel();
                 } else {
                     JOptionPane.showMessageDialog(null, "Thêm tác giả thất bại!");
                 }
@@ -261,7 +251,7 @@ public class TacGiaGUI {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Lỗi khi thêm tác giả: " + e.getMessage());
             }
-            buttons[0].setBackground( new Color(0, 36, 107));
+            tool.clearButtons(buttons);
            
         }
     }
@@ -273,46 +263,51 @@ public class TacGiaGUI {
         }
         add=false;
         delete=false;
-        if(update==false){
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn tác giả để sửa!");
+        }
+        else if (update==false){
             tool.clearButtons(buttons);
             tool.Editable(txt_array,true);
             tool.clearButtons(buttons);
 
-            buttons[1].setBackground(Color.RED);
+            buttons[1].setBackground(new Color(202, 220, 252));
+            buttons[1].setForeground(Color.BLACK);
+            buttons[5].setBackground(Color.RED);
+
+            for (int i = 0, length = buttons.length - 1; i < length; i++) {
+                if (i != 1) {
+                    buttons[i].setVisible(false);
+                }
+            }
+
             txt_array[0].setEditable(false);
             update=true;
-      
-           
-        }
-        else{
-        try {
-            TacGiaDTO tacGia = new TacGiaDTO();
-            tacGia.setMaTG(txt_array[0].getText().trim());
-            tacGia.setTenTG(txt_array[1].getText().trim());
-            tacGia.setDiaChi(txt_array[2].getText().trim());
-            tacGia.setSdt(txt_array[3].getText().trim());
+        } else {
+            try {
+                TacGiaDTO tacGia = new TacGiaDTO();
+                tacGia.setMaTG(txt_array[0].getText().trim());
+                tacGia.setTenTG(txt_array[1].getText().trim());
+                tacGia.setDiaChi(txt_array[2].getText().trim());
+                tacGia.setSdt(txt_array[3].getText().trim());
 
-            if (tacGia.getMaTG().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Vui lòng chọn tác giả để sửa!");
-                return;
-            }
+                if (tacGia.getMaTG().isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng chọn tác giả để sửa!");
+                    return;
+                }
 
-            if (tacGiaBUS.updateTacGia(tacGia)) {
-                JOptionPane.showMessageDialog(null, "Sửa tác giả thành công!");
-                tool.clearFields(txt_array);
-                tool.clearButtons(buttons);
-                refreshTable();
-                update=false;
-                
- 
-            } else {
-                JOptionPane.showMessageDialog(null, "Sửa tác giả thất bại!");
+                if (tacGiaBUS.updateTacGia(tacGia)) {
+                    JOptionPane.showMessageDialog(null, "Sửa tác giả thành công!");
+                    cancel();
+                } else {
+                    JOptionPane.showMessageDialog(null, "Sửa tác giả thất bại!");
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Lỗi khi sửa tác giả: " + e.getMessage());
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi sửa tác giả: " + e.getMessage());
+            tool.clearButtons(buttons);
         }
-    }
     }
 
     // Phương thức xóa tác giả
@@ -322,37 +317,55 @@ public class TacGiaGUI {
         }
         add=false;
         update=false;
-        if(delete==false){
-            tool.clearButtons(buttons);
-            tool.Editable(txt_array,false);
-            tool.clearButtons(buttons);
-            buttons[2].setBackground(Color.RED);
-            delete=true;
-      
-           
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn tác giả để sửa!");
         }
-        else{
+        // else if (delete==false){
+        //     tool.clearButtons(buttons);
+        //     tool.Editable(txt_array,false);
+        //     buttons[2].setBackground(new Color(202, 220, 252));
+        //     buttons[2].setForeground(Color.BLACK);
+        //     buttons[5].setBackground(Color.RED);
+
+        //     // for (int i = 0, length = buttons.length - 1; i < length; i++) {
+        //     //     if (i != 0) {
+        //     //         buttons[i].setVisible(false);
+        //     //     }
+        //     // }
+
+        //     delete=true;
+        // } 
+        else {
             try {
                 String maTG = txt_array[0].getText().trim();
                 if (maTG.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Vui lòng chọn tác giả để xóa!");
                     return;
                 }
-                if (tacGiaBUS.deleteTacGia(maTG)) {
-                    JOptionPane.showMessageDialog(null, "Xóa tác giả thành công!");
-                    refreshTable();
-                    tool.clearFields(txt_array);
-                    tool.clearButtons(buttons);
-                    delete=false;
+                if (JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa tác giả này?", "Xóa thông tin tác giả", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    if (tacGiaBUS.deleteTacGia(maTG)) {
+                        JOptionPane.showMessageDialog(null, "Xóa tác giả thành công!");
+                        cancel();
+                    }
                 }
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    JOptionPane.showMessageDialog(null, "Lỗi khi xóa tác giả: " + e.getMessage());
-                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Lỗi khi xóa tác giả: " + e.getMessage());
+            }
+            tool.clearButtons(buttons);
         }
     }
 
-
+    private void cancel() {
+        add = false;
+        update = false;
+        delete = false;
+        refreshTable();
+        tool.clearButtons(buttons);
+        tool.clearFields(txt_array);
+        tool.Editable(txt_array,false);
+        selectedRow = -1;
+    }
 
     public JPanel getPanel() {
         return this.panel;

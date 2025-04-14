@@ -8,6 +8,7 @@ import java.awt.FlowLayout;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -16,7 +17,9 @@ import javax.swing.JTextField;
 public class BanSachGUI {
     private Tool tool = new Tool();
     private JPanel mainPanel;
-    private JTextField txtName, txtPublisher, txtAuthor, txtCategory, txtQuantity;
+    private JTextField txt_array_1[] = new JTextField[5];
+    private JTextField txt_array_2[] = new JTextField[2];
+    private JButton button[] = new JButton[3];
     private static final int WIDTH = 1200;
     private static final int SIDE_MENU_WIDTH = 151;
     private static final int HEIGHT = (int) (WIDTH * 0.625);
@@ -75,9 +78,8 @@ public class BanSachGUI {
     }
 
     private JPanel createDetailPanel1() {
-        JTextField[] textFields = {txtName, txtPublisher, txtAuthor, txtCategory, txtQuantity};
         String[] labels = {"Tên", "Nhà xuất bản", "Tác giả", "Thể loại", "Số lượng"};
-        JPanel detailPanel = tool.createJTextField(textFields, labels);
+        JPanel detailPanel = tool.createJTextField(txt_array_1, labels);
         
         JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         wrapper.setPreferredSize(new Dimension(400, 250));
@@ -86,9 +88,8 @@ public class BanSachGUI {
     }
 
     private JPanel createDetailPanel2() {
-        JTextField[] textFields = {txtName, txtQuantity};
         String[] labels = {"Tên", "Số lượng"};
-        JPanel detailPanel = tool.createDetailPanel(textFields, labels, new ImageIcon("images/Book/the_little_prince.jpg"), 380, 300,  1, 2, true);
+        JPanel detailPanel = tool.createDetailPanel(txt_array_2, labels, new ImageIcon("images/Book/the_little_prince.jpg"), 380, 300,  1, 2, true);
         
         JPanel wrapper = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         wrapper.add(detailPanel);
@@ -98,7 +99,7 @@ public class BanSachGUI {
     private JPanel createButtonPanel() {
         String[] buttonTexts = {"Thêm", "Xóa", "Thanh toán"};
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.add(tool.createButtonPanel(buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
+        buttonPanel.add(tool.createButtonPanel(button, buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 110, 95));
         return buttonPanel;
     }

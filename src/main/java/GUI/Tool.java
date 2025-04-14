@@ -82,54 +82,6 @@ public class Tool {
 		return table;
 	}
 
-	// Hàm này bị thiếu việc xử lý sự kiện Event, đầy đủ của nó phải là public JPanel createButtonHorizontal(String texts[], Color bg, Color fg, ActionListener event)
-	public JPanel createButtonPanel(String texts[], Color bg, Color fg, String xy) {
-		// TODO: Thiếu việc gán event vào nút
-		int btn_width = 130;
-		int btn_height = 30;
-		JPanel panel = new JPanel(new GridBagLayout());
-		GridBagConstraints c = new GridBagConstraints(); // Để các nút có thể được thêm ngay phía dưới
-
-		c.insets = new Insets(10, 10, 10, 10);
-        c.gridx = 0;
-        c.gridy = 0;
-        c.weightx = 0.5;
-        c.weighty = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-
-		for (int i = 0; i < texts.length ; i++) {
-			if(xy == "y")
-				c.gridy += 1; 
-			if(xy=="x")
-				c.gridx += 1; 
-			JButton button = new JButton(texts[i]);
-			button.setFocusable(false);
-			button.setPreferredSize(new Dimension(btn_width, btn_height));
-			button.setBackground(bg);
-			button.setForeground(fg);
-	
-			button.addMouseListener(new MouseAdapter() {
-					@Override
-					public void mouseEntered(MouseEvent e) {
-						if (bg != null) button.setBackground(bg.darker());
-					}
-	
-					@Override
-					public void mouseExited(MouseEvent e) {
-						button.setBackground(bg);
-					}
-	
-					@Override
-					public void mouseReleased(MouseEvent e) {
-						button.setBackground(bg);
-					}
-				});
-			panel.add(button, c);		
-		}
-
-		return panel;
-	}
-
 	public JPanel createSearchTextField(int x, int y,String[] list) {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
@@ -183,11 +135,10 @@ public class Tool {
 		
         
         for (int i = 0; i < txt_array.length; i++) {
-             txt_array[i] = new JTextField();
+            txt_array[i] = new JTextField(15);
 			txt_array[i].setBackground(new Color(202, 220, 252));
-			// txt_array[i].setForeground(new Color(192, 79, 21));
-            txt_array[i].setPreferredSize(new Dimension(182, 30));//182
-            // txt_array[i].setEditable(false);
+            txt_array[i].setPreferredSize(new Dimension(182, 30));
+			txt_array[i].setEditable(false);
         }
 
 		int count = 0;
@@ -283,7 +234,8 @@ public class Tool {
 	
 		return panelDetail;
 	}
-	public JPanel createButtonPanel1(JButton[] button, Color bg, Color fg, String xy) {
+	
+	public JPanel createButtonPanel(JButton[] button, String[] txt_btn, Color bg, Color fg, String xy) {
 		// TODO: Thiếu việc gán event vào nút
 		int btn_width = 130;
 		int btn_height = 30;
@@ -298,11 +250,10 @@ public class Tool {
         c.fill = GridBagConstraints.HORIZONTAL;
 
 		for (int i = 0; i < button.length ; i++) {
-			if(xy == "y")
+			if (xy.equals("y"))
 				c.gridy += 1; 
-			if(xy=="x")
-				c.gridx += 1; 
-			// JButton button = new JButton(texts[i]);
+			else c.gridx += 1; 
+			button[i] = new JButton(txt_btn[i]);
 			button[i].setFocusable(false);
 			button[i].setPreferredSize(new Dimension(btn_width, btn_height));
 			button[i].setBackground(bg);
@@ -314,22 +265,24 @@ public class Tool {
 		return panel;
 	}
 
-	    // Phương thức xóa các trường nhập liệu
-		public void clearFields(JTextField[] txt_array) {
-			for (JTextField txt : txt_array) {
-				txt.setText("");
-			}
+	// Phương thức xóa các trường nhập liệu
+	public void clearFields(JTextField[] txt_array) {
+		for (JTextField txt : txt_array) {
+			txt.setText("");
 		}
-		public void clearButtons(JButton[] buttons)
-		{
-			for (JButton bt : buttons) {
-				bt.setBackground( new Color(0, 36, 107));
-			}
+	}
+	public void clearButtons(JButton[] buttons)
+	{
+		for (JButton bt : buttons) {
+			bt.setBackground(new Color(0, 36, 107));
+			bt.setForeground(Color.WHITE);
+			bt.setVisible(true);
 		}
-		public void Editable(JTextField[] txt_array,boolean TF){
+	}
+	public void Editable(JTextField[] txt_array,boolean TF){
 
-			for (JTextField txt : txt_array) {
-				txt.setEditable(TF);
-			}
+		for (JTextField txt : txt_array) {
+			txt.setEditable(TF);
 		}
+	}
 }
