@@ -187,7 +187,7 @@ public class TacGiaGUI {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0); // Xóa dữ liệu cũ
         try {
-            List<TacGiaDTO> tacGiaList = tacGiaBUS.getAllTacGia();
+            tacGiaList = tacGiaBUS.getAllTacGia();
             for (TacGiaDTO tacGia : tacGiaList) {
                 model.addRow(new Object[]{
                     tacGia.getMaTG(),
