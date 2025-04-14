@@ -124,11 +124,11 @@ paymentPanel.add(createDetailPanel(500, 10, txt_array_down, txt_label_down, new 
     }
 
     private JPanel createButtonPanel() {
-        // String[] buttonTexts = {"Thêm", "Xóa", "Thanh toán"};
-        // Khai báo và khởi tạo mảng JButton[]
-        buttons[0] = new JButton("Thêm");
-        buttons[1] = new JButton("Xóa");
-        buttons[2] = new JButton("Thanh toán");
+        String[] buttonTexts = {"Thêm", "Xóa", "Thanh toán"};
+        // // Khai báo và khởi tạo mảng JButton[]
+        // buttons[0] = new JButton("Thêm");
+        // buttons[1] = new JButton("Xóa");
+        // buttons[2] = new JButton("Thanh toán");
 
         // // Gắn sự kiện cho các nút
         // buttons[0].addActionListener(e -> addPhieuNhap());
@@ -136,7 +136,7 @@ paymentPanel.add(createDetailPanel(500, 10, txt_array_down, txt_label_down, new 
         // buttons[2].addActionListener(e -> thanhtoan());
         
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.add(tool.createButtonPanel1(buttons, new Color(0, 36, 107), Color.WHITE, "x"));
+        buttonPanel.add(tool.createButtonPanel(buttons,buttonTexts,new Color(0, 36, 107), Color.WHITE, "x"));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 110, 25));
         return buttonPanel;
     }
