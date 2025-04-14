@@ -60,7 +60,7 @@ public class KhachHangDAO {
     }
 
     public boolean updateKhachHang(KhachHangDTO kh) throws SQLException {
-        String query = "UPDATE khachhang SET HoTen = ?, Diem = ? WHERE SDT = ?";
+        String query = "UPDATE khachhang SET HoTen = ?, Diem = ? WHERE SDT = ?"; // Lỗi
         
         try (Connection conn = Data.getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {

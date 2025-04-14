@@ -40,13 +40,6 @@ public class KhachHangGUI {
     private int selectedRow = -1;
     private int lastSelectedRow = -1; // Lưu dòng được chọn trước đó
     private boolean update = false;
-    int count = 0;
-    public String getID() {
-        String str = String.valueOf(count);
-        while (str.length() != 3)
-            str = "0" + str;
-        return "KH" + str;
-    }
 
 
     public KhachHangGUI() {
@@ -81,8 +74,7 @@ public class KhachHangGUI {
             JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu từ cơ sở dữ liệu: " + e.getMessage());
         }
         // Bảng
-        table = new JTable(model);
-        table.setDefaultEditor(Object.class, null); // Không cho chỉnh sửa trực tiếp trên bảng
+        table = tool.createTable(model, column);        table.setDefaultEditor(Object.class, null); // Không cho chỉnh sửa trực tiếp trên bảng
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(850, 340));
 
@@ -90,6 +82,9 @@ public class KhachHangGUI {
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (update) {
+                    return;
+                }
                 tool.clearFields(txt_array);
                 tool.clearButtons(btn);
                 selectedRow = table.getSelectedRow();
@@ -136,7 +131,7 @@ public class KhachHangGUI {
         String [] btn_txt = {"Sửa", "Nhập Excel", "Xuất Excel", "Hủy"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(btn, btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
-        panelBtn.setBorder(BorderFactory.createEmptyBorder(50, 0, 0, 0));
+        panelBtn.setBorder(BorderFactory.createEmptyBorder(40, 0, 0, 0));
 
         // Gắn sự kiện cho các nút
         btn[0].addActionListener(e -> updateKhachHang());
@@ -177,7 +172,6 @@ public class KhachHangGUI {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu từ cơ sở dữ liệu: " + e.getMessage());
         }
-        table = new JTable(model);
     }
 
     // Phương thức sửa khách hàng
@@ -226,7 +220,6 @@ public class KhachHangGUI {
                     e.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Lỗi khi sửa khách hàng: " + e.getMessage());
                 }
-                tool.clearButtons(btn);
             }
         }    
 
@@ -237,6 +230,7 @@ public class KhachHangGUI {
         tool.clearFields(txt_array);
         tool.Editable(txt_array,false);
         selectedRow = -1;
+        lastSelectedRow = -1;
     }
 
     private boolean checkValidate(KhachHangDTO khachHang) {
@@ -256,15 +250,13 @@ public class KhachHangGUI {
         }
 
         for (KhachHangDTO kh : khachHangList) {
-            if (kh.getSdt().equals(khachHang.getSdt())) {
+            if (kh.getSdt().equals(khachHang.getSdt()) && khachHangList.indexOf(kh) != selectedRow) {
                 JOptionPane.showMessageDialog(null, "Số điện thoại đã được sử dụng");
                 return false;                            
             }
         }
         return true;
     }
-
-    
 
     public JPanel getPanel() {
         return this.panel;

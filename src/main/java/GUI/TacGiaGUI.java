@@ -90,7 +90,7 @@ public class TacGiaGUI {
         }
 
         // Bảng
-        table = new JTable(model);
+        table = tool.createTable(model, column);
         table.setDefaultEditor(Object.class, null); // Không cho chỉnh sửa trực tiếp trên bảng
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(850, 340));
@@ -255,8 +255,6 @@ public class TacGiaGUI {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Lỗi khi thêm tác giả: " + e.getMessage());
             }
-            tool.clearButtons(buttons);
-           
         }
     }
 
@@ -314,7 +312,6 @@ public class TacGiaGUI {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Lỗi khi sửa tác giả: " + e.getMessage());
             }
-            tool.clearButtons(buttons);
         }
     }
 
@@ -360,7 +357,6 @@ public class TacGiaGUI {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Lỗi khi xóa tác giả: " + e.getMessage());
             }
-            tool.clearButtons(buttons);
         }
     }
 
@@ -373,6 +369,7 @@ public class TacGiaGUI {
         tool.clearFields(txt_array);
         tool.Editable(txt_array,false);
         selectedRow = -1;
+        lastSelectedRow = -1;
     }
 
     private boolean checkValidate(TacGiaDTO tacGia) {
