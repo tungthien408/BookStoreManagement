@@ -99,9 +99,14 @@ public class TacGiaGUI {
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (add || update) {
+                    return;
+                }
+
                 tool.clearFields(txt_array);
                 tool.clearButtons(buttons);
                 add=false;
+                
                 selectedRow = table.getSelectedRow();
 
                 // Nếu click vào cùng một dòng đã chọn trước đó
@@ -212,6 +217,7 @@ public class TacGiaGUI {
         update=false;
         delete=false;
         if(add==false){
+            add=true;
             tool.clearFields(txt_array);
             tool.clearButtons(buttons);
             tool.Editable(txt_array,true);
@@ -226,7 +232,6 @@ public class TacGiaGUI {
                 }
             }
             txt_array[0].setEditable(false);
-            add=true;
         }
         else {
             try {
@@ -266,6 +271,7 @@ public class TacGiaGUI {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn tác giả để sửa!");
         }
         else if (update==false){
+            update=true;
             tool.clearButtons(buttons);
             tool.Editable(txt_array,true);
             tool.clearButtons(buttons);
@@ -281,7 +287,6 @@ public class TacGiaGUI {
             }
 
             txt_array[0].setEditable(false);
-            update=true;
         } else {
             try {
                 TacGiaDTO tacGia = new TacGiaDTO();
@@ -336,7 +341,7 @@ public class TacGiaGUI {
         //     //     }
         //     // }
 
-        //     delete=true;
+            // delete=true;
         // } 
         else {
             try {
