@@ -14,75 +14,71 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 
+import BUS.ChiTietPhieuNhapBUS;
+import BUS.NXBBUS;
+import BUS.NhanVienBUS;
+import BUS.PhieuNhapBUS;
+import BUS.SachBUS;
+
 public class NhapSachGUI {
     Tool tool = new Tool();
-    JButton btn[] = new JButton[3];
     JPanel panel;
     int width = 1200;
     int width_sideMenu = 151;
     int height = (int)(width * 0.625);
-    JTextField txt_array_1[] = new JTextField[5];
-    JTextField txt_array_2[] = new JTextField[2];
+    // JTextField txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total, txt_name, txt_quantity;
+    JButton[] buttons = new JButton[3];
+    JTextField[] txt_array_top = new JTextField[5];
+    JTextField[] txt_array_down = new JTextField[2];
+    private PhieuNhapBUS phieuNhapBUS;
+    private ChiTietPhieuNhapBUS chiTietPhieuNhapBUS;
+    private NXBBUS nhaXuatBanBUS;
+    private SachBUS sachBUS;
+    private NhanVienBUS nhanVienBUS;
+
+         // fake data
+    String tableContent_book[][] = {
+        {"S001", "Book A", "10", "100"},
+        {"S002", "Book B", "15", "150"},
+        {"S003", "Book C",  "20", "200"},
+        {"S004", "Book D",  "25", "250"},
+        {"S005", "Book E", "30", "300"},
+        {"S006", "Book F", "35", "350"},
+        {"S007", "Book G", "40", "400"},
+        {"S008", "Book H",  "45", "450"},
+        {"S009", "Book I",  "50", "500"},
+        {"S010", "Book J",  "55", "550"},
+        {"S011", "Book K", "60", "600"},
+        {"S012", "Book L", "65", "650"},
+        {"S013", "Book M",  "70", "700"},
+        {"S040", "Book AN", "205", "2050"}      
+    };
+    String nameField_book[] = {"Mã sách", "Tên sách", "Số lượng", "Đơn giá"};
 
     public NhapSachGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel.add(createSearchPanel(), BorderLayout.NORTH); // search panel
-        // fake data
-        String tableContent_book[][] = {
-            {"S001", "Book A", "Fiction", "10", "100"},
-            {"S002", "Book B", "Non-Fiction", "15", "150"},
-            {"S003", "Book C", "Science", "20", "200"},
-            {"S004", "Book D", "History", "25", "250"},
-            {"S005", "Book E", "Biography", "30", "300"},
-            {"S006", "Book F", "Fantasy", "35", "350"},
-            {"S007", "Book G", "Mystery", "40", "400"},
-            {"S008", "Book H", "Romance", "45", "450"},
-            {"S009", "Book I", "Thriller", "50", "500"},
-            {"S010", "Book J", "Adventure", "55", "550"},
-            {"S011", "Book K", "Fiction", "60", "600"},
-            {"S012", "Book L", "Non-Fiction", "65", "650"},
-            {"S013", "Book M", "Science", "70", "700"},
-            {"S014", "Book N", "History", "75", "750"},
-            {"S015", "Book O", "Biography", "80", "800"},
-            {"S016", "Book P", "Fantasy", "85", "850"},
-            {"S017", "Book Q", "Mystery", "90", "900"},
-            {"S018", "Book R", "Romance", "95", "950"},
-            {"S019", "Book S", "Thriller", "100", "1000"},
-            {"S020", "Book T", "Adventure", "105", "1050"},
-            {"S021", "Book U", "Fiction", "110", "1100"},
-            {"S022", "Book V", "Non-Fiction", "115", "1150"},
-            {"S023", "Book W", "Science", "120", "1200"},
-            {"S024", "Book X", "History", "125", "1250"},
-            {"S025", "Book Y", "Biography", "130", "1300"},
-            {"S026", "Book Z", "Fantasy", "135", "1350"},
-            {"S027", "Book AA", "Mystery", "140", "1400"},
-            {"S028", "Book AB", "Romance", "145", "1450"},
-            {"S029", "Book AC", "Thriller", "150", "1500"},
-            {"S030", "Book AD", "Adventure", "155", "1550"},
-            {"S031", "Book AE", "Fiction", "160", "1600"},
-            {"S032", "Book AF", "Non-Fiction", "165", "1650"},
-            {"S033", "Book AG", "Science", "170", "1700"},
-            {"S034", "Book AH", "History", "175", "1750"},
-            {"S035", "Book AI", "Biography", "180", "1800"},
-            {"S036", "Book AJ", "Fantasy", "185", "1850"},
-            {"S037", "Book AK", "Mystery", "190", "1900"},
-            {"S038", "Book AL", "Romance", "195", "1950"},
-            {"S039", "Book AM", "Thriller", "200", "2000"},
-            {"S040", "Book AN", "Adventure", "205", "2050"}      
-        };
-        String nameField_book[] = {"Mã sách", "Tên sách", "Số lượng", "Đơn giá"};
-        
+   
         // table
         panel.add(createTable(650, 10,tableContent_book, nameField_book), BorderLayout.WEST);
 
         // detail (top right)
-        String txt_label_top[] = {"Mã phiếu nhập", "Mã NV", "NXB", "Ngày nhập", "Tổng tiền"};
-        panel.add(createDetailPanel(400, 30, txt_array_1, txt_label_top, null), BorderLayout.CENTER);
+        // JTextField txt_array_top[] = {txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total};
+        txt_array_top[0] = new JTextField(20);
+        txt_array_top[1] = new JTextField(20);
+        txt_array_top[2] = new JTextField(20);
+        txt_array_top[3] = new JTextField(20);
         
+        String txt_label_top[] = {"Mã phiếu nhập", "Mã NV", "NXB", "Ngày nhập", "Tổng tiền"};
+        panel.add(createDetailPanel(400, 30, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
+        
+        txt_array_down[0] = new JTextField(20);
+        txt_array_down[1] = new JTextField(20);
         JPanel paymentPanel = tool.createPanel(width - width_sideMenu, (int)(height * 0.55), new BorderLayout());
-        String[] txt_label = {"Tên sách", "Số lượng"};
+        // JTextField txt_array[] = {txt_name, txt_quantity};
+        String[] txt_label_down = {"Tên sách", "Số lượng"};
         // detail (bottom right)
-        paymentPanel.add(createDetailPanel(500, 10, txt_array_2, txt_label, new ImageIcon("images/Book/the_little_prince.jpg")), BorderLayout.WEST);
+paymentPanel.add(createDetailPanel(500, 10, txt_array_down, txt_label_down, new ImageIcon("images/Book/the_little_prince.jpg")), BorderLayout.WEST);
         
         // buttons
         paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
@@ -129,8 +125,18 @@ public class NhapSachGUI {
 
     private JPanel createButtonPanel() {
         String[] buttonTexts = {"Thêm", "Xóa", "Thanh toán"};
+        // // Khai báo và khởi tạo mảng JButton[]
+        // buttons[0] = new JButton("Thêm");
+        // buttons[1] = new JButton("Xóa");
+        // buttons[2] = new JButton("Thanh toán");
+
+        // // Gắn sự kiện cho các nút
+        // buttons[0].addActionListener(e -> addPhieuNhap());
+        // buttons[1].addActionListener(e -> deletePhieuNhap());
+        // buttons[2].addActionListener(e -> thanhtoan());
+        
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.add(tool.createButtonPanel(btn, buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
+        buttonPanel.add(tool.createButtonPanel(buttons,buttonTexts,new Color(0, 36, 107), Color.WHITE, "x"));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 110, 25));
         return buttonPanel;
     }
