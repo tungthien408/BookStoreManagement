@@ -1,167 +1,116 @@
 package DAO;
-
-import DTO.NhanVienDTO;
-import src.main.Service.Data;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import DTO.NhanVienDTO;
+import Service.Data;
+
 public class NhanVienDAO {
-    
-    public NhanVienDTO getNhanVienBySDT(String sdt) throws SQLException {
-        String query = "SELECT HoTen, MaNV, ChucVu, DiaChi, SDT, NgaySinh FROM nhanvien WHERE SDT = ?";
-        Connection conn = Data.getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        NhanVienDTO nv = null;
-
-        try {
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, sdt);
-            rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                nv = getNhanVienInfo(rs);
-            }
-        } finally {
-            closeResources(rs, stmt, conn);
+    // Thêm một nhân viên mới
+    public boolean create(NhanVienDTO nhanVien) {
+        String sql = "INSERT INTO nhanvien (MaNV, HoTen, ChucVu, DiaChi, SDT, Cccd, NgaySinh, trangThaiXoa) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nhanVien.getMaNV());
+            stmt.setString(2, nhanVien.getHoTen());
+            stmt.setString(3, nhanVien.getChucVu());
+            stmt.setString(4, nhanVien.getDiaChi());
+            stmt.setString(5, nhanVien.getSdt());
+            stmt.setString(6, nhanVien.getCccd());
+            stmt.setDate(7, nhanVien.getNgaySinh());
+            stmt.setInt(8, nhanVien.getTrangThaiXoa());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-        return nv;
     }
 
-    public NhanVienDTO getNhanVienByMaNV(String maNV) throws SQLException {
-        String query = "SELECT HoTen, MaNV, ChucVu, DiaChi, SDT, NgaySinh FROM nhanvien WHERE MaNV = ?";
-        Connection conn = Data.getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        NhanVienDTO nv = null;
-
-        try {
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, maNV);
-            rs = stmt.executeQuery();
-
-            if (rs.next()) {
-                nv = getNhanVienInfo(rs);
-            }
-        } finally {
-            closeResources(rs, stmt, conn);
-        }
-        return nv;
-    }
-
-    private NhanVienDTO getNhanVienInfo(ResultSet rs) throws SQLException {
-        NhanVienDTO nv = new NhanVienDTO();
-        nv.setMaNV(rs.getString("MaNV"));
-        nv.setHoTen(rs.getString("HoTen"));
-        nv.setChucVu(rs.getString("ChucVu"));
-        nv.setDiaChi(rs.getString("DiaChi"));
-        nv.setSdt(rs.getString("SDT"));
-        nv.setNgaySinh(rs.getString("NgaySinh"));
-        return nv;
-    }
-
-    public boolean isSDTExists(String nvsdt) throws SQLException {
-        String query = "SELECT 1 FROM nhanvien WHERE SDT = ? LIMIT 1";
-        return checkExists(query, nvsdt);
-    }
-
-    public boolean isMaNVExists(String nvma) throws SQLException {
-        String query = "SELECT 1 FROM nhanvien WHERE MaNV = ? LIMIT 1";
-        return checkExists(query, nvma);
-    }
-
-    private boolean checkExists(String query, String param) throws SQLException {
-        Connection conn = Data.getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-        boolean exists = false;
-
-        try {
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, param);
-            rs = stmt.executeQuery();
-            exists = rs.next();
-        } finally {
-            closeResources(rs, stmt, conn);
-        }
-        return exists;
-    }
-
-    public boolean addNhanVien(NhanVienDTO nv) throws SQLException {
-        String query = "INSERT INTO nhanvien (MaNV, HoTen, ChucVu, DiaChi, SDT, NgaySinh) VALUES (?, ?, ?, ?, ?, ?)";
-        return executeUpdate(query, nv);
-    }
-
-    public boolean updateNhanVien(NhanVienDTO nv) throws SQLException {
-        String query = "UPDATE nhanvien SET HoTen = ?, ChucVu = ?, DiaChi = ?, NgaySinh = ? WHERE MaNV = ?";
-        return executeUpdate(query, nv);
-    }
-
-    public boolean deleteNhanVien(String nvma) throws SQLException {
-        String query = "DELETE FROM nhanvien WHERE MaNV = ?";
-        return executeDelete(query, nvma);
-    }
-
-    public List<NhanVienDTO> getAllNhanVien() throws SQLException {
-        String query = "SELECT MaNV, HoTen, ChucVu, DiaChi, SDT, NgaySinh FROM nhanvien";
-        List<NhanVienDTO> dsNV = new ArrayList<>();
-        Connection conn = Data.getConnection();
-        PreparedStatement stmt = null;
-        ResultSet rs = null;
-
-        try {
-            stmt = conn.prepareStatement(query);
-            rs = stmt.executeQuery();
-
+    // Lấy tất cả nhân viên chưa bị xóa (trangThaiXoa = 0)
+    public List<NhanVienDTO> getAll() {
+        List<NhanVienDTO> list = new ArrayList<>();
+        String sql = "SELECT * FROM nhanvien WHERE trangThaiXoa = 0";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                dsNV.add(getNhanVienInfo(rs));
+                NhanVienDTO nhanVien = new NhanVienDTO();
+                nhanVien.setMaNV(rs.getString("MaNV"));
+                nhanVien.setHoTen(rs.getString("HoTen"));
+                nhanVien.setChucVu(rs.getString("ChucVu"));
+                nhanVien.setDiaChi(rs.getString("DiaChi"));
+                nhanVien.setSdt(rs.getString("SDT"));
+                nhanVien.setCccd(rs.getString("Cccd"));
+                nhanVien.setNgaySinh(rs.getDate("NgaySinh"));
+                nhanVien.setTrangThaiXoa(rs.getInt("trangThaiXoa"));
+                list.add(nhanVien);
             }
-        } finally {
-            closeResources(rs, stmt, conn);
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return dsNV;
+        return list;
     }
 
-    private boolean executeUpdate(String query, NhanVienDTO nv) throws SQLException {
-        Connection conn = Data.getConnection();
-        PreparedStatement stmt = null;
-        boolean success = false;
-
-        try {
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, nv.getHoTen());
-            stmt.setString(2, nv.getChucVu());
-            stmt.setString(3, nv.getDiaChi());
-            stmt.setString(4, nv.getNgaySinh());
-            stmt.setString(5, nv.getMaNV());
-
-            success = stmt.executeUpdate() > 0;
-        } finally {
-            closeResources(null, stmt, conn);
+    // Lấy nhân viên theo MaNV
+    public NhanVienDTO getByMaNV(String maNV) {
+        String sql = "SELECT * FROM nhanvien WHERE MaNV = ? AND trangThaiXoa = 0";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, maNV);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    NhanVienDTO nhanVien = new NhanVienDTO();
+                    nhanVien.setMaNV(rs.getString("MaNV"));
+                    nhanVien.setHoTen(rs.getString("HoTen"));
+                    nhanVien.setChucVu(rs.getString("ChucVu"));
+                    nhanVien.setDiaChi(rs.getString("DiaChi"));
+                    nhanVien.setSdt(rs.getString("SDT"));
+                    nhanVien.setCccd(rs.getString("Cccd"));
+                    nhanVien.setNgaySinh(rs.getDate("NgaySinh"));
+                    nhanVien.setTrangThaiXoa(rs.getInt("trangThaiXoa"));
+                    return nhanVien;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return success;
+        return null;
     }
 
-    private boolean executeDelete(String query, String param) throws SQLException {
-        Connection conn = Data.getConnection();
-        PreparedStatement stmt = null;
-        boolean success = false;
-
-        try {
-            stmt = conn.prepareStatement(query);
-            stmt.setString(1, param);
-            success = stmt.executeUpdate() > 0;
-        } finally {
-            closeResources(null, stmt, conn);
+    // Cập nhật thông tin nhân viên
+    public boolean update(NhanVienDTO nhanVien) {
+        String sql = "UPDATE nhanvien SET HoTen = ?, ChucVu = ?, DiaChi = ?, SDT = ?, Cccd = ?, NgaySinh = ?, trangThaiXoa = ? WHERE MaNV = ?";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, nhanVien.getHoTen());
+            stmt.setString(2, nhanVien.getChucVu());
+            stmt.setString(3, nhanVien.getDiaChi());
+            stmt.setString(4, nhanVien.getSdt());
+            stmt.setString(5, nhanVien.getCccd());
+            stmt.setDate(6, nhanVien.getNgaySinh());
+            stmt.setInt(7, nhanVien.getTrangThaiXoa());
+            stmt.setString(8, nhanVien.getMaNV());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-        return success;
     }
 
-    private void closeResources(ResultSet rs, PreparedStatement stmt, Connection conn) throws SQLException {
-        if (rs != null) rs.close();
-        if (stmt != null) stmt.close();
-        if (conn != null) conn.close();
+    // Xóa mềm (cập nhật trangThaiXoa = 1)
+    public boolean delete(String maNV) {
+        String sql = "UPDATE nhanvien SET trangThaiXoa = 1 WHERE MaNV = ?";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, maNV);
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

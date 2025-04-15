@@ -7,9 +7,10 @@ public class ChiTietHoaDonDTO {
     private int gia;
 
     // Constructor mặc định
-    public ChiTietHoaDonDTO() {}
+    public ChiTietHoaDonDTO() {
+    }
 
-    // Constructor có tham số
+    // Constructor đầy đủ
     public ChiTietHoaDonDTO(String maSach, String maHD, int soLuong, int gia) {
         this.maSach = maSach;
         this.maHD = maHD;
@@ -17,7 +18,7 @@ public class ChiTietHoaDonDTO {
         this.gia = gia;
     }
 
-    // Getter và Setter
+    // Getters và Setters
     public String getMaSach() {
         return maSach;
     }

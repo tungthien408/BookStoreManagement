@@ -1,19 +1,31 @@
 package DTO;
-import java.io.Serializable;
-
-public class KhachHangDTO implements Serializable {
+public class KhachHangDTO {
+    private String maKH;
     private String sdt;
     private String hoTen;
-    private int Diem;
+    private int diem;
+    private int trangThaiXoa;
 
-    // ✅ Constructor không tham số (Fix lỗi)
-    public KhachHangDTO() {}
+    // Constructor mặc định
+    public KhachHangDTO() {
+    }
 
-    // ✅ Constructor có tham số
-    public KhachHangDTO(String sdt, String hoTen, int Diem) {
+    // Constructor đầy đủ
+    public KhachHangDTO(String maKH, String sdt, String hoTen, int diem, int trangThaiXoa) {
+        this.maKH = maKH;
         this.sdt = sdt;
         this.hoTen = hoTen;
-        this.Diem = Diem;
+        this.diem = diem;
+        this.trangThaiXoa = trangThaiXoa;
+    }
+
+    // Getters và Setters
+    public String getMaKH() {
+        return maKH;
+    }
+
+    public void setMaKH(String maKH) {
+        this.maKH = maKH;
     }
 
     public String getSdt() {
@@ -33,10 +45,19 @@ public class KhachHangDTO implements Serializable {
     }
 
     public int getDiem() {
-        return Diem;
+        return diem;
     }
 
-    public void setDiem(int Diem) {
-        this.Diem = Diem;
+    public void setDiem(int diem) {
+        this.diem = diem;
     }
+
+    public int getTrangThaiXoa() {
+        return trangThaiXoa;
+    }
+
+    public void setTrangThaiXoa(int trangThaiXoa) {
+        this.trangThaiXoa = trangThaiXoa;
+    }
+
 }

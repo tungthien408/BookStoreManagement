@@ -1,121 +1,91 @@
 package DAO;
 
-import DTO.PhieuNhapDTO;
-import src.main.Service.Data;
-import src.main.Service.Lib;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import DTO.PhieuNhapDTO;
+import Service.Data;
+
 public class PhieuNhapDAO {
-    private int count = 0;
-
-    public String getID() {
-		count++;
-		Integer a = count;
-		String str = a.toString();
-		while (str.length() != 3)
-			str = "0" + str;
-		str = "NP" + str;
-		return str;
-	}
-
-
-    // Lấy phiếu nhập theo mã
-    public PhieuNhapDTO getPhieuNhapByID(String maPN) throws SQLException {
-        String query = "SELECT * FROM phieunhap WHERE MAPN = ?";
-        
+    // Thêm một phiếu nhập mới
+    public boolean create(PhieuNhapDTO phieuNhap) {
+        String sql = "INSERT INTO phieunhap (MAPN, MANV, NgayNhap, TongTien, MANXB, trangThaiXoa) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, phieuNhap.getMaPN());
+            stmt.setString(2, phieuNhap.getMaNV());
+            stmt.setDate(3, phieuNhap.getNgayNhap());
+            stmt.setDouble(4, phieuNhap.getTongTien());
+            stmt.setString(5, phieuNhap.getMaNXB());
+            stmt.setInt(6, phieuNhap.getTrangThaiXoa());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
+    // Lấy tất cả phiếu nhập chưa bị xóa (trangThaiXoa = 0)
+    public List<PhieuNhapDTO> getAll() {
+        List<PhieuNhapDTO> list = new ArrayList<>();
+        String sql = "SELECT * FROM phieunhap WHERE trangThaiXoa = 0";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                PhieuNhapDTO phieuNhap = new PhieuNhapDTO();
+                phieuNhap.setMaPN(rs.getString("MAPN"));
+                phieuNhap.setMaNV(rs.getString("MANV"));
+                phieuNhap.setNgayNhap(rs.getDate("NgayNhap"));
+                phieuNhap.setTongTien(rs.getDouble("TongTien"));
+                phieuNhap.setMaNXB(rs.getString("MANXB"));
+                phieuNhap.setTrangThaiXoa(rs.getInt("trangThaiXoa"));
+                list.add(phieuNhap);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // Lấy phiếu nhập theo MAPN
+    public PhieuNhapDTO getByMaPN(String maPN) {
+        String sql = "SELECT * FROM phieunhap WHERE MAPN = ? AND trangThaiXoa = 0";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maPN);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return getPhieuNhapInfo(rs);
+                    PhieuNhapDTO phieuNhap = new PhieuNhapDTO();
+                    phieuNhap.setMaPN(rs.getString("MAPN"));
+                    phieuNhap.setMaNV(rs.getString("MANV"));
+                    phieuNhap.setNgayNhap(rs.getDate("NgayNhap"));
+                    phieuNhap.setTongTien(rs.getDouble("TongTien"));
+                    phieuNhap.setMaNXB(rs.getString("MANXB"));
+                    phieuNhap.setTrangThaiXoa(rs.getInt("trangThaiXoa"));
+                    return phieuNhap;
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
         return null;
     }
 
-    // Lấy danh sách tất cả phiếu nhập
-    public List<PhieuNhapDTO> getAllPhieuNhap() throws SQLException {
-        List<PhieuNhapDTO> dsPhieuNhap = new ArrayList<>();
-        String query = "SELECT * FROM phieunhap";
-
+    // Cập nhật thông tin phiếu nhập
+    public boolean delete(String maPN) {
+        String sql = "UPDATE phieunhap SET trangThaiXoa = 1 WHERE MAPN = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-            
-            while (rs.next()) {
-                dsPhieuNhap.add(getPhieuNhapInfo(rs));
-            }
-        }
-        return dsPhieuNhap;
-    }
-
-    // Thêm phiếu nhập mới
-    public boolean addPhieuNhap(PhieuNhapDTO pn) throws SQLException {
-        String query = "INSERT INTO phieunhap (MAPN, MANV, NgayNhap, TongTien, MANXB) VALUES (?, ?, ?, ?, ?)";
-        
-        try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setString(1, getID());
-            stmt.setString(2, pn.getMaNV());
-            stmt.setDate(3, Lib.getDateNow()); // Ngày nhập tự động lấy thời gian hiện tại
-            stmt.setDouble(4, pn.getTongTien());
-            stmt.setString(5, pn.getMaNXB());
-
-            return stmt.executeUpdate() > 0;
-        }
-    }
-
-
-    // Xóa phiếu nhập
-    public boolean deletePhieuNhap(String maPN) throws SQLException {
-        String query = "DELETE FROM phieunhap WHERE MAPN = ?";
-        
-        try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maPN);
             return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
-
-    // Kiểm tra mã nhân viên & mã nhà xuất bản có tồn tại trước khi thêm phiếu nhập
-    public boolean isForeignKeyValid(String maNV, String maNXB) throws SQLException {
-        String queryNV = "SELECT 1 FROM nhanvien WHERE MANV = ?";
-        String queryNXB = "SELECT 1 FROM nhaxuatban WHERE MANXB = ?";
-
-        try (Connection conn = Data.getConnection();
-             PreparedStatement stmtNV = conn.prepareStatement(queryNV);
-             PreparedStatement stmtNXB = conn.prepareStatement(queryNXB)) {
-
-            stmtNV.setString(1, maNV);
-            ResultSet rsNV = stmtNV.executeQuery();
-            boolean nvExists = rsNV.next();
-            rsNV.close();
-
-            stmtNXB.setString(1, maNXB);
-            ResultSet rsNXB = stmtNXB.executeQuery();
-            boolean nxbExists = rsNXB.next();
-            rsNXB.close();
-
-            return nvExists && nxbExists; // Chỉ hợp lệ khi cả hai đều tồn tại
-        }
-    }
-
-    // Hàm hỗ trợ chuyển ResultSet thành PhieuNhapDTO
-    private PhieuNhapDTO getPhieuNhapInfo(ResultSet rs) throws SQLException {
-        return new PhieuNhapDTO(
-            rs.getString("MAPN"),
-            rs.getString("MANV"),
-            rs.getDate("NgayNhap"),
-            rs.getDouble("TongTien"),
-            rs.getString("MANXB")
-        );
-    }
-}

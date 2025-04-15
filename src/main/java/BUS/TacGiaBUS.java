@@ -1,40 +1,84 @@
 package BUS;
 
-import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
-import DAO.TacGiaDAO;
 
+import DAO.TacGiaDAO;
 import DTO.TacGiaDTO;
 
 public class TacGiaBUS {
-    TacGiaDAO TacGiaDAO = new TacGiaDAO();
+    private TacGiaDAO tacGiaDAO;
 
-    public TacGiaDTO getTacGiaByID(String nvma) throws SQLException {
-        return TacGiaDAO.getTacGiaByID(nvma);
+    public TacGiaBUS() {
+        tacGiaDAO = new TacGiaDAO();
     }
 
-    public TacGiaDTO getTacGiaBySDT(String sdtma) throws SQLException {
-        return TacGiaDAO.getTacGiaBySDT(sdtma);
+    // Thêm tác giả mới
+    public boolean addTacGia(TacGiaDTO tacGia) {
+        // Kiểm tra dữ liệu đầu vào
+        if (tacGia.getMaTG() == null || tacGia.getMaTG().trim().isEmpty()) {
+            throw new IllegalArgumentException("Mã tác giả không được để trống!");
+        }
+        if (tacGia.getTenTG() == null || tacGia.getTenTG().trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên tác giả không được để trống!");
+        }
+        if (tacGia.getSdt() != null && !tacGia.getSdt().matches("\\d{10}")) {
+            throw new IllegalArgumentException("Số điện thoại phải có đúng 10 chữ số!");
+        }
+
+        // Kiểm tra xem MATG đã tồn tại chưa
+        TacGiaDTO existing = tacGiaDAO.getByMaTG(tacGia.getMaTG());
+        if (existing != null) {
+            throw new IllegalArgumentException("Mã tác giả đã tồn tại!");
+        }
+
+        // Gọi DAO để thêm
+        return tacGiaDAO.create(tacGia);
     }
 
-    public boolean addTacGia(TacGiaDTO nv) throws SQLException {
-        return TacGiaDAO.addTacGia(nv);
+    // Lấy danh sách tác giả
+    public List<TacGiaDTO> getAllTacGia() {
+        return tacGiaDAO.getAll();
     }
 
-    public boolean updateTacGia(TacGiaDTO nv) throws SQLException {
-        return TacGiaDAO.updateTacGia(nv); // Gọi DAO để cập nhật
-    }
-    
-    public boolean deleteTacGia(String nvma) throws SQLException {
-        return TacGiaDAO.deleteTacGia(nvma);
-    }
-
-    public List<TacGiaDTO> getAllTacGia() throws SQLException {
-        return TacGiaDAO.getAllTacGia();
+    // Lấy tác giả theo MATG
+    public TacGiaDTO getTacGiaByMaTG(String maTG) {
+        if (maTG == null || maTG.trim().isEmpty()) {
+            throw new IllegalArgumentException("Mã tác giả không được để trống!");
+        }
+        return tacGiaDAO.getByMaTG(maTG);
     }
 
-    public boolean isSDTvsIDExists(String nvsdt,String maTG) throws SQLException {
-        return TacGiaDAO.isSDTvsIDExists(nvsdt,maTG);
+    // Cập nhật tác giả
+    public boolean updateTacGia(TacGiaDTO tacGia) {
+        if (tacGia.getMaTG() == null || tacGia.getMaTG().trim().isEmpty()) {
+            throw new IllegalArgumentException("Mã tác giả không được để trống!");
+        }
+        if (tacGia.getTenTG() == null || tacGia.getTenTG().trim().isEmpty()) {
+            throw new IllegalArgumentException("Tên tác giả không được để trống!");
+        }
+        if (tacGia.getSdt() != null && !tacGia.getSdt().matches("\\d{10}")) {
+            throw new IllegalArgumentException("Số điện thoại phải có đúng 10 chữ số!");
+        }
+        return tacGiaDAO.update(tacGia);
     }
 
+    // Xóa tác giả (xóa mềm)
+    public boolean deleteTacGia(String maTG) {
+        if (maTG == null || maTG.trim().isEmpty()) {
+            throw new IllegalArgumentException("Mã tác giả không được để trống!");
+        }
+        return tacGiaDAO.delete(maTG);
+    }
+
+    // Tìm kiếm tác giả theo tên (gần đúng)
+    public List<TacGiaDTO> searchByTenTG(String tenTG) {
+        List<TacGiaDTO> result = new ArrayList<>();
+        for (TacGiaDTO tg : tacGiaDAO.getAll()) {
+            if (tg.getTenTG().toLowerCase().contains(tenTG.toLowerCase())) {
+                result.add(tg);
+            }
+        }
+        return result;
+    }
 }

@@ -8,20 +8,23 @@ public class PhieuNhapDTO {
     private Date ngayNhap;
     private double tongTien;
     private String maNXB;
+    private int trangThaiXoa;
 
-    // Constructor không tham số
-    public PhieuNhapDTO() {}
+    // Constructor mặc định
+    public PhieuNhapDTO() {
+    }
 
-    // Constructor có tham số
-    public PhieuNhapDTO(String maPN, String maNV, Date ngayNhap, double tongTien, String maNXB) {
+    // Constructor đầy đủ
+    public PhieuNhapDTO(String maPN, String maNV, Date ngayNhap, double tongTien, String maNXB, int trangThaiXoa) {
         this.maPN = maPN;
         this.maNV = maNV;
         this.ngayNhap = ngayNhap;
         this.tongTien = tongTien;
         this.maNXB = maNXB;
+        this.trangThaiXoa = trangThaiXoa;
     }
 
-    // Getter và Setter
+    // Getters và Setters
     public String getMaPN() {
         return maPN;
     }
@@ -61,4 +64,14 @@ public class PhieuNhapDTO {
     public void setMaNXB(String maNXB) {
         this.maNXB = maNXB;
     }
+
+    public int getTrangThaiXoa() {
+        return trangThaiXoa;
+    }
+
+    public void setTrangThaiXoa(int trangThaiXoa) {
+        this.trangThaiXoa = trangThaiXoa;
+    }
+
+
 }

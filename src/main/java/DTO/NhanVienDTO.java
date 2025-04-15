@@ -1,27 +1,34 @@
 package DTO;
 
+import java.sql.Date;
+
 public class NhanVienDTO {
     private String maNV;
     private String hoTen;
     private String chucVu;
     private String diaChi;
     private String sdt;
-    private String ngaySinh;
+    private String cccd;
+    private Date ngaySinh;
+    private int trangThaiXoa;
 
-    // Constructor không tham số
-    public NhanVienDTO() {}
+    // Constructor mặc định
+    public NhanVienDTO() {
+    }
 
-    // Constructor đầy đủ tham số
-    public NhanVienDTO(String maNV, String hoTen, String chucVu, String diaChi, String sdt, String ngaySinh) {
+    // Constructor đầy đủ
+    public NhanVienDTO(String maNV, String hoTen, String chucVu, String diaChi, String sdt, String cccd, Date ngaySinh, int trangThaiXoa) {
         this.maNV = maNV;
         this.hoTen = hoTen;
         this.chucVu = chucVu;
         this.diaChi = diaChi;
         this.sdt = sdt;
+        this.cccd = cccd;
         this.ngaySinh = ngaySinh;
+        this.trangThaiXoa = trangThaiXoa;
     }
 
-    // Getter và Setter
+    // Getters và Setters
     public String getMaNV() {
         return maNV;
     }
@@ -62,13 +69,28 @@ public class NhanVienDTO {
         this.sdt = sdt;
     }
 
-    public String getNgaySinh() {
+    public String getCccd() {
+        return cccd;
+    }
+
+    public void setCccd(String cccd) {
+        this.cccd = cccd;
+    }
+
+    public Date getNgaySinh() {
         return ngaySinh;
     }
 
-    public void setNgaySinh(String ngaySinh) {
+    public void setNgaySinh(Date ngaySinh) {
         this.ngaySinh = ngaySinh;
     }
 
+    public int getTrangThaiXoa() {
+        return trangThaiXoa;
+    }
+
+    public void setTrangThaiXoa(int trangThaiXoa) {
+        this.trangThaiXoa = trangThaiXoa;
+    }
 
 }

@@ -1,25 +1,30 @@
 package DTO;
 
-import java.util.Date;
+import java.sql.Date;
 
 public class HoaDonDTO {
     private String maHD;
     private String maNV;
-    private String sdt;
+    private String maKH;
     private Date ngayBan;
     private int tongTien;
+    private int trangThaiXoa;
 
+    // Constructor mặc định
     public HoaDonDTO() {
     }
 
-    public HoaDonDTO(String maHD, String maNV, String sdt, Date ngayBan, int tongTien) {
+    // Constructor đầy đủ
+    public HoaDonDTO(String maHD, String maNV, String maKH, Date ngayBan, int tongTien, int trangThaiXoa) {
         this.maHD = maHD;
         this.maNV = maNV;
-        this.sdt = sdt;
+        this.maKH = maKH;
         this.ngayBan = ngayBan;
         this.tongTien = tongTien;
+        this.trangThaiXoa = trangThaiXoa;
     }
 
+    // Getters và Setters
     public String getMaHD() {
         return maHD;
     }
@@ -36,12 +41,12 @@ public class HoaDonDTO {
         this.maNV = maNV;
     }
 
-    public String getSdt() {
-        return sdt;
+    public String getMaKH() {
+        return maKH;
     }
 
-    public void setSdt(String sdt) {
-        this.sdt = sdt;
+    public void setMaKH(String maKH) {
+        this.maKH = maKH;
     }
 
     public Date getNgayBan() {
@@ -60,4 +65,11 @@ public class HoaDonDTO {
         this.tongTien = tongTien;
     }
 
+    public int getTrangThaiXoa() {
+        return trangThaiXoa;
+    }
+
+    public void setTrangThaiXoa(int trangThaiXoa) {
+        this.trangThaiXoa = trangThaiXoa;
+    }
 }

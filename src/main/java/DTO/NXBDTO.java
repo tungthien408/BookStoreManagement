@@ -1,21 +1,25 @@
 package DTO;
-
 public class NXBDTO {
     private String maNXB;
     private String tenNXB;
     private String diaChi;
     private String sdt;
+    private int trangThaiXoa;
 
+    // Constructor mặc định
     public NXBDTO() {
     }
 
-    public NXBDTO(String maNXB, String tenNXB, String diaChi, String sdt) {
+    // Constructor đầy đủ
+    public NXBDTO(String maNXB, String tenNXB, String diaChi, String sdt, int trangThaiXoa) {
         this.maNXB = maNXB;
         this.tenNXB = tenNXB;
         this.diaChi = diaChi;
         this.sdt = sdt;
+        this.trangThaiXoa = trangThaiXoa;
     }
 
+    // Getters và Setters
     public String getMaNXB() {
         return maNXB;
     }
@@ -46,6 +50,14 @@ public class NXBDTO {
 
     public void setSdt(String sdt) {
         this.sdt = sdt;
+    }
+
+    public int getTrangThaiXoa() {
+        return trangThaiXoa;
+    }
+
+    public void setTrangThaiXoa(int trangThaiXoa) {
+        this.trangThaiXoa = trangThaiXoa;
     }
 
 }

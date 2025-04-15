@@ -94,7 +94,7 @@ public class TacGiaGUI {
         table.setDefaultEditor(Object.class, null); // Không cho chỉnh sửa trực tiếp trên bảng
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(850, 340));
-
+        
         // Thêm MouseListener cho bảng
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -205,7 +205,7 @@ public class TacGiaGUI {
                 count = Integer.parseInt(numericPart)+1;
                 
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi làm mới bảng: " + e.getMessage());
         }
@@ -251,7 +251,7 @@ public class TacGiaGUI {
                 } else {
                     JOptionPane.showMessageDialog(null, "Thêm tác giả thất bại!");
                 }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Lỗi khi thêm tác giả: " + e.getMessage());
             }

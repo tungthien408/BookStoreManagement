@@ -5,17 +5,22 @@ public class TacGiaDTO {
     private String tenTG;
     private String diaChi;
     private String sdt;
+    private int trangThaiXoa;
 
+    // Constructor mặc định
     public TacGiaDTO() {
     }
 
-    public TacGiaDTO(String maTG, String tenTG, String diaChi, String sdt) {
+    // Constructor đầy đủ
+    public TacGiaDTO(String maTG, String tenTG, String diaChi, String sdt, int trangThaiXoa) {
         this.maTG = maTG;
         this.tenTG = tenTG;
         this.diaChi = diaChi;
         this.sdt = sdt;
+        this.trangThaiXoa = trangThaiXoa;
     }
 
+    // Getters và Setters
     public String getMaTG() {
         return maTG;
     }
@@ -46,6 +51,14 @@ public class TacGiaDTO {
 
     public void setSdt(String sdt) {
         this.sdt = sdt;
+    }
+
+    public int getTrangThaiXoa() {
+        return trangThaiXoa;
+    }
+
+    public void setTrangThaiXoa(int trangThaiXoa) {
+        this.trangThaiXoa = trangThaiXoa;
     }
 
 }

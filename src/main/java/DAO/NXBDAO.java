@@ -1,113 +1,104 @@
 package DAO;
-
-import DTO.NXBDTO;
-import src.main.Service.Data;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import DTO.NXBDTO;
+import Service.Data;
+
 public class NXBDAO {
-
-    public NXBDTO getNXBBySDT(String sdt) throws SQLException {
-        String query = "SELECT MaNXB, TenNXB, DiaChi, SDT FROM nhaxuatban WHERE SDT = ?";
-        return getNXB(query, sdt);
-    }
-
-    public NXBDTO getNXBByID(String maNXB) throws SQLException {
-        String query = "SELECT MaNXB, TenNXB, DiaChi, SDT FROM nhaxuatban WHERE MaNXB = ?";
-        return getNXB(query, maNXB);
-    }
-
-    // Hàm chung để giảm trùng lặp
-    private NXBDTO getNXB(String query, String value) throws SQLException {
+    // Thêm một nhà xuất bản mới
+    public boolean create(NXBDTO nxb) {
+        String sql = "INSERT INTO nhaxuatban (MANXB, TenNXB, DiaChi, SDT, trangThaiXoa) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-             
-            stmt.setString(1, value);
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next() ? getNXBInfo(rs) : null;
-            }
-        }
-    }
-
-    private NXBDTO getNXBInfo(ResultSet rs) throws SQLException {
-        return new NXBDTO(
-            rs.getString("MaNXB"),
-            rs.getString("TenNXB"),
-            rs.getString("DiaChi"),
-            rs.getString("SDT")
-        );
-    }
-
-    public boolean isSDTvsIDExists(String sdt, String maNXB) throws SQLException {
-        String query = "SELECT 1 FROM nhaxuatban WHERE SDT = ? AND MaNXB = ? LIMIT 1";
-        
-        try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-             
-            stmt.setString(1, sdt);
-            stmt.setString(2, maNXB);
-            try (ResultSet rs = stmt.executeQuery()) {
-                return rs.next();
-            }
-        }
-    }
-
-    public boolean addNXB(NXBDTO nxb) throws SQLException {
-        String query = "INSERT INTO nhaxuatban (MaNXB, TenNXB, DiaChi, SDT) VALUES (?, ?, ?, ?)";
-        
-        try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-             
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nxb.getMaNXB());
             stmt.setString(2, nxb.getTenNXB());
             stmt.setString(3, nxb.getDiaChi());
             stmt.setString(4, nxb.getSdt());
-
+            stmt.setInt(5, nxb.getTrangThaiXoa());
             return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    public boolean updateNXB(NXBDTO nxb) throws SQLException {
-        String query = "UPDATE nhaxuatban SET TenNXB = ?, DiaChi = ?, SDT = ? WHERE MaNXB = ?";
-        
+    // Lấy tất cả nhà xuất bản chưa bị xóa (trangThaiXoa = 0)
+    public List<NXBDTO> getAll() {
+        List<NXBDTO> list = new ArrayList<>();
+        String sql = "SELECT * FROM nhaxuatban WHERE trangThaiXoa = 0";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-             
+             PreparedStatement stmt = conn.prepareStatement(sql);
+             ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                NXBDTO nxb = new NXBDTO();
+                nxb.setMaNXB(rs.getString("MANXB"));
+                nxb.setTenNXB(rs.getString("TenNXB"));
+                nxb.setDiaChi(rs.getString("DiaChi"));
+                nxb.setSdt(rs.getString("SDT"));
+                nxb.setTrangThaiXoa(rs.getInt("trangThaiXoa"));
+                list.add(nxb);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
+    // Lấy nhà xuất bản theo MANXB
+    public NXBDTO getByMaNXB(String maNXB) {
+        String sql = "SELECT * FROM nhaxuatban WHERE MANXB = ? AND trangThaiXoa = 0";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, maNXB);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    NXBDTO nxb = new NXBDTO();
+                    nxb.setMaNXB(rs.getString("MANXB"));
+                    nxb.setTenNXB(rs.getString("TenNXB"));
+                    nxb.setDiaChi(rs.getString("DiaChi"));
+                    nxb.setSdt(rs.getString("SDT"));
+                    nxb.setTrangThaiXoa(rs.getInt("trangThaiXoa"));
+                    return nxb;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    // Cập nhật thông tin nhà xuất bản
+    public boolean update(NXBDTO nxb) {
+        String sql = "UPDATE nhaxuatban SET TenNXB = ?, DiaChi = ?, SDT = ?, trangThaiXoa = ? WHERE MANXB = ?";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nxb.getTenNXB());
             stmt.setString(2, nxb.getDiaChi());
             stmt.setString(3, nxb.getSdt());
-            stmt.setString(4, nxb.getMaNXB());
-
+            stmt.setInt(4, nxb.getTrangThaiXoa());
+            stmt.setString(5, nxb.getMaNXB());
             return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    public boolean deleteNXB(String maNXB) throws SQLException {
-        String query = "DELETE FROM nhaxuatban WHERE MaNXB = ?";
-        
+    // Xóa mềm (cập nhật trangThaiXoa = 1)
+    public boolean delete(String maNXB) {
+        String sql = "UPDATE nhaxuatban SET trangThaiXoa = 1 WHERE MANXB = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-             
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maNXB);
             return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-    }
-
-    public List<NXBDTO> getAllNXB() throws SQLException {
-        List<NXBDTO> dsNXB = new ArrayList<>();
-        String query = "SELECT MaNXB, TenNXB, DiaChi, SDT FROM nhaxuatban";
-        
-        try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
-             ResultSet rs = stmt.executeQuery()) {
-             
-            while (rs.next()) {
-                dsNXB.add(getNXBInfo(rs));
-            }
-        }
-        
-        return dsNXB;
     }
 }

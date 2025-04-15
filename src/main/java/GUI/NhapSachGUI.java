@@ -4,21 +4,27 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.sql.SQLException;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.table.DefaultTableModel;
 
 import BUS.ChiTietPhieuNhapBUS;
 import BUS.NXBBUS;
 import BUS.NhanVienBUS;
 import BUS.PhieuNhapBUS;
 import BUS.SachBUS;
+import DTO.ChiTietPhieuNhapDTO;
+import DTO.SachDTO;
 
 public class NhapSachGUI {
     Tool tool = new Tool();
@@ -26,87 +32,108 @@ public class NhapSachGUI {
     int width = 1200;
     int width_sideMenu = 151;
     int height = (int)(width * 0.625);
-    // JTextField txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total, txt_name, txt_quantity;
+    JTextField txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total, txt_name, txt_quantity;
     JButton[] buttons = new JButton[3];
-    JTextField[] txt_array_top = new JTextField[5];
-    JTextField[] txt_array_down = new JTextField[2];
+    JTable table_down,table_top;
     private PhieuNhapBUS phieuNhapBUS;
-    private ChiTietPhieuNhapBUS chiTietPhieuNhapBUS;
     private NXBBUS nhaXuatBanBUS;
     private SachBUS sachBUS;
     private NhanVienBUS nhanVienBUS;
+    private ChiTietPhieuNhapBUS chiTietPhieuNhapBUS;
 
-         // fake data
-    String tableContent_book[][] = {
-        {"S001", "Book A", "10", "100"},
-        {"S002", "Book B", "15", "150"},
-        {"S003", "Book C",  "20", "200"},
-        {"S004", "Book D",  "25", "250"},
-        {"S005", "Book E", "30", "300"},
-        {"S006", "Book F", "35", "350"},
-        {"S007", "Book G", "40", "400"},
-        {"S008", "Book H",  "45", "450"},
-        {"S009", "Book I",  "50", "500"},
-        {"S010", "Book J",  "55", "550"},
-        {"S011", "Book K", "60", "600"},
-        {"S012", "Book L", "65", "650"},
-        {"S013", "Book M",  "70", "700"},
-        {"S040", "Book AN", "205", "2050"}      
-    };
-    String nameField_book[] = {"Mã sách", "Tên sách", "Số lượng", "Đơn giá"};
+    List<SachDTO> sachList;
+    List<ChiTietPhieuNhapDTO> chiTietPhieuNhapList;
+
 
     public NhapSachGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel.add(createSearchPanel(), BorderLayout.NORTH); // search panel
-   
-        // table
-        panel.add(createTable(650, 10,tableContent_book, nameField_book), BorderLayout.WEST);
+        
+        // table_top
+        panel.add(createTable_top(), BorderLayout.WEST);
 
         // detail (top right)
-        // JTextField txt_array_top[] = {txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total};
-        txt_array_top[0] = new JTextField(20);
-        txt_array_top[1] = new JTextField(20);
-        txt_array_top[2] = new JTextField(20);
-        txt_array_top[3] = new JTextField(20);
-        
+        JTextField txt_array_top[] = {txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total};
         String txt_label_top[] = {"Mã phiếu nhập", "Mã NV", "NXB", "Ngày nhập", "Tổng tiền"};
         panel.add(createDetailPanel(400, 30, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
         
-        txt_array_down[0] = new JTextField(20);
-        txt_array_down[1] = new JTextField(20);
         JPanel paymentPanel = tool.createPanel(width - width_sideMenu, (int)(height * 0.55), new BorderLayout());
-        // JTextField txt_array[] = {txt_name, txt_quantity};
-        String[] txt_label_down = {"Tên sách", "Số lượng"};
+        JTextField txt_array[] = {txt_name, txt_quantity};
+        String[] txt_label = {"Tên sách", "Số lượng"};
         // detail (bottom right)
-paymentPanel.add(createDetailPanel(500, 10, txt_array_down, txt_label_down, new ImageIcon("images/Book/the_little_prince.jpg")), BorderLayout.WEST);
+        paymentPanel.add(createDetailPanel(500, 10, txt_array, txt_label, new ImageIcon("images/Book/the_little_prince.jpg")), BorderLayout.WEST);
         
         // buttons
         paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
         
-        String tableContent_payment[][] = {
-            {"S041", "Book AO", "5", "500"},
-            {"S042", "Book AP", "10", "1000"},
-            {"S043", "Book AQ", "15", "1500"},
-            {"S044", "Book AR", "20", "2000"},
-            {"S045", "Book AS", "25", "2500"},
-            {"S041", "Book AO", "5", "500"},
-            {"S042", "Book AP", "10", "1000"},
-            {"S043", "Book AQ", "15", "1500"},
-            {"S044", "Book AR", "20", "2000"},
-            {"S045", "Book AS", "25", "2500"}
-        };
-        paymentPanel.add(createTable(500, 20, tableContent_payment, nameField_book), BorderLayout.EAST);
+        paymentPanel.add(createTable_down(), BorderLayout.EAST);
         panel.add(paymentPanel, BorderLayout.SOUTH);
 
     }
 
-    private JPanel createTable(int width, int padding_top, String tableContent[][], String[] nameField) {
-        JTable table = tool.createTable(tableContent, nameField);
-        JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(width, 300));
+    private JPanel createTable_top() {
+        String column[] = {"Mã sách", "Tên sách", "Số lượng", "Đơn giá"};
+        DefaultTableModel model = new DefaultTableModel(column, 0);
+                // Lấy dữ liệu từ cơ sở dữ liệu
+        try {
+            sachList = sachBUS.getAllSach();
+            for (SachDTO sach : sachList) {
+                model.addRow(new Object[]{
+                    sach.getMaSach(),
+                    sach.getTenSach(),
+                    sach.getSoLuong(),
+                    sach.getDonGia()
+                    
+                });
+            }
 
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu từ cơ sở dữ liệu: " + e.getMessage());
+        }
+        // Bảng
+        table_top = new JTable(model);
+        table_top.setDefaultEditor(Object.class, null); // Không cho chỉnh sửa trực tiếp trên bảng
+        JScrollPane scrollPane = new JScrollPane(table_top);
+        scrollPane.setPreferredSize(new Dimension(650, 300));
         // Tạo khoảng cách xung quanh bảng
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(padding_top, 10, 10, 10)); // Top, Left, Bottom, Right
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Top, Left, Bottom, Right
+        
+        // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
+        JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelTable.add(scrollPane);
+        return panelTable;
+    }
+
+    private JPanel createTable_down() {
+        String column[] = {"Mã PN","Mã sách", "Số lượng", "Đơn giá"};
+        DefaultTableModel model = new DefaultTableModel(column, 0);
+                // Lấy dữ liệu từ cơ sở dữ liệu
+        try {
+            chiTietPhieuNhapList = chiTietPhieuNhapBUS.getAllChiTietPhieuNhap();
+            for (ChiTietPhieuNhapDTO chiTietPhieuNhap : chiTietPhieuNhapList) {
+                model.addRow(new Object[]{
+                    chiTietPhieuNhap.getMaPN(),
+                    chiTietPhieuNhap.getMaSach(),
+                    chiTietPhieuNhap.getSoLuong(),
+                    chiTietPhieuNhap.getGiaNhap()
+                    
+                });
+            }
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu từ cơ sở dữ liệu: " + e.getMessage());
+        }
+        // Bảng
+        table_down = new JTable(model);
+        table_down.setDefaultEditor(Object.class, null); // Không cho chỉnh sửa trực tiếp trên bảng
+        JScrollPane scrollPane = new JScrollPane(table_down);
+        scrollPane.setPreferredSize(new Dimension(500, 300));
+        // Tạo khoảng cách xung quanh bảng
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10)); // Top, Left, Bottom, Right
         
         // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -125,19 +152,14 @@ paymentPanel.add(createDetailPanel(500, 10, txt_array_down, txt_label_down, new 
 
     private JPanel createButtonPanel() {
         String[] buttonTexts = {"Thêm", "Xóa", "Thanh toán"};
-        // // Khai báo và khởi tạo mảng JButton[]
-        // buttons[0] = new JButton("Thêm");
-        // buttons[1] = new JButton("Xóa");
-        // buttons[2] = new JButton("Thanh toán");
-
-        // // Gắn sự kiện cho các nút
-        // buttons[0].addActionListener(e -> addPhieuNhap());
-        // buttons[1].addActionListener(e -> deletePhieuNhap());
-        // buttons[2].addActionListener(e -> thanhtoan());
-        
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        buttonPanel.add(tool.createButtonPanel(buttons,buttonTexts,new Color(0, 36, 107), Color.WHITE, "x"));
+        buttonPanel.add(tool.createButtonPanel(buttons, buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 110, 25));
+
+        // khởi tạo event cho các buttons 
+        buttons[0].addActionListener(e -> addChiTietPhieuNhap());
+        buttons[1].addActionListener(e -> deleteChiTietPhieuNhap());
+        buttons[2].addActionListener(e -> thanhToan());
         return buttonPanel;
     }
 

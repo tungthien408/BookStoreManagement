@@ -1,126 +1,138 @@
 package DAO;
-
-import DTO.ChiTietHoaDonDTO;
-import src.main.Service.Data;
-
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import DTO.ChiTietHoaDonDTO;
+import Service.Data;
+
 public class ChiTietHoaDonDAO {
-
-    // Thêm chi tiết hóa đơn
-    public boolean addChiTietHoaDon(ChiTietHoaDonDTO cthd) throws SQLException {
-        String query = "INSERT INTO chitiethoadon (MASACH, MAHD, SoLuong, Gia) VALUES (?, ?, ?, ?)";
-
+    // Thêm một chi tiết hóa đơn mới
+    public boolean create(ChiTietHoaDonDTO chiTiet) {
+        String sql = "INSERT INTO chitiethoadon (MASACH, MAHD, SoLuong, Gia) VALUES (?, ?, ?, ?)";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
-            stmt.setString(1, cthd.getMaSach());
-            stmt.setString(2, cthd.getMaHD());
-            stmt.setInt(3, cthd.getSoLuong());
-            stmt.setInt(4, cthd.getGia());
-
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, chiTiet.getMaSach());
+            stmt.setString(2, chiTiet.getMaHD());
+            stmt.setInt(3, chiTiet.getSoLuong());
+            stmt.setInt(4, chiTiet.getGia());
             return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    // // Lấy danh sách chi tiết hóa đơn theo mã hóa đơn
-    // public List<ChiTietHoaDonDTO> getChiTietHoaDonByMaHD(String maHD) throws SQLException {
-    //     List<ChiTietHoaDonDTO> dsCTHD = new ArrayList<>();
-    //     String query = """
-    //         SELECT MASACH, MAHD, SoLuong, Gia 
-    //         FROM chitiethoadon 
-    //         WHERE MAHD = ?
-    //     """;
-
-    //     try (Connection conn = Data.getConnection();
-    //             PreparedStatement stmt = conn.prepareStatement(query)) {
-    //         stmt.setString(1, maHD);
-    //         try (ResultSet rs = stmt.executeQuery()) {
-    //             while (rs.next()) {
-    //                 ChiTietHoaDonDTO cthd = new ChiTietHoaDonDTO(
-    //                     rs.getString("MASACH"),
-    //                     rs.getString("MAHD"),
-    //                     rs.getInt("SoLuong"),
-    //                     rs.getInt("Gia")
-    //                 );
-    //                 dsCTHD.add(cthd);
-    //             }
-    //         }
-    //     }
-    //     return dsCTHD;
-    // }
-    
-
-    // Lấy danh sách tất cả chi tiết hóa đơn
-    public List<ChiTietHoaDonDTO> getAllChiTietHoaDon() throws SQLException {
-        List<ChiTietHoaDonDTO> dsCTHD = new ArrayList<>();
-        String query = "SELECT * FROM chitiethoadon";
-
+    // Lấy tất cả chi tiết hóa đơn
+    public List<ChiTietHoaDonDTO> getAll() {
+        List<ChiTietHoaDonDTO> list = new ArrayList<>();
+        String sql = "SELECT * FROM chitiethoadon";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query);
+             PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
-
             while (rs.next()) {
-                dsCTHD.add(getChiTietHoaDonInfo(rs));
+                ChiTietHoaDonDTO chiTiet = new ChiTietHoaDonDTO();
+                chiTiet.setMaSach(rs.getString("MASACH"));
+                chiTiet.setMaHD(rs.getString("MAHD"));
+                chiTiet.setSoLuong(rs.getInt("SoLuong"));
+                chiTiet.setGia(rs.getInt("Gia"));
+                list.add(chiTiet);
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return dsCTHD;
+        return list;
     }
 
-    // Lấy danh sách chi tiết hóa đơn theo mã hóa đơn
-    public List<ChiTietHoaDonDTO> getChiTietHoaDonByMaHD(String maHD) throws SQLException {
-        List<ChiTietHoaDonDTO> dsCTHD = new ArrayList<>();
-        String query = "SELECT * FROM chitiethoadon WHERE MAHD = ?";
-
+    // Lấy chi tiết hóa đơn theo MAHD và MASACH
+    public ChiTietHoaDonDTO getByMaHDAndMaSach(String maHD, String maSach) {
+        String sql = "SELECT * FROM chitiethoadon WHERE MAHD = ? AND MASACH = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, maHD);
+            stmt.setString(2, maSach);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    ChiTietHoaDonDTO chiTiet = new ChiTietHoaDonDTO();
+                    chiTiet.setMaSach(rs.getString("MASACH"));
+                    chiTiet.setMaHD(rs.getString("MAHD"));
+                    chiTiet.setSoLuong(rs.getInt("SoLuong"));
+                    chiTiet.setGia(rs.getInt("Gia"));
+                    return chiTiet;
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
+    // Lấy danh sách chi tiết hóa đơn theo MAHD
+    public List<ChiTietHoaDonDTO> getByMaHD(String maHD) {
+        List<ChiTietHoaDonDTO> list = new ArrayList<>();
+        String sql = "SELECT * FROM chitiethoadon WHERE MAHD = ?";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maHD);
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    dsCTHD.add(getChiTietHoaDonInfo(rs));
+                    ChiTietHoaDonDTO chiTiet = new ChiTietHoaDonDTO();
+                    chiTiet.setMaSach(rs.getString("MASACH"));
+                    chiTiet.setMaHD(rs.getString("MAHD"));
+                    chiTiet.setSoLuong(rs.getInt("SoLuong"));
+                    chiTiet.setGia(rs.getInt("Gia"));
+                    list.add(chiTiet);
                 }
             }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return dsCTHD;
+        return list;
     }
 
-    // Xóa chi tiết hóa đơn theo mã hóa đơn và mã sách
-    public boolean deleteChiTietHoaDon(String maHD, String maSach) throws SQLException {
-        String query = "DELETE FROM chitiethoadon WHERE MAHD = ? AND MASACH = ?";
-
+    // Cập nhật chi tiết hóa đơn
+    public boolean update(ChiTietHoaDonDTO chiTiet) {
+        String sql = "UPDATE chitiethoadon SET SoLuong = ?, Gia = ? WHERE MAHD = ? AND MASACH = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, chiTiet.getSoLuong());
+            stmt.setInt(2, chiTiet.getGia());
+            stmt.setString(3, chiTiet.getMaHD());
+            stmt.setString(4, chiTiet.getMaSach());
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 
+    // Xóa chi tiết hóa đơn
+    public boolean delete(String maHD, String maSach) {
+        String sql = "DELETE FROM chitiethoadon WHERE MAHD = ? AND MASACH = ?";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maHD);
             stmt.setString(2, maSach);
             return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 
-    // Kiểm tra tồn tại chi tiết hóa đơn
-    public boolean isChiTietHoaDonExists(String maHD, String maSach) throws SQLException {
-        String query = "SELECT 1 FROM chitiethoadon WHERE MAHD = ? AND MASACH = ?";
-
+    // Xóa tất cả chi tiết hóa đơn theo MAHD
+    public boolean deleteByMaHD(String maHD) {
+        String sql = "DELETE FROM chitiethoadon WHERE MAHD = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(query)) {
-
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maHD);
-            stmt.setString(2, maSach);
-            ResultSet rs = stmt.executeQuery();
-            return rs.next();
+            return stmt.executeUpdate() > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
-    }
-
-    // Hàm hỗ trợ chuyển ResultSet thành ChiTietHoaDonDTO
-    private ChiTietHoaDonDTO getChiTietHoaDonInfo(ResultSet rs) throws SQLException {
-        return new ChiTietHoaDonDTO(
-            rs.getString("MASACH"),
-            rs.getString("MAHD"),
-            rs.getInt("SoLuong"),
-            rs.getInt("Gia")
-        );
     }
 }
