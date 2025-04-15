@@ -56,4 +56,9 @@ public class ChiTietPhieuNhapBUS {
             e.printStackTrace();
         }
     }
+
+    // Lấy chi tiết  phiếu nhập theo mapn
+    public List<ChiTietPhieuNhapDTO> getChiTietPhieuNhapByMaPN(String maPN) throws SQLException {
+        return chiTietPhieuNhapDAO.getChiTietPhieuNhapByMaPN(maPN);
+    }
 }

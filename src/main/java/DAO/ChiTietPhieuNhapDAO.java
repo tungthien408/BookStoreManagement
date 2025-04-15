@@ -78,4 +78,25 @@ public class ChiTietPhieuNhapDAO {
         stmt.executeUpdate();
         stmt.close();
     }
+
+    // Lấy danh sách chi tiết phiếu nhập theo MAPN
+    public List<ChiTietPhieuNhapDTO> getChiTietPhieuNhapByMaPN(String maPN) throws SQLException {
+        List<ChiTietPhieuNhapDTO> list = new ArrayList<>();
+        String query = "SELECT * FROM CHITIETPHIEUNHAP WHERE MAPN = ?";
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, maPN);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    ChiTietPhieuNhapDTO ctpn = new ChiTietPhieuNhapDTO(
+                        rs.getString("MASACH"),
+                        rs.getString("MAPN"),
+                        rs.getInt("SoLuong"),
+                        rs.getInt("GiaNhap")
+                    );
+                    list.add(ctpn);
+                }
+            }
+        }
+        return list;
+    }
 }

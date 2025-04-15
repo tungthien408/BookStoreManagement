@@ -6,8 +6,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.SQLException;
-import java.time.chrono.JapaneseChronology;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -84,7 +82,7 @@ public class TacGiaGUI {
             }
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu từ cơ sở dữ liệu: " + e.getMessage());
         }
@@ -308,7 +306,7 @@ public class TacGiaGUI {
                 } else {
                     JOptionPane.showMessageDialog(null, "Sửa tác giả thất bại!");
                 }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Lỗi khi sửa tác giả: " + e.getMessage());
             }
@@ -353,7 +351,7 @@ public class TacGiaGUI {
                         cancel();
                     }
                 }
-            } catch (SQLException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Lỗi khi xóa tác giả: " + e.getMessage());
             }

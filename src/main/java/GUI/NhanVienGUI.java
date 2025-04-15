@@ -85,7 +85,7 @@ public class NhanVienGUI {
             }
 
 
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu từ cơ sở dữ liệu: " + e.getMessage());
         }
@@ -208,7 +208,7 @@ public class NhanVienGUI {
                 String numericPart = maNV.substring(2);
                 count = Integer.parseInt(numericPart)+1;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu từ cơ sở dữ liệu: " + e.getMessage());
         }

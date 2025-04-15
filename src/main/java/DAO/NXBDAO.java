@@ -93,7 +93,7 @@ public class NXBDAO {
     public boolean delete(String maNXB) {
         String sql = "UPDATE nhaxuatban SET trangThaiXoa = 1 WHERE MANXB = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maNXB);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
