@@ -1,16 +1,9 @@
 package DAO;
-<<<<<<< HEAD
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-=======
-
-import DTO.NhanVienDTO;
-import Service.Data;
-
-import java.sql.*;
->>>>>>> aca7c2bf1476c308987ef0a76dbf5134ba80777a
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +15,7 @@ public class NhanVienDAO {
     public boolean create(NhanVienDTO nhanVien) {
         String sql = "INSERT INTO nhanvien (MaNV, HoTen, ChucVu, DiaChi, SDT, Cccd, NgaySinh, trangThaiXoa) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nhanVien.getMaNV());
             stmt.setString(2, nhanVien.getHoTen());
             stmt.setString(3, nhanVien.getChucVu());
@@ -43,8 +36,8 @@ public class NhanVienDAO {
         List<NhanVienDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM nhanvien WHERE trangThaiXoa = 0";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 NhanVienDTO nhanVien = new NhanVienDTO();
                 nhanVien.setMaNV(rs.getString("MaNV"));
@@ -67,7 +60,7 @@ public class NhanVienDAO {
     public NhanVienDTO getByMaNV(String maNV) {
         String sql = "SELECT * FROM nhanvien WHERE MaNV = ? AND trangThaiXoa = 0";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maNV);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -93,7 +86,7 @@ public class NhanVienDAO {
     public boolean update(NhanVienDTO nhanVien) {
         String sql = "UPDATE nhanvien SET HoTen = ?, ChucVu = ?, DiaChi = ?, SDT = ?, Cccd = ?, NgaySinh = ?, trangThaiXoa = ? WHERE MaNV = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, nhanVien.getHoTen());
             stmt.setString(2, nhanVien.getChucVu());
             stmt.setString(3, nhanVien.getDiaChi());
@@ -113,7 +106,7 @@ public class NhanVienDAO {
     public boolean delete(String maNV) {
         String sql = "UPDATE nhanvien SET trangThaiXoa = 1 WHERE MaNV = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maNV);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
