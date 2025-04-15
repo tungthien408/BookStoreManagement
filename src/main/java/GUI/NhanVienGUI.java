@@ -246,6 +246,8 @@ public class NhanVienGUI {
                 nv.setSdt(txt_array[4].getText().trim());
                 nv.setNgaySinh(txt_array[5].getText().trim());
 
+                // bất hợp lí ở code 247
+
                 if (!checkValidate(nv)) {
                     return;
                 }
