@@ -1,8 +1,16 @@
 package DAO;
+<<<<<<< HEAD
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+=======
+
+import DTO.NhanVienDTO;
+import Service.Data;
+
+import java.sql.*;
+>>>>>>> aca7c2bf1476c308987ef0a76dbf5134ba80777a
 import java.util.ArrayList;
 import java.util.List;
 

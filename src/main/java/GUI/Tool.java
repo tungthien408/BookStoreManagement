@@ -81,6 +81,32 @@ public class Tool {
 		return table;
 	}
 
+	public JTable createTable(DefaultTableModel tableModel, String nameField[]) {
+		JTable table = new JTable(tableModel);
+		table.setRowHeight(30);
+
+		DefaultTableCellRenderer ob = new DefaultTableCellRenderer(); // Mục đích: Căn nội dung của bảng về giữa
+		ob.setHorizontalAlignment(SwingConstants.CENTER);
+		for (int i = 0; i < table.getColumnCount(); i++) {
+			table.getColumnModel().getColumn(i).setCellRenderer(ob);
+		}
+
+		table.setShowGrid(true);
+		table.setGridColor(Color.gray);
+		table.setFont(new Font("Arial", Font.PLAIN, 14));
+
+		JTableHeader header = table.getTableHeader();
+		header.setFont(new Font("Arial", Font.BOLD, 18));
+
+		table.setSelectionBackground(new Color(202, 220, 252));
+		// table.setRowSelectionAllowed(true);
+		// table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		// table.isRowSelected(row);
+
+		return table;
+	}
+
+
 	public JPanel createSearchTextField(int x, int y,String[] list) {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         

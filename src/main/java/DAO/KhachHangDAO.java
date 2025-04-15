@@ -90,9 +90,15 @@ public class KhachHangDAO {
         }
     }
 
+<<<<<<< HEAD
     // Xóa mềm (cập nhật trangThaiXoa = 1)
     public boolean delete(String maKH) {
         String sql = "UPDATE khachhang SET trangThaiXoa = 1 WHERE MAKH = ?";
+=======
+    public boolean updateKhachHang(KhachHangDTO kh) throws SQLException {
+        String query = "UPDATE khachhang SET HoTen = ?, Diem = ? WHERE SDT = ?"; // Lỗi
+        
+>>>>>>> aca7c2bf1476c308987ef0a76dbf5134ba80777a
         try (Connection conn = Data.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maKH);
