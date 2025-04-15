@@ -4,21 +4,27 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-
+import java.awt.Dimension;
 import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
+import javax.swing.JDialog;
 
 public class MenuGUI {
-    String array_function[] = {"Bán sách", "Nhập sách", "Sách", "Nhà xuất bản", "Tác giả", "Hóa đơn nhập", "Hóa đơn bán", "Khuyến mãi", "Khách hàng", "Nhân viên", "Tài khoản", "Phân quyền", "Thống kê"};
+    String array_function[] = { "Bán sách", "Nhập sách", "Sách", "Nhà xuất bản", "Tác giả", "Hóa đơn nhập",
+            "Hóa đơn bán", "Khuyến mãi", "Khách hàng", "Nhân viên", "Tài khoản", "Phân quyền", "Thống kê",
+            "Đăng xuất" };
     // ArrayList <JPanel> panel_content = new ArrayList<>();
     JPanel panel_content[];
     JPanel menuContent;
@@ -29,31 +35,34 @@ public class MenuGUI {
         Tool tool = new Tool();
         int length = array_function.length;
         int width = 1200;
-        int height = (int)(width * 0.625);
+        int height = (int) (width * 0.625);
 
         JFrame frame = tool.createFrame("Book Shop Management", 1200, null);
         JPanel mainPanel = tool.createPanel(width, height, new BorderLayout());
         panel_content = new JPanel[length];
 
-        JPanel sideMenu = new JPanel(new GridBagLayout()); // GridBagLayout() -> layout linh động nhất nhưng phức tạp nhất trong java swing
-        sideMenu.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0)); // xóa padding với margin mặc định của panel
+        JPanel sideMenu = new JPanel(new GridBagLayout()); // GridBagLayout() -> layout linh động nhất nhưng phức tạp
+                                                           // nhất trong java swing
+        sideMenu.setBorder(BorderFactory.createEmptyBorder(-20, 0, 0, 0)); // xóa padding với margin mặc định của panel
         sideMenu.setBackground(MENU_BACKGROUND);
-        
+        sideMenu.setPreferredSize(null);
+
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(10, 20, 10, 20);
         c.gridx = 0;
         c.gridy = 0;
-        c.weightx = 0.5;
-        c.weighty = 1.5;
+        // c.weightx = 0.5;
+        // c.weighty = 1.5;
         c.fill = GridBagConstraints.HORIZONTAL;
+        c.anchor = GridBagConstraints.NORTH;
 
         JPanel panel_logo = new JPanel(new BorderLayout());
-        panel_logo.setBackground(Color.GREEN);
+        panel_logo.setBackground(Color.RED);
         JLabel label_logo = new JLabel("Logo will be here");
         panel_logo.add(label_logo, BorderLayout.CENTER);
+        panel_logo.setPreferredSize(new Dimension(100, 80));
+        c.weighty = -5;
         sideMenu.add(panel_logo, c);
-
-        c.weighty = 0;
 
         for (int i = 0; i < length; i++) {
             switch (i) {
@@ -96,6 +105,9 @@ public class MenuGUI {
                 case 12:
                     panel_content[i] = new ThongKeGUI().getPanel();
                     break;
+                case 13:
+                    panel_content[i] = new DangXuatGUI().getPanel();
+                    break;
                 default:
                     panel_content[i] = new JPanel();
                     break;
@@ -107,6 +119,7 @@ public class MenuGUI {
         // Tạo từng module cho thanh menu bên trái
         for (int i = 0; i < length; i++) {
             c.gridy = i + 1;
+            c.weighty = 0;
             final int func = i;
 
             JPanel panel = new JPanel(new BorderLayout());
@@ -136,7 +149,22 @@ public class MenuGUI {
                         mainPanel.add(menuContent, BorderLayout.CENTER);
                         // refresh the UI
                         mainPanel.revalidate();
-                        mainPanel.repaint();    
+                        mainPanel.repaint();
+                    }
+                    if (array_function[func] == "Đăng xuất") {
+                        JOptionPane pane = new JOptionPane(
+                                "Bạn có muốn đăng xuất không?",
+                                JOptionPane.QUESTION_MESSAGE,
+                                JOptionPane.YES_NO_OPTION);
+                        JDialog dialog = pane.createDialog("Thông báo");
+                        dialog.setLocationRelativeTo(null); // Center on screen
+                        dialog.setVisible(true);
+
+                        Object value = pane.getValue();
+                        if (value != null && value.equals(JOptionPane.YES_OPTION)) {
+                            frame.dispose();
+                            new LoginGUIImproved();
+                        }
                     }
                 }
 
@@ -146,12 +174,16 @@ public class MenuGUI {
                 }
             });
             sideMenu.add(panel, c);
+            panel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         }
 
-        mainPanel.add(sideMenu, BorderLayout.WEST);
+        JScrollPane scrollPane = new JScrollPane(sideMenu);
+        scrollPane.setBorder(null);
+        scrollPane.setPreferredSize(new Dimension(160, height));
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        mainPanel.add(scrollPane, BorderLayout.WEST);
         mainPanel.add(menuContent, BorderLayout.CENTER);
         frame.add(mainPanel);
-
 
         frame.setVisible(true);
     }

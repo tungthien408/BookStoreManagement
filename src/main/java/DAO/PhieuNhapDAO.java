@@ -1,6 +1,5 @@
 package DAO;
 
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,7 +15,7 @@ public class PhieuNhapDAO {
     public boolean create(PhieuNhapDTO phieuNhap) {
         String sql = "INSERT INTO phieunhap (MAPN, MANV, NgayNhap, TongTien, MANXB, trangThaiXoa) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, phieuNhap.getMaPN());
             stmt.setString(2, phieuNhap.getMaNV());
             stmt.setDate(3, phieuNhap.getNgayNhap());
@@ -35,8 +34,8 @@ public class PhieuNhapDAO {
         List<PhieuNhapDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM phieunhap WHERE trangThaiXoa = 0";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 PhieuNhapDTO phieuNhap = new PhieuNhapDTO();
                 phieuNhap.setMaPN(rs.getString("MAPN"));
@@ -57,7 +56,7 @@ public class PhieuNhapDAO {
     public PhieuNhapDTO getByMaPN(String maPN) {
         String sql = "SELECT * FROM phieunhap WHERE MAPN = ? AND trangThaiXoa = 0";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maPN);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -81,7 +80,7 @@ public class PhieuNhapDAO {
     public boolean delete(String maPN) {
         String sql = "UPDATE phieunhap SET trangThaiXoa = 1 WHERE MAPN = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maPN);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -89,3 +88,4 @@ public class PhieuNhapDAO {
             return false;
         }
     }
+}

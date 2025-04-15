@@ -15,7 +15,7 @@ public class KhachHangDAO {
     public boolean create(KhachHangDTO khachHang) {
         String sql = "INSERT INTO khachhang (MAKH, SDT, HoTen, Diem, trangThaiXoa) VALUES (?, ?, ?, ?, ?)";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, khachHang.getMaKH());
             stmt.setString(2, khachHang.getSdt());
             stmt.setString(3, khachHang.getHoTen());
@@ -33,8 +33,8 @@ public class KhachHangDAO {
         List<KhachHangDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM khachhang WHERE trangThaiXoa = 0";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 KhachHangDTO khachHang = new KhachHangDTO();
                 khachHang.setMaKH(rs.getString("MAKH"));
@@ -54,7 +54,7 @@ public class KhachHangDAO {
     public KhachHangDTO getByMaKH(String maKH) {
         String sql = "SELECT * FROM khachhang WHERE MAKH = ? AND trangThaiXoa = 0";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maKH);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -77,7 +77,7 @@ public class KhachHangDAO {
     public boolean update(KhachHangDTO khachHang) {
         String sql = "UPDATE khachhang SET SDT = ?, HoTen = ?, Diem = ?, trangThaiXoa = ? WHERE MAKH = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, khachHang.getSdt());
             stmt.setString(2, khachHang.getHoTen());
             stmt.setInt(3, khachHang.getDiem());
@@ -90,18 +90,14 @@ public class KhachHangDAO {
         }
     }
 
-<<<<<<< HEAD
-    // Xóa mềm (cập nhật trangThaiXoa = 1)
-    public boolean delete(String maKH) {
-        String sql = "UPDATE khachhang SET trangThaiXoa = 1 WHERE MAKH = ?";
-=======
     public boolean updateKhachHang(KhachHangDTO kh) throws SQLException {
         String query = "UPDATE khachhang SET HoTen = ?, Diem = ? WHERE SDT = ?"; // Lỗi
-        
->>>>>>> aca7c2bf1476c308987ef0a76dbf5134ba80777a
+
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setString(1, maKH);
+                PreparedStatement stmt = conn.prepareStatement(query)) {
+            stmt.setString(1, kh.getHoTen());
+            stmt.setInt(2, kh.getDiem());
+            stmt.setString(3, kh.getSdt());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();

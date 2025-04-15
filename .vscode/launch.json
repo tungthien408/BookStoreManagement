@@ -1,76 +1,97 @@
 {
-    // Use IntelliSense to learn about possible attributes.
-    // Hover to view descriptions of existing attributes.
-    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-    "version": "0.2.0",
-    "configurations": [
-        {
-            "type": "java",
-            "name": "Main",
-            "request": "launch",
-            "mainClass": "GUI.Main",
-            "projectName": "BookStoreManagement"
-        },
-        {
-            "type": "java",
-            "name": "LoginGUIImproved",
-            "request": "launch",
-            "mainClass": "src.main.java.GUI.LoginGUIImproved",
-            "projectName": "BookStoreManagement_2ceef9c4"
-        },
-        {
-            "type": "java",
-            "name": "Main",
-            "request": "launch",
-            "mainClass": "src.main.java.GUI.Main",
-            "projectName": "BookStoreManagement_2ceef9c4"
-        },
-        {
-            "type": "java",
-            "name": "slide1",
-            "request": "launch",
-            "mainClass": "slide1",
-            "projectName": "BookStoreManagement_2ceef9c4"
-        },
-        {
-            "type": "java",
-            "name": "KhachHangGUI",
-            "request": "launch",
-            "mainClass": "GUI.KhachHangGUI",
-            "projectName": "ProjectBanLaptop"
-        },
-        {
-            "type": "java",
-            "name": "LoginGUI",
-            "request": "launch",
-            "mainClass": "GUI.LoginGUI",
-            "projectName": "BookStoreManagement"
-        },
-        {
-            "type": "java",
-            "name": "LoginGUI",
-            "request": "launch",
-            "mainClass": "src.main.java.GUI.LoginGUI",
-            "projectName": "BookStoreManagement_2ceef9c4"
-        },
-        {
-            "type": "java",
-            "name": "LoginGUI",
-            "request": "launch",
-            "mainClass": "GUI.LoginGUI",
-            "projectName": "ProjectBanLaptop"
-        },
-        {
-            "type": "java",
-            "name": "Main",
-            "request": "launch",
-            "mainClass": "GUI.Main",
-            "projectName": "ProjectBanLaptop"
-        },
-        {
-            "type": "java+",
-            "request": "launch",
-            "name": "Launch Java App"
-        }
-    ]
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "java",
+      "name": "ScrollPaneWithButtons",
+      "request": "launch",
+      "mainClass": "GUI.ScrollPaneWithButtons",
+      "projectName": "BookStoreManagement"
+    },
+    {
+      "type": "java",
+      "name": "ScrollPaneWithButtons",
+      "request": "launch",
+      "mainClass": "ScrollPaneWithButtons",
+      "projectName": "BookStoreManagement"
+    },
+    {
+      "type": "java",
+      "name": "LoginGUIImproved",
+      "request": "launch",
+      "mainClass": "GUI.LoginGUIImproved",
+      "projectName": "BookStoreManagement"
+    },
+    {
+      "type": "java",
+      "name": "Main",
+      "request": "launch",
+      "mainClass": "GUI.Main",
+      "projectName": "BookStoreManagement"
+    },
+    {
+      "type": "java",
+      "name": "LoginGUIImproved",
+      "request": "launch",
+      "mainClass": "src.main.java.GUI.LoginGUIImproved",
+      "projectName": "BookStoreManagement_2ceef9c4"
+    },
+    {
+      "type": "java",
+      "name": "Main",
+      "request": "launch",
+      "mainClass": "src.main.java.GUI.Main",
+      "projectName": "BookStoreManagement_2ceef9c4"
+    },
+    {
+      "type": "java",
+      "name": "slide1",
+      "request": "launch",
+      "mainClass": "slide1",
+      "projectName": "BookStoreManagement_2ceef9c4"
+    },
+    {
+      "type": "java",
+      "name": "KhachHangGUI",
+      "request": "launch",
+      "mainClass": "GUI.KhachHangGUI",
+      "projectName": "ProjectBanLaptop"
+    },
+    {
+      "type": "java",
+      "name": "LoginGUI",
+      "request": "launch",
+      "mainClass": "GUI.LoginGUI",
+      "projectName": "BookStoreManagement"
+    },
+    {
+      "type": "java",
+      "name": "LoginGUI",
+      "request": "launch",
+      "mainClass": "src.main.java.GUI.LoginGUI",
+      "projectName": "BookStoreManagement_2ceef9c4"
+    },
+    {
+      "type": "java",
+      "name": "LoginGUI",
+      "request": "launch",
+      "mainClass": "GUI.LoginGUI",
+      "projectName": "ProjectBanLaptop"
+    },
+    {
+      "type": "java",
+      "name": "Main",
+      "request": "launch",
+      "mainClass": "GUI.Main",
+      "projectName": "ProjectBanLaptop"
+    },
+    {
+      "type": "java+",
+      "request": "launch",
+      "name": "Launch Java App"
+    }
+  ]
 }
