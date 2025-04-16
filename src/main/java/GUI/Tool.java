@@ -29,6 +29,8 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
+import com.toedter.calendar.JCalendar;
+
 public class Tool {
 	public Tool() {}
 	public JFrame createFrame(String title, int width, LayoutManager layout) {
@@ -199,9 +201,90 @@ public class Tool {
         wrappedPanel.add(panelDetail);
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
 
-		return panelDetail;
+		return wrappedPanel;
 	}
 	
+	private void addCalendarToPanel(JPanel panel, JCalendar cal, GridBagConstraints c, boolean newLine) {
+	    if (newLine) {
+	        c.gridy += 1;
+	        panel.add(cal, c);
+	    } else {
+	        c.gridx += 1;
+	        panel.add(cal, c);
+	        c.gridx--; // Reset to original position
+	    }
+	}
+
+	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label, JCalendar cal, ImageIcon img, int width, int height, double weightx, final int TEXTFIELD_CAPACITY, boolean newLine) {
+	    JPanel panelDetail = createPanel(width, height, new GridBagLayout());
+	    JPanel panel_detail = new JPanel(new GridBagLayout());
+
+	    GridBagConstraints c = new GridBagConstraints();
+	    c.gridx = 0;
+	    c.gridy = 0;
+	    c.weightx = weightx;
+	    c.weighty = 0;
+	    c.fill = GridBagConstraints.HORIZONTAL;
+	    c.insets = new Insets(5, 0, 5, 10);
+
+	    // Add Image
+	    if (img != null) {
+	        JLabel label_img = new JLabel(img);
+	        JPanel panelImg = new JPanel();
+	        panelImg.add(label_img);
+	        panelDetail.add(panelImg, c);
+	    }
+
+	    // Initialize TextFields
+	    for (int i = 0; i < txt_array.length; i++) {
+	        txt_array[i] = new JTextField(15);
+	        txt_array[i].setBackground(new Color(202, 220, 252));
+	        txt_array[i].setPreferredSize(new Dimension(182, 30));
+	        txt_array[i].setEditable(false);
+	    }
+
+		int count = 0;
+
+		while (count < txt_array.length) {
+			int index = count;
+			count = ((count + TEXTFIELD_CAPACITY) < txt_array.length) ? count + TEXTFIELD_CAPACITY : txt_array.length;
+			// Add Components
+			for (int i = index; i < count; i++) {
+				c.gridy += 1;
+				JLabel label = new JLabel(txt_label[i]);
+				panel_detail.add(label, c);
+	
+				if (newLine) {
+					c.gridy += 1;
+					panel_detail.add(txt_array[i], c);
+				} else {
+					c.gridx += 1;
+					panel_detail.add(txt_array[i], c);
+					c.gridx--;
+				}
+	
+				// Add Calendar if applicable
+				if (i == txt_array.length - 1 && cal != null) {
+					addCalendarToPanel(panel_detail, cal, c, newLine);
+				}
+			}
+			
+			c.fill = GridBagConstraints.VERTICAL;
+			c.gridx++;
+			c.gridy = 0;
+			panelDetail.add(panel_detail, c);
+			c.fill = GridBagConstraints.HORIZONTAL;
+	
+			panel_detail = new JPanel(new GridBagLayout());
+		}
+
+	    JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        wrappedPanel.add(panelDetail);
+        wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
+
+		return wrappedPanel;
+	}
+
 	public JPanel createJTextField(JTextField[] txt_array, String[] txt_label) {
 		final int TEXTFIELD_CAPACITY = 5;
 		JPanel panelDetail = createPanel(400, 250, new GridBagLayout());

@@ -3,8 +3,8 @@ package GUI;
 import javax.swing.*;
 import java.awt.*;
 
-public class LoginGUIImproved {
-        LoginGUIImproved() {
+public class LoginGUI {
+        LoginGUI() {
                 JFrame frame = new JFrame("Login");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
                 frame.setSize(700, 400);

@@ -163,7 +163,7 @@ public class MenuGUI {
                         Object value = pane.getValue();
                         if (value != null && value.equals(JOptionPane.YES_OPTION)) {
                             frame.dispose();
-                            new LoginGUIImproved();
+                            new LoginGUI();
                         }
                     }
                 }

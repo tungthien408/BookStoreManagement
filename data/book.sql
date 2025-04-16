@@ -60,10 +60,16 @@ CREATE TABLE `tacgia` (
 --
 INSERT INTO `tacgia` (`MATG`, `TenTG`, `DiaChi`, `SDT`, `trangThaiXoa`) VALUES
 ('TG01', 'Nguyễn Nhật Ánh', '123 Lê Lợi, TP.HCM', '0901234567', 0),
-('TG02', 'Tô Hoài', '45 Hàng Bông, Hà Nội', NULL, 0),
-('TG03', 'Nam Cao', '78 Trần Phú, Nam Định', '0912345678', 0),
-('TG04', 'Nguyễn Đình Thi', '56 Nguyễn Du, Hà Nội', '0987654321', 0),
-('TG05', 'Xuân Quỳnh', NULL, '0935432109', 0);
+('TG02', 'Tô Hoài', '45 Hàng Bông, Hà Nội', '0912345678', 0),
+('TG03', 'Nam Cao', '78 Trần Phú, Nam Định', '0923456789', 0),
+('TG04', 'Ngô Tất Tố', '56 Nguyễn Du, Hà Nội', '0934567890', 0),
+('TG05', 'Xuân Quỳnh', '12 Trần Hưng Đạo, Hà Nội', '0945678901', 0),
+('TG06', 'Nguyễn Huy Tưởng', '34 Lý Thường Kiệt, Hà Nội', '0956789012', 0),
+('TG07', 'Nguyễn Tuân', '56 Nguyễn Trãi, Hà Nội', '0967890123', 0),
+('TG08', 'Vũ Trọng Phụng', '78 Hàng Đào, Hà Nội', '0978901234', 0),
+('TG09', 'Nguyễn Công Hoan', '90 Nguyễn Huệ, TP.HCM', '0989012345', 0),
+('TG10', 'Hồ Biểu Chánh', '12 Lê Lợi, Hà Nội', '0990123456', 0);
+
 
 -- --------------------------------------------------------
 
@@ -91,8 +97,41 @@ INSERT INTO `sach` (`MASACH`, `TenSach`, `TheLoai`, `SoLuong`, `DonGia`, `MATG`,
 ('S01', 'Cho Tôi Xin Một Vé Đi Tuổi Thơ', 'Truyện dài', 100, 85000, 'TG01', 'NXB01', 0),
 ('S02', 'Dế Mèn Phiêu Lưu Ký', 'Truyện thiếu nhi', 150, 65000, 'TG02', 'NXB01', 0),
 ('S03', 'Chí Phèo', 'Truyện ngắn', 80, 45000, 'TG03', 'NXB04', 0),
-('S04', 'Tắt Đèn', 'Tiểu thuyết', 60, 75000, 'TG03', 'NXB04', 0),
-('S05', 'Sóng', 'Thơ', 200, 55000, 'TG05', 'NXB05', 0);
+('S04', 'Tắt Đèn', 'Tiểu thuyết', 60, 75000, 'TG04', 'NXB04', 0),
+('S05', 'Sóng', 'Thơ', 200, 55000, 'TG05', 'NXB05', 0),
+('S06', 'Cô Gái Đến Từ Hôm Qua', 'Truyện dài', 120, 80000, 'TG01', 'NXB02', 0),
+('S07', 'Mắt Biếc', 'Truyện dài', 90, 82000, 'TG01', 'NXB03', 0),
+('S08', 'Tôi Là Bêtô', 'Truyện thiếu nhi', 110, 70000, 'TG01', 'NXB01', 0),
+('S09', 'Tôi Thấy Hoa Vàng Trên Cỏ Xanh', 'Truyện dài', 95, 85000, 'TG01', 'NXB02', 0),
+('S10', 'Nhà Chử', 'Tiểu thuyết', 70, 60000, 'TG02', 'NXB03', 0),
+('S11', 'O Chuột', 'Truyện ngắn', 85, 55000, 'TG02', 'NXB04', 0),
+('S12', 'Truyện Tây Bắc', 'Truyện ngắn', 100, 65000, 'TG02', 'NXB05', 0),
+('S13', 'Kim Đồng', 'Truyện thiếu nhi', 130, 60000, 'TG02', 'NXB01', 0),
+('S14', 'Chiều Chiều', 'Truyện ngắn', 75, 58000, 'TG02', 'NXB02', 0),
+('S15', 'Giấc Mộng Ông Thợ Dìu', 'Truyện ngắn', 60, 62000, 'TG02', 'NXB03', 0),
+('S16', 'Giữ Gìn 36 Phố Phường', 'Tùy bút', 90, 70000, 'TG02', 'NXB04', 0),
+('S17', 'Lão Hạc', 'Truyện ngắn', 80, 50000, 'TG03', 'NXB05', 0),
+('S18', 'Sống Mòn', 'Tiểu thuyết', 70, 75000, 'TG03', 'NXB01', 0),
+('S19', 'Đêm Hội Long Trì', 'Tiểu thuyết lịch sử', 65, 80000, 'TG06', 'NXB02', 0),
+('S20', 'An Tư', 'Tiểu thuyết lịch sử', 60, 78000, 'TG06', 'NXB03', 0),
+('S21', 'Vũ Như Tô', 'Kịch', 50, 70000, 'TG06', 'NXB04', 0),
+('S22', 'Sống Mãi Với Thủ Đô', 'Truyện ngắn', 85, 65000, 'TG06', 'NXB05', 0),
+('S23', 'Vang Bóng Một Thời', 'Tùy bút', 90, 72000, 'TG07', 'NXB01', 0),
+('S24', 'Chùa Đàn', 'Tiểu thuyết', 70, 68000, 'TG07', 'NXB02', 0),
+('S25', 'Chiếc Lư Đồng Mắt Cua', 'Tùy bút', 80, 70000, 'TG07', 'NXB03', 0),
+('S26', 'Giông Tố', 'Tiểu thuyết', 75, 75000, 'TG08', 'NXB04', 0),
+('S27', 'Làm Đĩ', 'Tiểu thuyết', 65, 72000, 'TG08', 'NXB05', 0),
+('S28', 'Số Đỏ', 'Tiểu thuyết', 90, 80000, 'TG08', 'NXB01', 0),
+('S29', 'Bước Đường Cùng', 'Tiểu thuyết', 70, 70000, 'TG09', 'NXB02', 0),
+('S30', 'Kép Tư Bền', 'Truyện ngắn', 85, 60000, 'TG09', 'NXB03', 0),
+('S31', 'Người Ngựa Ngựa Người', 'Truyện ngắn', 80, 65000, 'TG09', 'NXB04', 0),
+('S32', 'Con Nhà Nghèo', 'Tiểu thuyết', 90, 75000, 'TG10', 'NXB05', 0),
+('S33', 'Lòng Dạ Đàn Bà', 'Tiểu thuyết', 70, 72000, 'TG10', 'NXB01', 0),
+('S34', 'Tại Tôi', 'Tiểu thuyết', 65, 70000, 'TG10', 'NXB02', 0),
+('S35', 'Hai Khối Tình', 'Tiểu thuyết', 80, 73000, 'TG10', 'NXB03', 0),
+('S36', 'Nợ Đời', 'Tiểu thuyết', 75, 74000, 'TG10', 'NXB04', 0),
+('S37', 'Chị Đào Chị Lý', 'Tiểu thuyết', 85, 71000, 'TG10', 'NXB05', 0),
+('S38', 'Chút Phận Linh Đinh', 'Tiểu thuyết', 70, 72000, 'TG10', 'NXB01', 0);
 
 -- --------------------------------------------------------
 
@@ -112,11 +151,46 @@ CREATE TABLE `khachhang` (
 -- Dumping data for table `khachhang`
 --
 INSERT INTO `khachhang` (`MAKH`, `SDT`, `HoTen`, `Diem`, `trangThaiXoa`) VALUES
-('KH01', '0912345678', 'Nguyễn Văn An', 100, 0),
-('KH02', '0987654321', 'Trần Thị Bình', 50, 0),
-('KH03', '0935432109', 'Lê Minh Châu', 200, 0),
-('KH04', '0901234567', 'Phạm Quốc Dũng', 0, 0),
-('KH05', '0923456789', 'Hoàng Thị E', 150, 0);
+('KH001', '0912345678', 'Nguyễn Văn An', 100, 0),
+('KH002', '0987654321', 'Trần Thị Bình', 50, 0),
+('KH003', '0935432109', 'Lê Minh Châu', 200, 0),
+('KH004', '0901234567', 'Phạm Quốc Dũng', 0, 0),
+('KH005', '0923456789', 'Hoàng Thị E', 150, 0),
+('KH006', '0812345678', 'Nguyễn Thị Hoa', 120, 0),
+('KH007', '0823456789', 'Trần Văn Bảo', 80, 0),
+('KH008', '0834567890', 'Lê Thị Hạnh', 90, 0),
+('KH009', '0845678901', 'Phạm Minh Tâm', 60, 0),
+('KH010', '0856789012', 'Hoàng Văn Phúc', 110, 0),
+('KH011', '0867890123', 'Nguyễn Thị Lan', 70, 0),
+('KH012', '0878901234', 'Trần Quốc Hùng', 130, 0),
+('KH013', '0889012345', 'Lê Văn Hòa', 140, 0),
+('KH014', '0890123456', 'Phạm Thị Mai', 50, 0),
+('KH015', '0712345678', 'Nguyễn Văn Lộc', 100, 0),
+('KH016', '0723456789', 'Trần Thị Ngọc', 200, 0),
+('KH017', '0734567890', 'Lê Minh Tuấn', 90, 0),
+('KH018', '0745678901', 'Phạm Văn Hùng', 80, 0),
+('KH019', '0756789012', 'Hoàng Thị Hương', 70, 0),
+('KH020', '0767890123', 'Nguyễn Văn Phong', 60, 0),
+('KH021', '0778901234', 'Trần Thị Thanh', 150, 0),
+('KH022', '0789012345', 'Lê Văn Hải', 140, 0),
+('KH023', '0790123456', 'Phạm Minh Đức', 130, 0),
+('KH024', '0312345678', 'Nguyễn Thị Hồng', 120, 0),
+('KH025', '0323456789', 'Trần Văn Hậu', 110, 0),
+('KH026', '0334567890', 'Lê Thị Thu', 100, 0),
+('KH027', '0345678901', 'Phạm Văn Long', 90, 0),
+('KH028', '0356789012', 'Hoàng Thị Vân', 80, 0),
+('KH029', '0367890123', 'Nguyễn Văn Hòa', 70, 0),
+('KH030', '0378901234', 'Trần Thị Hạnh', 60, 0),
+('KH031', '0389012345', 'Lê Văn Tài', 50, 0),
+('KH032', '0390123456', 'Phạm Thị Hương', 200, 0),
+('KH033', '0512345678', 'Nguyễn Văn Bình', 150, 0),
+('KH034', '0523456789', 'Trần Thị Hòa', 140, 0),
+('KH035', '0534567890', 'Lê Minh Phúc', 130, 0),
+('KH036', '0545678901', 'Phạm Văn Tâm', 120, 0),
+('KH037', '0556789012', 'Hoàng Thị Mai', 110, 0),
+('KH038', '0567890123', 'Nguyễn Văn Hùng', 100, 0);
+-- ('KH039', '0578901234', 'Trần Thị Hương', 90, 0),
+-- ('KH040', '0589012345', 'Lê Văn Đức', 80, 0);
 
 -- --------------------------------------------------------
 
@@ -139,11 +213,11 @@ CREATE TABLE `nhanvien` (
 -- Dumping data for table `nhanvien`
 --
 INSERT INTO `nhanvien` (`MaNV`, `HoTen`, `ChucVu`, `DiaChi`, `SDT`, `Cccd`, `NgaySinh`, `trangThaiXoa`) VALUES
-('NV01', 'Nguyễn Thành Nam', 'Quản lý', '12 Nguyễn Trãi, Hà Nội', '0912345678', '123456789012', '1990-05-15', 0),
-('NV02', 'Trần Thị Mai', 'Nhân viên bán hàng', '45 Lê Lợi, TP.HCM', '0987654321', '234567890123', '1995-08-20', 0),
-('NV03', 'Lê Văn Hùng', 'Kế toán', '78 Hùng Vương, Đà Nẵng', '0935432109', '345678901234', '1992-03-10', 0),
-('NV04', 'Phạm Thị Lan', 'Nhân viên kho', '56 Trần Phú, Nha Trang', '0901234567', '456789012345', '1998-11-25', 0),
-('NV05', 'Hoàng Văn Long', 'Nhân viên bán hàng', '23 Bà Triệu, Hà Nội', '0923456789', '567890123456', '1993-07-30', 0);
+('NV01', 'Nguyễn Thành Nam', 'Quản lý', '12 Nguyễn Trãi, Hà Nội', '0912345678', '010123456789', '1990-05-15', 0),
+('NV02', 'Trần Thị Mai', 'Nhân viên bán hàng', '45 Lê Lợi, TP.HCM', '0987654321', '020234567890', '1995-08-20', 0),
+('NV03', 'Lê Văn Hùng', 'Kế toán', '78 Hùng Vương, Đà Nẵng', '0935432109', '040345678901', '1992-03-10', 0),
+('NV04', 'Phạm Thị Lan', 'Nhân viên kho', '56 Trần Phú, Nha Trang', '0901234567', '060456789012', '1998-11-25', 0),
+('NV05', 'Hoàng Văn Long', 'Nhân viên bán hàng', '23 Bà Triệu, Hà Nội', '0923456789', '080567890123', '1993-07-30', 0);
 
 -- --------------------------------------------------------
 
@@ -162,7 +236,7 @@ CREATE TABLE `taikhoannv` (
 -- Dumping data for table `taikhoannv`
 --
 INSERT INTO `taikhoannv` (`MANV`, `PASS`, `trangThaiXoa`) VALUES
-('NV01', 'hashed_password_1', 0),
+('NV01', 'admin', 0),
 ('NV02', 'hashed_password_2', 0),
 ('NV03', 'hashed_password_3', 0),
 ('NV04', 'hashed_password_4', 0),
@@ -189,12 +263,45 @@ CREATE TABLE `hoadon` (
 -- Dumping data for table `hoadon`
 --
 INSERT INTO `hoadon` (`MAHD`, `MANV`, `MAKH`, `NgayBan`, `TongTien`, `trangThaiXoa`) VALUES
-('HD01', 'NV02', 'KH01', '2025-04-10', 170000, 0),
-('HD02', 'NV05', 'KH03', '2025-04-11', 65000, 0),
-('HD03', 'NV02', 'KH02', '2025-04-12', 110000, 0),
-('HD04', 'NV05', 'KH04', '2025-04-13', 150000, 0),
-('HD05', 'NV03', 'KH05', '2025-04-14', 45000, 0);
-
+('HD01', 'NV02', 'KH001', '2025-04-10', 153000, 0), -- 10% discount for KH001
+('HD02', 'NV05', 'KH003', '2025-04-11', 58500, 0), -- 10% discount for KH003
+('HD03', 'NV02', 'KH002', '2025-04-12', 110000, 0), -- No discount for KH002
+('HD04', 'NV05', 'KH004', '2025-04-13', 150000, 0), -- No discount for KH004
+('HD05', 'NV03', 'KH005', '2025-04-14', 40500, 0), -- 10% discount for KH005
+('HD06', 'NV01', 'KH006', '2025-04-15', 180000, 0), -- 10% discount for KH006
+('HD07', 'NV04', 'KH007', '2025-04-16', 85000, 0), -- No discount for KH007
+('HD08', 'NV02', 'KH008', '2025-04-17', 108000, 0), -- 10% discount for KH008
+('HD09', 'NV05', 'KH009', '2025-04-18', 95000, 0), -- No discount for KH009
+-- Insert the remaining invoices
+('HD10', 'NV03', 'KH010', '2025-04-19', 162000, 0), -- 10% discount for KH010
+('HD11', 'NV01', 'KH011', '2025-04-20', 70000, 0), -- No discount for KH011
+('HD12', 'NV02', 'KH012', '2025-04-21', 195000, 0), -- 10% discount for KH012
+('HD13', 'NV03', 'KH013', '2025-04-22', 140000, 0), -- 10% discount for KH013
+('HD14', 'NV04', 'KH014', '2025-04-23', 58000, 0), -- No discount for KH014
+('HD15', 'NV05', 'KH015', '2025-04-24', 100000, 0), -- 10% discount for KH015
+('HD16', 'NV01', 'KH016', '2025-04-25', 200000, 0), -- 10% discount for KH016
+('HD17', 'NV02', 'KH017', '2025-04-26', 90000, 0), -- No discount for KH017
+('HD18', 'NV03', 'KH018', '2025-04-27', 80000, 0), -- No discount for KH018
+('HD19', 'NV04', 'KH019', '2025-04-28', 70000, 0), -- No discount for KH019
+('HD20', 'NV05', 'KH020', '2025-04-29', 60000, 0), -- No discount for KH020
+('HD21', 'NV01', 'KH021', '2025-04-30', 150000, 0), -- 10% discount for KH021
+('HD22', 'NV02', 'KH022', '2025-05-01', 140000, 0), -- 10% discount for KH022
+('HD23', 'NV03', 'KH023', '2025-05-02', 130000, 0), -- 10% discount for KH023
+('HD24', 'NV04', 'KH024', '2025-05-03', 120000, 0), -- 10% discount for KH024
+('HD25', 'NV05', 'KH025', '2025-05-04', 110000, 0), -- 10% discount for KH025
+('HD26', 'NV01', 'KH026', '2025-05-05', 100000, 0), -- 10% discount for KH026
+('HD27', 'NV02', 'KH027', '2025-05-06', 90000, 0), -- No discount for KH027
+('HD28', 'NV03', 'KH028', '2025-05-07', 80000, 0), -- No discount for KH028
+('HD29', 'NV04', 'KH029', '2025-05-08', 70000, 0), -- No discount for KH029
+('HD30', 'NV05', 'KH030', '2025-05-09', 60000, 0), -- No discount for KH030
+('HD31', 'NV01', 'KH031', '2025-05-10', 50000, 0), -- No discount for KH031
+('HD32', 'NV02', 'KH032', '2025-05-11', 200000, 0), -- 10% discount for KH032
+('HD33', 'NV03', 'KH033', '2025-05-12', 150000, 0), -- 10% discount for KH033
+('HD34', 'NV04', 'KH034', '2025-05-13', 140000, 0), -- 10% discount for KH034
+('HD35', 'NV05', 'KH035', '2025-05-14', 130000, 0), -- 10% discount for KH035
+('HD36', 'NV01', 'KH036', '2025-05-15', 120000, 0), -- 10% discount for KH036
+('HD37', 'NV02', 'KH037', '2025-05-16', 110000, 0), -- 10% discount for KH037
+('HD38', 'NV03', 'KH038', '2025-05-17', 100000, 0); -- 10% discount for KH038
 -- --------------------------------------------------------
 
 --
@@ -218,8 +325,41 @@ INSERT INTO `chitiethoadon` (`MASACH`, `MAHD`, `SoLuong`, `Gia`) VALUES
 ('S02', 'HD02', 1, 65000),
 ('S05', 'HD03', 2, 55000),
 ('S04', 'HD04', 2, 75000),
-('S03', 'HD05', 1, 45000);
-
+('S03', 'HD03', 1, 45000),
+('S05', 'HD05', 1, 55000),
+('S06', 'HD06', 3, 80000),
+('S07', 'HD07', 1, 82000),
+('S08', 'HD08', 2, 70000),
+('S09', 'HD09', 1, 85000),
+('S10', 'HD10', 2, 60000),
+('S11', 'HD11', 1, 55000),
+('S12', 'HD12', 3, 65000),
+('S13', 'HD13', 2, 60000),
+('S14', 'HD14', 1, 58000),
+('S15', 'HD15', 2, 62000),
+('S16', 'HD16', 1, 70000),
+('S17', 'HD17', 2, 50000),
+('S18', 'HD18', 1, 75000),
+('S19', 'HD19', 2, 80000),
+('S20', 'HD20', 1, 78000),
+('S21', 'HD21', 2, 70000),
+('S22', 'HD22', 1, 65000),
+('S23', 'HD23', 2, 72000),
+('S24', 'HD24', 1, 68000),
+('S25', 'HD25', 2, 70000),
+('S26', 'HD26', 1, 75000),
+('S27', 'HD27', 2, 72000),
+('S28', 'HD28', 1, 80000),
+('S29', 'HD29', 2, 70000),
+('S30', 'HD30', 1, 60000),
+('S31', 'HD31', 2, 65000),
+('S32', 'HD32', 1, 75000),
+('S33', 'HD33', 2, 72000),
+('S34', 'HD34', 1, 70000),
+('S35', 'HD35', 2, 73000),
+('S36', 'HD36', 1, 74000),
+('S37', 'HD37', 2, 71000),
+('S38', 'HD38', 1, 72000);
 -- --------------------------------------------------------
 
 --
