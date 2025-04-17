@@ -87,7 +87,7 @@ public class NhaXuatBanGUI {
         JTable table = tool.createTable(model, column);
         table.setDefaultEditor(Object.class, null);
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(850, 340));
+        scrollPane.setPreferredSize(new Dimension(850, 540));
 
         // Add MouseListener for the table
         table.addMouseListener(new MouseAdapter() {
@@ -133,7 +133,7 @@ public class NhaXuatBanGUI {
         });
 
         // Tạo khoảng cách xung quanh bảng
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(50, 40, 10, 10)); // Top, Left, Bottom, Right
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 30, 10)); // Top, Left, Bottom, Right
         
         // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -145,7 +145,7 @@ public class NhaXuatBanGUI {
         String [] btn_txt = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Hủy"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(btn, btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
-        panelBtn.setBorder(BorderFactory.createEmptyBorder(25, 0, 0, 0));
+        // panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         // TODO: assign event for btn
         btn[0].addActionListener(e -> add());
@@ -157,11 +157,11 @@ public class NhaXuatBanGUI {
     }
 
     private JPanel createDetailPanel(JTextField txt_array[], String txt_label[]) {
-        panelDetail = tool.createDetailPanel(txt_array, txt_label, null,850,300, 0.5, 4, false);
+        panelDetail = tool.createDetailPanel(txt_array, txt_label, null,850,90, 0.5, 2, false);
 
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
-        wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
+        wrappedPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
         return wrappedPanel;
 
     }

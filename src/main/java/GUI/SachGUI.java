@@ -90,7 +90,7 @@ public class SachGUI {
         // Bảng
         JTable table = tool.createTable(tableContent, column);
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(850, 340));
+        scrollPane.setPreferredSize(new Dimension(850, 310));
 
         // Hiển thị dữ liệu khi chọn một dòng trong bảng
         // __________________________ AI Code __________________________
@@ -114,7 +114,7 @@ public class SachGUI {
 
         // __________________________ AI Code __________________________
         // Tạo khoảng cách xung quanh bảng
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(50, 40, 10, 10)); // Top, Left, Bottom, Right
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 30, 10)); // Top, Left, Bottom, Right
         
         // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -126,16 +126,16 @@ public class SachGUI {
         String [] btn_txt = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Thoát"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(btn, btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
-        panelBtn.setBorder(BorderFactory.createEmptyBorder(25, 0, 0, 0));
+        // panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         return panelBtn;
     }
     
     private JPanel createDetailPanel(JTextField txt_array[], String txt_label[]) {
-        panelDetail = tool.createDetailPanel(txt_array, txt_label, new ImageIcon("images/Book/the_little_prince.jpg"), 850,300, 0.5, 3, true);
+        panelDetail = tool.createDetailPanel(txt_array, txt_label, new ImageIcon("images/Book/the_little_prince.jpg"), 850,290, 0.5, 3, true);
 
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
-        wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
+        wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
         return wrappedPanel;
     }
     
