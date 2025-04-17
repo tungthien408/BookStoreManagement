@@ -17,7 +17,6 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
-
 import java.awt.event.MouseEvent;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -61,7 +60,7 @@ public class NhanVienGUI {
         panel.add(createPanelButton(), BorderLayout.CENTER);
 
         // Chi tiết sản phẩm
-        String txt_label[] = { "Mã NV", "Tên", "Địa chỉ", "Số điện thoại", "Chức vụ", "Ngày sinh"};
+        String txt_label[] = { "Mã NV", "Tên", "Địa chỉ", "Số điện thoại", "Chức vụ", "Ngày sinh" };
         panel.add(createPanelDetail(txt_array, txt_label), BorderLayout.SOUTH);
 
         panel.add(createPanelSearch(), BorderLayout.NORTH);
@@ -257,7 +256,7 @@ public class NhanVienGUI {
                 String startDate = txt_array[5].getText();
                 SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
                 java.util.Date date = sdf1.parse(startDate);
-                java.sql.Date sqlStartDate = new java.sql.Date(date.getTime()); 
+                java.sql.Date sqlStartDate = new java.sql.Date(date.getTime());
                 nv.setNgaySinh(sqlStartDate);
 
                 // bất hợp lí ở code 247
@@ -316,7 +315,7 @@ public class NhanVienGUI {
                 String startDate = txt_array[5].getText();
                 SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
                 java.util.Date date = sdf1.parse(startDate);
-                java.sql.Date sqlStartDate = new java.sql.Date(date.getTime()); 
+                java.sql.Date sqlStartDate = new java.sql.Date(date.getTime());
                 nv.setNgaySinh(sqlStartDate);
 
                 if (nv.getMaNV().isEmpty()) {
@@ -428,7 +427,8 @@ public class NhanVienGUI {
             }
         }
 
-        if (!nv.getNgaySinh().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().isAfter(LocalDate.now().minusYears(18))) {
+        if (!nv.getNgaySinh().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+                .isAfter(LocalDate.now().minusYears(18))) {
             JOptionPane.showMessageDialog(null, "Nhân viên phải trên 18 tuổi");
             return false;
         }

@@ -65,12 +65,19 @@ public class TaiKhoanNVBUS {
     }
 
     // Kiểm tra đăng nhập
-    public boolean checkLogin(String maNV, String pass) {
-        TaiKhoanNVDTO taiKhoan = getTaiKhoanByMaNV(maNV);
-        if (taiKhoan != null) {
-            // So sánh mật khẩu (thực tế nên mã hóa mật khẩu)
-            return taiKhoan.getPass().equals(pass);
+    public boolean checkLogin(String maNV, String pass, Integer trangThaiXoa) {
+        if (maNV == null || maNV.trim().isEmpty()) {
+            return false;
         }
-        return false;
+        if (pass == null || pass.trim().isEmpty()) {
+            return false;
+        }
+
+        TaiKhoanNVDTO taiKhoan = getTaiKhoanByMaNV(maNV);
+        if (taiKhoan == null) {
+            return false;
+        }
+
+        return taiKhoan.getPass().equals(pass) && taiKhoan.getTrangThaiXoa() == 0;
     }
 }

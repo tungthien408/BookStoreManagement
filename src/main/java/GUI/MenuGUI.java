@@ -20,6 +20,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
 import javax.swing.JDialog;
+import javax.swing.ImageIcon;
+import java.awt.Image;
 
 public class MenuGUI {
     String array_function[] = { "Bán sách", "Nhập sách", "Sách", "Nhà xuất bản", "Tác giả", "Hóa đơn nhập",
@@ -43,7 +45,7 @@ public class MenuGUI {
 
         JPanel sideMenu = new JPanel(new GridBagLayout()); // GridBagLayout() -> layout linh động nhất nhưng phức tạp
                                                            // nhất trong java swing
-        sideMenu.setBorder(BorderFactory.createEmptyBorder(-20, 0, 0, 0)); // xóa padding với margin mặc định của panel
+        sideMenu.setBorder(BorderFactory.createEmptyBorder(-45, 0, 0, 0)); // xóa padding với margin mặc định của panel
         sideMenu.setBackground(MENU_BACKGROUND);
         sideMenu.setPreferredSize(null);
 
@@ -56,11 +58,17 @@ public class MenuGUI {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.anchor = GridBagConstraints.NORTH;
 
-        JPanel panel_logo = new JPanel(new BorderLayout());
-        panel_logo.setBackground(Color.RED);
-        JLabel label_logo = new JLabel("Logo will be here");
-        panel_logo.add(label_logo, BorderLayout.CENTER);
-        panel_logo.setPreferredSize(new Dimension(100, 80));
+        JPanel panel_logo = new JPanel(new GridBagLayout());
+        panel_logo.setBackground(new Color(0, 0, 0, 0)); // Trong suốt
+        panel_logo.setPreferredSize(new Dimension(130, 130));
+        ImageIcon Logo = new ImageIcon(
+                "D:/CodeNProjects/Codes/JavaCourse/BaiTapCoHieu/Project/BookStoreManagement/images/book-icon-transparent-image.png");
+        Image image = Logo.getImage();
+        Image Logo_newImage = image.getScaledInstance(110, 110, Image.SCALE_SMOOTH);
+        Logo = new ImageIcon(Logo_newImage);
+        JLabel imageLabel = new JLabel(Logo);
+        panel_logo.add(imageLabel);
+        panel_logo.setOpaque(false); // Trong suốt
         c.weighty = -5;
         sideMenu.add(panel_logo, c);
 
