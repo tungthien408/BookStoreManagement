@@ -81,4 +81,8 @@ public class NXBBUS {
         }
         return result;
     }
+
+    public boolean isNhaXuatBanExists(String maNXB) {
+        return nhaXuatBanDAO.existsByMaNXB(maNXB);
+    }
 }
