@@ -15,13 +15,13 @@ public class HoaDonDTO {
     }
 
     // Constructor đầy đủ
-    public HoaDonDTO(String maHD, String maNV, String maKH, Date ngayBan, int tongTien, int trangThaiXoa) {
+    public HoaDonDTO(String maHD, String maNV, String maKH, Date ngayBan, int tongTien) {
         this.maHD = maHD;
         this.maNV = maNV;
         this.maKH = maKH;
         this.ngayBan = ngayBan;
         this.tongTien = tongTien;
-        this.trangThaiXoa = trangThaiXoa;
+        this.trangThaiXoa = 0;
     }
 
     // Getters và Setters

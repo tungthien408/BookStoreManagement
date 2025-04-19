@@ -4,110 +4,206 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
+import javax.swing.table.DefaultTableModel;
+
+import BUS.ChiTietPhieuNhapBUS;
+import BUS.NXBBUS;
+import BUS.PhieuNhapBUS;
+import BUS.SachBUS;
+import DTO.ChiTietPhieuNhapDTO;
+import DTO.PhieuNhapDTO;
+import DTO.SachDTO;
 
 public class HoaDonNhapGUI {
-    Tool tool = new Tool();
-    JButton btn[] = new JButton[3];
-    JPanel panel;
-    int width = 1200;
-    int width_sideMenu = 151;
-    int height = (int)(width * 0.625);
+    private static final int WIDTH = 1200;
+    private static final int SIDE_MENU_WIDTH = 151;
+    private static final int HEIGHT = (int) (WIDTH * 0.625);
+    private static final int TABLE_WIDTH = 850;
+    private static final int TABLE_HEIGHT = 660;
+    private static final int SEARCH_FIELD_WIDTH = 300;
+    private static final int SEARCH_FIELD_HEIGHT = 30;
+
+    private Tool tool = new Tool();
+    private JButton[] buttons = new JButton[3];
+    private JPanel panel;
+    private JTable table;
+    private DefaultTableModel tableModel;
+    private List<PhieuNhapDTO> phieuNhapList;
+    private PhieuNhapBUS phieuNhapBUS = new PhieuNhapBUS();
+    private ChiTietPhieuNhapBUS chiTietPhieuNhapBUS = new ChiTietPhieuNhapBUS();
+    private NXBBUS nxbBUS = new NXBBUS();
+    private SachBUS sachBUS = new SachBUS();
 
     public HoaDonNhapGUI() {
-        panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
-        panel.add(createHoaDonNhapTable(), BorderLayout.WEST);
-
-        panel.add(createPanelButton(), BorderLayout.CENTER);
-
-        // Tạo thanh tìm kiếm 
+        panel = tool.createPanel(WIDTH - SIDE_MENU_WIDTH, HEIGHT, new BorderLayout());
+        initializeData();
         panel.add(createSearchPanel(), BorderLayout.NORTH);
+        panel.add(createHoaDonNhapTable(), BorderLayout.WEST);
+        panel.add(createPanelButton(), BorderLayout.CENTER);
+    }
+
+    private void initializeData() {
+        try {
+            phieuNhapList = phieuNhapBUS.getAllPhieuNhap();
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu phiếu nhập: " + e.getMessage());
+        }
     }
 
     private JPanel createHoaDonNhapTable() {
-        // Fake data
-        String tableContent[][] = {
-            {"PN001", "NV001", "2023-01-01", "500000", "NXB001"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN002", "NV002", "2023-01-02", "600000", "NXB002"},
-            {"PN003", "NV003", "2023-01-03", "700000", "NXB003"},
-            {"PN004", "NV004", "2023-01-04", "800000", "NXB004"},
-            {"PN005", "NV005", "2023-01-05", "900000", "NXB005"},
-            {"PN006", "NV006", "2023-01-06", "1000000", "NXB006"},
-            {"PN007", "NV007", "2023-01-07", "1100000", "NXB007"},
-            {"PN008", "NV008", "2023-01-08", "1200000", "NXB008"},
-            {"PN009", "NV009", "2023-01-09", "1300000", "NXB009"},
-            {"PN010", "NV010", "2023-01-10", "1400000", "NXB010"},
-            {"PN011", "NV011", "2023-01-11", "1500000", "NXB011"},
-            {"PN012", "NV012", "2023-01-12", "1600000", "NXB012"},
-            {"PN013", "NV013", "2023-01-13", "1700000", "NXB013"},
-            {"PN014", "NV014", "2023-01-14", "1800000", "NXB014"},
-            {"PN015", "NV015", "2023-01-15", "1900000", "NXB015"},
-            {"PN016", "NV016", "2023-01-16", "2000000", "NXB016"},
-            {"PN017", "NV017", "2023-01-17", "2100000", "NXB017"},
-            {"PN018", "NV018", "2023-01-18", "2200000", "NXB018"},
-            {"PN019", "NV019", "2023-01-19", "2300000", "NXB019"},
-            {"PN020", "NV020", "2023-01-20", "2400000", "NXB020"}
+        String[] columns = {"Mã phiếu nhập", "Mã nhân viên", "Ngày nhập", "Tổng tiền", "Mã NXB"};
+        tableModel = new DefaultTableModel(columns, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Make table non-editable
+            }
         };
-        String column[] = {"Mã phiếu nhập", "Mã nhân viên", "Ngày nhập", "Tổng tiền", "Mã NXB"};
 
-        // Bảng
-        JTable table = tool.createTable(tableContent, column);
+        try {
+            if (phieuNhapList != null) {
+                for (PhieuNhapDTO phieuNhap : phieuNhapList) {
+                    tableModel.addRow(new Object[]{
+                            phieuNhap.getMaPN(),
+                            phieuNhap.getMaNV(),
+                            phieuNhap.getNgayNhap().toString(),
+                            phieuNhap.getTongTien(),
+                            phieuNhap.getMaNXB()
+                    });
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu phiếu nhập: " + e.getMessage());
+        }
+
+        table = tool.createTable(tableModel, columns);
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(850, 660));
+        scrollPane.setPreferredSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 30, 10));
 
-        // Tạo khoảng cách xung quanh bảng
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 30, 10)); // Top, Left, Bottom, Right
-        
-        // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelTable.add(scrollPane);
         return panelTable;
     }
 
     private JPanel createPanelButton() {
-        String [] btn_txt = {"Chi tiết", "Nhập Excel", "Xuất Excel"};
+        String[] btnText = {"Chi tiết", "Nhập Excel", "Xuất Excel"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBtn.add(tool.createButtonPanel(btn, btn_txt, new Color(0, 36, 107),  Color.WHITE,"y"));
-        // panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        panelBtn.add(tool.createButtonPanel(buttons, btnText, new Color(0, 36, 107), Color.WHITE, "y"));
+        panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+
+        // Add action listeners for buttons
+        buttons[0].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                showInvoiceDetails();
+            }
+        });
+        buttons[1].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                importFromExcel();
+            }
+        });
+        buttons[2].addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                exportToExcel();
+            }
+        });
+
         return panelBtn;
     }
 
     private JPanel createSearchPanel() {
-        String [] searchOptions = {"Mã nhân viên", "Mã khách hàng"};
-        JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panelSearch.add(Box.createHorizontalStrut(33));
-        panelSearch.add(tool.createSearchTextField(0, 0,searchOptions));
-        return panelSearch;
+        String[] searchOptions = {"Mã nhân viên", "SĐT khách hàng"};
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(Box.createHorizontalStrut(33));
+        searchPanel.add(tool.createSearchTextField(300, 30, searchOptions));
+        return searchPanel;
     }
-    
-    
+
+    private void filterTable(String query) {
+        tableModel.setRowCount(0);
+        try {
+            for (PhieuNhapDTO phieuNhap : phieuNhapList) {
+                String maPN = phieuNhap.getMaPN().toLowerCase();
+                String maNV = phieuNhap.getMaNV().toLowerCase();
+                String maNXB = phieuNhap.getMaNXB().toLowerCase();
+                if (maPN.contains(query) || maNV.contains(query) || maNXB.contains(query)) {
+                    tableModel.addRow(new Object[]{
+                            phieuNhap.getMaPN(),
+                            phieuNhap.getMaNV(),
+                            phieuNhap.getNgayNhap().toString(),
+                            phieuNhap.getTongTien(),
+                            phieuNhap.getMaNXB()
+                    });
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage());
+        }
+    }
+
+    private void showInvoiceDetails() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn một phiếu nhập để xem chi tiết!");
+            return;
+        }
+
+        String maPN = (String) tableModel.getValueAt(selectedRow, 0);
+        try {
+            List<ChiTietPhieuNhapDTO> chiTietList = chiTietPhieuNhapBUS.getChiTietPhieuNhapByMaPN(maPN);
+            if (chiTietList == null || chiTietList.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Không tìm thấy chi tiết phiếu nhập!");
+                return;
+            }
+
+            StringBuilder details = new StringBuilder("Chi tiết phiếu nhập " + maPN + ":\n");
+            for (ChiTietPhieuNhapDTO chiTiet : chiTietList) {
+                SachDTO sach = sachBUS.getSachByMaSach(chiTiet.getMaSach());
+                details.append("Sách: ").append(sach != null ? sach.getTenSach() : chiTiet.getMaSach())
+                        .append(", Số lượng: ").append(chiTiet.getSoLuong())
+                        .append(", Giá nhập: ").append(chiTiet.getGiaNhap())
+                        .append("\n");
+            }
+            JOptionPane.showMessageDialog(null, details.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi tải chi tiết phiếu nhập: " + e.getMessage());
+        }
+    }
+
+    private void importFromExcel() {
+        // Placeholder for Excel import
+        JOptionPane.showMessageDialog(null, "Chức năng Nhập Excel đang được phát triển!");
+        // Implement Excel import logic using Apache POI
+    }
+
+    private void exportToExcel() {
+        // Placeholder for Excel export
+        JOptionPane.showMessageDialog(null, "Chức năng Xuất Excel đang được phát triển!");
+        // Implement Excel export logic using Apache POI
+    }
+
     public JPanel getPanel() {
         return this.panel;
-    } 
+    }
 }
