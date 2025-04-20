@@ -279,7 +279,12 @@ public class ThongKeGUI {
         JTable table_KhachHang = tool.createTable(tableData_KhachHang, columnNames_KhachHang);
         JTable table_SanPham = tool.createTable(tableData_SanPham, columnNames_SanPham);
         JTable table_DoanhThu = tool.createTable(tableData_DoanhThu, columnNames_DoanhThu);
-
+        table_KhachHang.getTableHeader().setBackground(MENU_BACKGROUND);
+        table_SanPham.getTableHeader().setBackground(MENU_BACKGROUND);
+        table_DoanhThu.getTableHeader().setBackground(MENU_BACKGROUND);
+        table_KhachHang.getTableHeader().setForeground(Color.WHITE);
+        table_SanPham.getTableHeader().setForeground(Color.WHITE);
+        table_DoanhThu.getTableHeader().setForeground(Color.WHITE);
         // Add table to scroll pane
         JScrollPane scrollPane_KhachHang = new JScrollPane(table_KhachHang);
         JScrollPane scrollPane_SanPham = new JScrollPane(table_SanPham);

@@ -81,4 +81,11 @@ public class TacGiaBUS {
         }
         return result;
     }
+    // kiểm tra tác giả có tồn tại 
+    public boolean isTacGiaExists(String maTG){
+        if (maTG == null || maTG.trim().isEmpty()) {
+            throw new IllegalArgumentException("Mã tác giả không được để trống!");
+        }
+        return tacGiaDAO.isTacGiaExists(maTG);
+    }
 }
