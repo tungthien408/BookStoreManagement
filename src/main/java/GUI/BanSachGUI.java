@@ -6,7 +6,6 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.Connection;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -16,6 +15,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -44,9 +44,12 @@ public class BanSachGUI {
     private JPanel panel, paymentPanel;
     private JTextField[] txt_array_top = new JTextField[5];
     private JTextField[] txt_array_down = new JTextField[2];
+    private JTextField[] txt_array_search = new JTextField[1];
     private JTextField txt_invoiceId, txt_employeeId, txt_customerPhone, txt_date, txt_total;
     private JTextField txt_bookId, txt_quantity;
+    private JTextField txt_search;
     private JButton[] buttons = new JButton[3];
+    private JButton[] searchbutton = new JButton[1];
     private JTable table_down, table_top;
     private int selectedRow = -1;
     private int lastSelectedRow = -1;
@@ -75,8 +78,10 @@ public class BanSachGUI {
         txt_total = new JTextField();
         txt_bookId = new JTextField();
         txt_quantity = new JTextField();
+        txt_search = new JTextField();
         txt_array_top = new JTextField[]{txt_invoiceId, txt_employeeId, txt_customerPhone, txt_date, txt_total};
         txt_array_down = new JTextField[]{txt_bookId, txt_quantity};
+        txt_array_search = new JTextField[]{txt_search};
     }
 
     private void initializeMainPanel() {
@@ -119,10 +124,11 @@ public class BanSachGUI {
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = {"Mã nhân viên", "SĐT khách hàng"};
+        String[] searchOptions = {"Mã sách", "Tên sách"};
+        JComboBox<String> comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
-        searchPanel.add(tool.createSearchTextField(300, 30, searchOptions));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox,searchbutton , txt_array_search));
         return searchPanel;
     }
 

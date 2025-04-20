@@ -135,6 +135,25 @@ public class Tool {
         searchPanel.add(comboBox);
         return searchPanel;
     }
+
+	public JPanel createSearchTextFieldTest(JComboBox<String> comboBox,JButton[] button,JTextField[] textField) {
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        
+        // JTextField textField = new JTextField(20);
+        textField[0].setPreferredSize(new Dimension(120, 30));
+        textField[0].setBackground(new Color(202, 220, 252));
+		comboBox.setBackground(new Color(202, 220, 252));
+        comboBox.setPreferredSize(new Dimension(120, 30));
+		button[0] = new JButton("🔍");
+        button[0].setPreferredSize(new Dimension(60, 30));
+		button[0].setBackground(new Color(202, 220, 252));
+        
+        searchPanel.add(textField[0]);
+        searchPanel.add(comboBox);
+		searchPanel.add(button[0]);
+
+        return searchPanel;
+    }
 	
 	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label, ImageIcon img, int width,int height, double weightx, final int TEXTFIELD_CAPACITY, boolean newLine) {
 		// final int TEXTFIELD_CAPACITY = 3;

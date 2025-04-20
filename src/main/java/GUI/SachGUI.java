@@ -212,6 +212,7 @@ public class SachGUI {
                         sach.getMaSach(),
                         sach.getTenSach(),
                         sach.getTheLoai(),
+                        sach.getSoLuong(),
                         sach.getDonGia(),
                         sach.getMaTG()
                 });
