@@ -1,8 +1,26 @@
 package GUI;
 
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Image;
+import java.awt.Insets;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+
 import BUS.TaiKhoanNVBUS;
-import javax.swing.*;
-import java.awt.*;
 
 public class LoginGUI {
         LoginGUI() {
@@ -26,7 +44,7 @@ public class LoginGUI {
                 JLabel label2 = new JLabel("ĐĂNG NHẬP VÀO HỆ THỐNG");
                 // Use relative path for the image
                 ImageIcon image = new ImageIcon(
-                                "D:/CodeNProjects/Codes/JavaCourse/BaiTapCoHieu/Project/BookStoreManagement/images/book-icon-transparent-image.png");
+                                "images/book-icon-transparent-image.png");
                 label1.setFont(new Font("Arial", Font.PLAIN, 24));
                 label1.setHorizontalAlignment(SwingConstants.CENTER);
                 label1.setForeground(Color.WHITE);
@@ -62,7 +80,7 @@ public class LoginGUI {
 
                 // Icon user
                 ImageIcon imageUser = new ImageIcon(
-                                "D:/CodeNProjects/Codes/JavaCourse/BaiTapCoHieu/Project/BookStoreManagement/images/user.png");
+                                "images/user.png");
                 ImageIcon scaledImageUser = new ImageIcon(
                                 imageUser.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH));
                 JLabel iconLabelUser = new JLabel(scaledImageUser);
@@ -70,7 +88,7 @@ public class LoginGUI {
 
                 // Icon password
                 ImageIcon imagePassword = new ImageIcon(
-                                "D:/CodeNProjects/Codes/JavaCourse/BaiTapCoHieu/Project/BookStoreManagement/images/password.png");
+                                "images/password.png");
                 ImageIcon scaledImagePassword = new ImageIcon(
                                 imagePassword.getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH));
                 JLabel iconLabelPassword = new JLabel(scaledImagePassword);
@@ -84,6 +102,7 @@ public class LoginGUI {
                 // Create panel to hold text field and icon for username
                 JPanel userPanel = new JPanel(new BorderLayout(5, 0));
                 JTextField textFieldMaNV = new JTextField(20);
+                textFieldMaNV.setText("NV01");
                 textFieldMaNV.setFont(new Font("Arial", Font.PLAIN, 16));
                 userPanel.add(textFieldMaNV, BorderLayout.CENTER);
                 userPanel.add(iconLabelUser, BorderLayout.WEST);
@@ -95,6 +114,7 @@ public class LoginGUI {
                 // Create panel to hold text field and icon for password
                 JPanel passwordPanel = new JPanel(new BorderLayout(5, 0));
                 JPasswordField textFieldMatKhau = new JPasswordField(20);
+                textFieldMatKhau.setText("admin");
                 textFieldMatKhau.setFont(new Font("Arial", Font.PLAIN, 16));
                 passwordPanel.add(textFieldMatKhau, BorderLayout.CENTER);
                 passwordPanel.add(iconLabelPassword, BorderLayout.WEST);
@@ -133,10 +153,12 @@ public class LoginGUI {
 
                         TaiKhoanNVBUS taiKhoanNVBUS = new TaiKhoanNVBUS();
                         if (taiKhoanNVBUS.checkLogin(maNV, matKhau, 0)) {
-                                JOptionPane.showMessageDialog(null, "Đăng nhập thành công", "Thông báo",
-                                                JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Đăng nhập thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
                                 frame.dispose();
-                                new MenuGUI();
+                                new MenuGUI(taiKhoanNVBUS.getTaiKhoanByMaNV(maNV));
+                        }
+                        else {
+                                JOptionPane.showMessageDialog(null, "Tên đăng nhập hoặc mật khẩu không tồn tại", "Thông báo", JOptionPane.ERROR_MESSAGE);
                         }
 
                 });

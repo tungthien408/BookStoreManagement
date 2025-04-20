@@ -70,12 +70,12 @@ public class KhachHangBUS {
     }
 
     // Xóa khách hàng (xóa mềm)
-    public boolean deleteKhachHang(String maKH) {
-        if (maKH == null || maKH.trim().isEmpty()) {
-            throw new IllegalArgumentException("Mã khách hàng không được để trống!");
-        }
-        return khachHangDAO.delete(maKH);
-    }
+    // public boolean deleteKhachHang(String maKH) {
+    //     if (maKH == null || maKH.trim().isEmpty()) {
+    //         throw new IllegalArgumentException("Mã khách hàng không được để trống!");
+    //     }
+    //     return khachHangDAO.delete(maKH);
+    // }
 
     // Tìm kiếm khách hàng theo họ tên (gần đúng)
     public List<KhachHangDTO> searchByHoTen(String hoTen) {

@@ -29,8 +29,10 @@ import BUS.NhanVienBUS;
 import BUS.PhieuNhapBUS;
 import BUS.SachBUS;
 import DTO.ChiTietPhieuNhapDTO;
+import DTO.NhanVienDTO;
 import DTO.PhieuNhapDTO;
 import DTO.SachDTO;
+import DTO.TaiKhoanNVDTO;
 
 public class NhapSachGUI {
     private Tool tool = new Tool();
@@ -59,8 +61,10 @@ public class NhapSachGUI {
     private SachBUS sachBUS = new SachBUS();
     private NhanVienBUS nhanVienBUS = new NhanVienBUS();
     private ChiTietPhieuNhapBUS chiTietPhieuNhapBUS = new ChiTietPhieuNhapBUS();
+    private NhanVienDTO nv;
 
-    public NhapSachGUI() {
+    public NhapSachGUI(TaiKhoanNVDTO account) {
+        nv = nhanVienBUS.getNhanVienByMaNV(account.getMaNV());
         initializeTextFields();
         initializeMainPanel();
         setupPanelLayout();
@@ -81,7 +85,7 @@ public class NhapSachGUI {
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         panel.add(createTable_top(), BorderLayout.WEST);
         
-        String[] txt_label_top = {"Mã phiếu nhập", "Mã NV", "NXB", "Ngày nhập", "Tổng tiền"};
+        String[] txt_label_top = {"Mã phiếu nhập", "Nhân viên", "NXB", "Ngày nhập", "Tổng tiền"};
         panel.add(createDetailPanel_top(400, 30, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
         
         String[] txt_label = {"Mã Sách", "Số lượng"};
@@ -199,6 +203,8 @@ public class NhapSachGUI {
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(padding_top, 0, 0, 0));
         
         txt_array[0].setEditable(false);
+        txt_array[1].setText(nv.getHoTen());
+        txt_array[1].setEditable(false);
         txt_array[3].setEditable(false);
         txt_array[4].setEditable(false);
         return wrappedPanel;

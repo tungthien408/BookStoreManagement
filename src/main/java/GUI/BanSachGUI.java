@@ -31,7 +31,9 @@ import BUS.SachBUS;
 import DTO.ChiTietHoaDonDTO;
 import DTO.HoaDonDTO;
 import DTO.KhachHangDTO;
+import DTO.NhanVienDTO;
 import DTO.SachDTO;
+import DTO.TaiKhoanNVDTO;
 
 public class BanSachGUI {
     private static final int WIDTH = 1200;
@@ -62,8 +64,10 @@ public class BanSachGUI {
     private HoaDonBUS hoaDonBUS = new HoaDonBUS();
     private ChiTietHoaDonBUS chiTietHoaDonBUS = new ChiTietHoaDonBUS();
     private KhachHangBUS khachHangBUS = new KhachHangBUS();
+    private NhanVienDTO nv;
 
-    public BanSachGUI() {
+    public BanSachGUI(TaiKhoanNVDTO account) {
+        nv = nhanVienBUS.getNhanVienByMaNV(account.getMaNV());
         initializeTextFields();
         initializeMainPanel();
         setupPanelLayout();
@@ -71,13 +75,14 @@ public class BanSachGUI {
     }
 
     private void initializeTextFields() {
-        txt_invoiceId = new JTextField();
-        txt_employeeId = new JTextField();
-        txt_customerPhone = new JTextField();
-        txt_date = new JTextField();
-        txt_total = new JTextField();
-        txt_bookId = new JTextField();
-        txt_quantity = new JTextField();
+        // txt_invoiceId = new JTextField();
+        // txt_employeeId = new JTextField();
+        // System.out.println(nv.getHoTen());
+        // txt_customerPhone = new JTextField();
+        // txt_date = new JTextField();
+        // txt_total = new JTextField();
+        // txt_bookId = new JTextField();
+        // txt_quantity = new JTextField();
         txt_search = new JTextField();
         txt_array_top = new JTextField[]{txt_invoiceId, txt_employeeId, txt_customerPhone, txt_date, txt_total};
         txt_array_down = new JTextField[]{txt_bookId, txt_quantity};
@@ -93,7 +98,7 @@ public class BanSachGUI {
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         panel.add(createTable_top(), BorderLayout.WEST);
 
-        String[] txt_label_top = {"Mã hóa đơn", "Mã NV", "SDT KH", "Ngày bán", "Tổng tiền"};
+        String[] txt_label_top = {"Mã hóa đơn", "Nhân viên", "SDT KH", "Ngày bán", "Tổng tiền"};
         panel.add(createDetailPanel_top(400, 30, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
 
         String[] txt_label = {"Mã sách", "Số lượng"};
@@ -216,6 +221,9 @@ public class BanSachGUI {
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(padding_top, 0, 0, 0));
 
         txt_array[0].setEditable(false);
+        txt_array[1].setEditable(false);
+        txt_array[1].setText(nv.getHoTen());
+        txt_array[2].setEditable(false);
         txt_array[3].setEditable(false);
         txt_array[4].setEditable(false);
         return wrappedPanel;
@@ -245,7 +253,7 @@ public class BanSachGUI {
     private void addChiTietHoaDon() {
         txt_array_top[0].setEditable(false);
         txt_array_top[0].setText(getID());
-        txt_array_top[1].setEditable(true);
+        // txt_array_top[1].setEditable(true);
         txt_array_top[2].setEditable(true);
         txt_array_top[3].setText(LocalDate.now().toString());
 
@@ -386,7 +394,9 @@ public class BanSachGUI {
             model.setRowCount(0);
 
             for (JTextField txt : txt_array_top) {
-                txt.setText("");
+                if (txt != txt_employeeId) {
+                    txt.setText("");
+                }
                 txt.setEditable(txt != txt_invoiceId && txt != txt_date && txt != txt_total);
             }
             for (JTextField txt : txt_array_down) {
