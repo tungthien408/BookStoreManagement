@@ -91,7 +91,7 @@ public class TacGiaGUI {
         table = tool.createTable(model, column);
         table.setDefaultEditor(Object.class, null); // Không cho chỉnh sửa trực tiếp trên bảng
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(850, 340));
+        scrollPane.setPreferredSize(new Dimension(850, 540));
         
         // Thêm MouseListener cho bảng
         table.addMouseListener(new MouseAdapter() {
@@ -143,7 +143,7 @@ public class TacGiaGUI {
         });
 
         // Tạo khoảng cách xung quanh bảng
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(50, 40, 10, 10));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 30, 10));
 
         // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -155,7 +155,7 @@ public class TacGiaGUI {
         // Khai báo và khởi tạo mảng JButton[]
         String [] txt_btn = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel" ,"Hủy"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBtn.setBorder(BorderFactory.createEmptyBorder(25, 0, 0, 0));
+        // panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
         panelBtn.add(tool.createButtonPanel(buttons, txt_btn, new Color(0, 36, 107), Color.WHITE, "y"));
 
         // Gắn sự kiện cho các nút
@@ -169,13 +169,12 @@ public class TacGiaGUI {
 
     private JPanel createPanelDetail(JTextField[] txt_array, String[] txt_label) {
         // Sử dụng createDetailPanel từ Tool
-        panelDetail = tool.createDetailPanel(txt_array, txt_label, null,850,300, 0.5, 4, false);
+        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, 850,90, 0.5, 2, false);
 
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
-        wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
-        return wrappedPanel;
-    }
+        wrappedPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
+        return wrappedPanel;    }
 
     private JPanel createPanelSearch() {
         String[] searchOptions = {"Mã tác giả", "Tên tác giả", "Số điện thoại"};

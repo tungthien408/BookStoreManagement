@@ -104,4 +104,27 @@ public class KhachHangDAO {
             return false;
         }
     }
+
+        // Lấy khách hàng theo MAKH
+        public KhachHangDTO getmaKHBysdt(String sdt) {
+            String sql = "SELECT * FROM khachhang WHERE SDT = ? AND trangThaiXoa = 0";
+            try (Connection conn = Data.getConnection();
+                    PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, sdt);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        KhachHangDTO khachHang = new KhachHangDTO();
+                        khachHang.setMaKH(rs.getString("MAKH"));
+                        khachHang.setSdt(rs.getString("SDT"));
+                        khachHang.setHoTen(rs.getString("HoTen"));
+                        khachHang.setDiem(rs.getInt("Diem"));
+                        khachHang.setTrangThaiXoa(rs.getInt("trangThaiXoa"));
+                        return khachHang;
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
 }

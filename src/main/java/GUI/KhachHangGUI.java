@@ -28,7 +28,7 @@ public class KhachHangGUI {
     Tool tool = new Tool();
     JPanel panel, panelDetail;
     List<KhachHangDTO> khachHangList;
-    JTextField txt_array[] = new JTextField[3];
+    JTextField txt_array[] = new JTextField[4];
     
     int width = 1200;
     int width_sideMenu = 151;
@@ -51,7 +51,7 @@ public class KhachHangGUI {
         panel.add(createPanelButton(), BorderLayout.CENTER);
 
         // Chi tiết sản phẩm
-        String txt_label[] = {"Số điện thoại", "Tên", "Điểm tích lũy"};
+        String txt_label[] = {"Mã khách hàng", "Số điện thoại", "Tên", "Điểm tích lũy"};
         panel.add(createDetailPanel(txt_array, txt_label), BorderLayout.SOUTH);
       
         // Tạo thanh tìm kiếm 
@@ -59,14 +59,14 @@ public class KhachHangGUI {
     }
     
     private JPanel createKhachHangTable() {
-        String column[] = {"Số điện thoại", "Tên", "Điểm tích lũy"};
+        String column[] = {"Mã khách hàng", "Số điện thoại", "Tên", "Điểm tích lũy"};
         DefaultTableModel model = new DefaultTableModel(column, 0);
 
         try {
             khachHangList = khachHangBUS.getAllKhachHang();
             for (KhachHangDTO kh : khachHangList) {
                 model.addRow(new Object[] {
-                    kh.getSdt(), kh.getHoTen(), kh.getDiem()
+                    kh.getMaKH(), kh.getSdt(), kh.getHoTen(), kh.getDiem()
                 });
             }
         } catch (Exception e) {
@@ -76,9 +76,9 @@ public class KhachHangGUI {
         // Bảng
         table = tool.createTable(model, column);        table.setDefaultEditor(Object.class, null); // Không cho chỉnh sửa trực tiếp trên bảng
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(850, 340));
+        scrollPane.setPreferredSize(new Dimension(850, 540));
 
-                // Thêm MouseListener cho bảng
+        // Thêm MouseListener cho bảng
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -119,7 +119,7 @@ public class KhachHangGUI {
         });
 
         // Tạo khoảng cách xung quanh bảng
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(50, 40, 10, 10)); // Top, Left, Bottom, Right
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 30, 10)); // Top, Left, Bottom, Right
         
         // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -131,7 +131,7 @@ public class KhachHangGUI {
         String [] btn_txt = {"Sửa", "Nhập Excel", "Xuất Excel", "Hủy"};
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(btn, btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
-        panelBtn.setBorder(BorderFactory.createEmptyBorder(40, 0, 0, 0));
+        // panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         // Gắn sự kiện cho các nút
         btn[0].addActionListener(e -> updateKhachHang());
@@ -141,16 +141,16 @@ public class KhachHangGUI {
     }
 
     private JPanel createDetailPanel(JTextField[] txt_array, String txt_label[]) {
-        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, 850,300, 0.5, 3, false);
+        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, 850,90, 0.5, 2, false);
 
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
-        wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
+        wrappedPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
         return wrappedPanel;
     }
 
     private JPanel createSearchPanel() {
-        String [] searchOptions = {"SĐT", "Tên khách hàng", "Điểm tích lũy"};
+        String [] searchOptions = {"Mã khách hàng", "SĐT", "Tên khách hàng"};
         JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelSearch.add(Box.createHorizontalStrut(25));
         panelSearch.add(tool.createSearchTextField(0, 0,searchOptions));
@@ -165,7 +165,7 @@ public class KhachHangGUI {
             khachHangList = khachHangBUS.getAllKhachHang();
             for (KhachHangDTO kh : khachHangList) {
                 model.addRow(new Object[] {
-                    kh.getSdt(), kh.getHoTen(), kh.getDiem()
+                    kh.getMaKH(), kh.getSdt(), kh.getHoTen(), kh.getDiem()
                 });
             }
         } catch (Exception e) {

@@ -101,4 +101,18 @@ public class NXBDAO {
             return false;
         }
     }
+
+    public boolean existsByMaNXB(String maNXB) {
+        String sql = "SELECT 1 FROM nhaxuatban WHERE MANXB = ? AND trangThaiXoa = 0 LIMIT 1";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, maNXB);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

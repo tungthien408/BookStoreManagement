@@ -1,16 +1,10 @@
 package GUI;
 
 import java.awt.*;
-import java.util.concurrent.Flow;
-import javax.swing.border.Border;
-import javax.swing.table.DefaultTableCellRenderer;
+import java.awt.event.*;
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableCellRenderer;
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
+import javax.swing.table.*;
+import javax.swing.border.*;
 
 public class PhanQuyenGUI {
     Tool tool = new Tool();
@@ -24,11 +18,11 @@ public class PhanQuyenGUI {
     private static final Color MENU_HOVER = new Color(15, 76, 104);
 
     public PhanQuyenGUI() {
-        // Tạo panel chia bố cục
+        // T o panel chia b c c
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel_buttons = tool.createPanel(width - width_sideMenu, 50, new FlowLayout(FlowLayout.LEFT, 10, 0));
         panel_table = tool.createPanel(width - width_sideMenu, height - 50, new BorderLayout());
-        // Thêm các nội dung vào các panel
+        // Thêm các n i dung vào c c panel
         panel_buttons.setBorder(BorderFactory.createEmptyBorder(7, 3, 10, 10));
         panel_table.setBorder(BorderFactory.createEmptyBorder(20, 10, 0, 10));
         btn_add = new JButton("THÊM");
@@ -56,7 +50,7 @@ public class PhanQuyenGUI {
         btn_add.setBorderPainted(false);
         btn_edit.setBorderPainted(false);
         btn_delete.setBorderPainted(false);
-        // Hiệu ứng nút bấm
+        // Hi u ng nút b m
         btn_add.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -88,20 +82,15 @@ public class PhanQuyenGUI {
                 btn_delete.setBackground(MENU_BACKGROUND);
             }
         });
-        btn_edit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                new EditPhanQuyenGUI();
-            }
-        });
+
         panel_buttons.add(btn_add); // Thêm nút thêm
         panel_buttons.add(btn_edit); // Thêm nút sửa
         panel_buttons.add(btn_delete); // Thêm nút xóa
         // Tạo các nút chức năng
         String[] columnNames = { "MÃ QUYỀN", "TÊN QUYỀN" };
         String[][] data = {
-                { "1", "Quản trị viên (admin)" },
-                { "2", "Quản lý" },
+                { "1", "Quản lý nhân viên (admin)" },
+                { "2", "Quản lý " },
                 { "3", "Bán hàng" },
                 { "4", "Kế toán" },
         };
@@ -110,7 +99,7 @@ public class PhanQuyenGUI {
             model.addRow(row);
         }
         JTable table = new JTable(model);
-        table.setRowHeight(25);
+        table.setRowHeight(30);
         table.getTableHeader().setResizingAllowed(false);
         table.getTableHeader().setReorderingAllowed(false);
         table.setDefaultEditor(Object.class, null);
@@ -118,6 +107,8 @@ public class PhanQuyenGUI {
         table.setRowSelectionAllowed(true);
         table.setSelectionBackground(new Color(240, 240, 240));
         table.setSelectionForeground(Color.BLACK);
+        table.setFont(new Font("Arial", Font.PLAIN, 14));
+        table.setBackground(Color.white);
         table.getTableHeader().setFont(new Font("Arial", Font.BOLD, 18));
         table.getTableHeader().setBackground(MENU_BACKGROUND);
         table.getTableHeader().setForeground(Color.white);
@@ -138,10 +129,81 @@ public class PhanQuyenGUI {
         panel_table.add(scrollPane, BorderLayout.NORTH);
         panel.add(panel_table, BorderLayout.SOUTH);
         panel.add(panel_buttons, BorderLayout.NORTH);
+        table.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow >= 0) {
+                    int id = Integer.parseInt(table.getValueAt(selectedRow, 0).toString());
+                    String name = table.getValueAt(selectedRow, 1).toString();
+                }
+            }
+        });
+        btn_edit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow < 0) {
+                    JOptionPane.showMessageDialog(panel, "Vui lòng chọn một quyền chỉnh sửa!", "Thông báo",
+                            JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+                String ValueMaQuyen = table.getValueAt(selectedRow, 0).toString();
+                String ValueTenQuyen = table.getValueAt(selectedRow, 1).toString();
+                new EditPhanQuyenGUI(ValueMaQuyen, ValueTenQuyen);
+            }
+        });
+        // Làm đỡ cái thêm quyền
+        btn_add.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String tenQuyen = JOptionPane.showInputDialog(panel, "Nhập Tên Quyền:", "Thêm Quyền",
+                        JOptionPane.QUESTION_MESSAGE);
+                if (tenQuyen != null && !tenQuyen.trim().isEmpty()) {
+                    int maxMaQuyen = 0;
+                    for (int i = 0; i < table.getRowCount(); i++) {
+                        int currentMaQuyen = Integer.parseInt(table.getValueAt(i, 0).toString());
+                        if (currentMaQuyen > maxMaQuyen) {
+                            maxMaQuyen = currentMaQuyen;
+                        }
+                    }
+                    String newMaQuyen = String.valueOf(maxMaQuyen + 1);
+                    // Add logic to add the new "Quyen" with newMaQuyen and tenQuyen
+                    JOptionPane.showMessageDialog(panel,
+                            "Quyền " + tenQuyen + " với Mã Quyền " + newMaQuyen + " đã được thêm thành công!",
+                            "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                    String[] data = { newMaQuyen, tenQuyen };
+                    ((DefaultTableModel) table.getModel()).addRow(data);
+                } else {
+                    JOptionPane.showMessageDialog(panel, "Tên Quyền không được để trống!", "Lỗi",
+                            JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
+        btn_delete.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int selectedRow = table.getSelectedRow();
+                if (selectedRow >= 0) {
+                    int maQuyen = Integer.parseInt(table.getValueAt(selectedRow, 0).toString());
+                    String tenQuyen = table.getValueAt(selectedRow, 1).toString();
+                    int result = JOptionPane.showConfirmDialog(panel,
+                            "Bản xóa quyền " + tenQuyen + " với Mã Quyền " + maQuyen + " ?", "Xóa quyền",
+                            JOptionPane.YES_NO_OPTION);
+                    if (result == JOptionPane.YES_OPTION) {
+                        ((DefaultTableModel) table.getModel()).removeRow(selectedRow);
+                        JOptionPane.showMessageDialog(panel, "Quyền đã được xóa thành công!", "Thông báo",
+                                JOptionPane.INFORMATION_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(panel, "Vui lòng chọn một quyền để xóa!", "Thông báo",
+                            JOptionPane.WARNING_MESSAGE);
+                }
+            }
+        });
 
     }
-
-    /******* 4b0c9ffb-f370-424c-a1b2-6948671e1189 *******/
+    // Làm đỡ xóa quyền cho dễ hình dung
 
     public JPanel getPanel() {
         return this.panel;

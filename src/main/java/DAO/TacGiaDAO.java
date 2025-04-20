@@ -102,4 +102,18 @@ public class TacGiaDAO {
             return false;
         }
     }
+    public boolean isTacGiaExists(String maTG){
+        String sql = "SELECT 1 FROM tacgia WHERE MATG = ? AND trangThaiXoa = 0 LIMIT 1";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, maTG);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
 }

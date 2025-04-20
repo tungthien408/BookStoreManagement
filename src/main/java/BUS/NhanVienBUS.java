@@ -13,6 +13,10 @@ public class NhanVienBUS {
         nhanVienDAO = new NhanVienDAO();
     }
 
+    public boolean isNhanVienExists(String maNV) {
+        return nhanVienDAO.existsByMaNV(maNV);
+    }
+
     // Thêm nhân viên mới
     public boolean addNhanVien(NhanVienDTO nhanVien) {
         // Kiểm tra dữ liệu đầu vào

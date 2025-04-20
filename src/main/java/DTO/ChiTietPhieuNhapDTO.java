@@ -6,7 +6,8 @@ public class ChiTietPhieuNhapDTO {
     private int soLuong;
     private int giaNhap;
 
-    // Constructor
+    public ChiTietPhieuNhapDTO() {}
+
     public ChiTietPhieuNhapDTO(String maSach, String maPN, int soLuong, int giaNhap) {
         this.maSach = maSach;
         this.maPN = maPN;
@@ -14,36 +15,13 @@ public class ChiTietPhieuNhapDTO {
         this.giaNhap = giaNhap;
     }
 
-    // Getters và Setters
-    public String getMaSach() {
-        return maSach;
-    }
-
-    public void setMaSach(String maSach) {
-        this.maSach = maSach;
-    }
-
-    public String getMaPN() {
-        return maPN;
-    }
-
-    public void setMaPN(String maPN) {
-        this.maPN = maPN;
-    }
-
-    public int getSoLuong() {
-        return soLuong;
-    }
-
-    public void setSoLuong(int soLuong) {
-        this.soLuong = soLuong;
-    }
-
-    public int getGiaNhap() {
-        return giaNhap;
-    }
-
-    public void setGiaNhap(int giaNhap) {
-        this.giaNhap = giaNhap;
-    }
+    // Getters and Setters
+    public String getMaSach() { return maSach; }
+    public void setMaSach(String maSach) { this.maSach = maSach; }
+    public String getMaPN() { return maPN; }
+    public void setMaPN(String maPN) { this.maPN = maPN; }
+    public int getSoLuong() { return soLuong; }
+    public void setSoLuong(int soLuong) { this.soLuong = soLuong; }
+    public int getGiaNhap() { return giaNhap; }
+    public void setGiaNhap(int giaNhap) { this.giaNhap = giaNhap; }
 }

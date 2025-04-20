@@ -16,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import javax.swing.table.DefaultTableModel;
 
 public class ThongKeGUI {
     Tool tool = new Tool();
@@ -27,6 +28,8 @@ public class ThongKeGUI {
     int height = (int) (width * 0.625);
     private static final Color MENU_BACKGROUND = new Color(0, 36, 107);
     private static final Color MENU_HOVER = new Color(15, 76, 104);
+    JTable table_KhachHang, table_SanPham, table_DoanhThu;
+    DefaultTableModel model_KhachHang, model_SanPham, model_DoanhThu;
 
     public ThongKeGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
@@ -278,9 +281,14 @@ public class ThongKeGUI {
         // { "4", "HD004", "2024-01-04", "1250000" },
         // { "5", "HD005", "2024-01-05", "1500000" }
         // };
-        JTable table_KhachHang = tool.createTable(tableData_KhachHang, columnNames_KhachHang);
-        JTable table_SanPham = tool.createTable(tableData_SanPham, columnNames_SanPham);
-        JTable table_DoanhThu = tool.createTable(tableData_DoanhThu, columnNames_DoanhThu);
+        table_KhachHang = tool.createTable(tableData_KhachHang, columnNames_KhachHang);
+        table_SanPham = tool.createTable(tableData_SanPham, columnNames_SanPham);
+        table_DoanhThu = tool.createTable(tableData_DoanhThu, columnNames_DoanhThu);
+        // Set model for table
+        model_KhachHang = (DefaultTableModel) table_KhachHang.getModel();
+        model_SanPham = (DefaultTableModel) table_SanPham.getModel();
+        model_DoanhThu = (DefaultTableModel) table_DoanhThu.getModel();
+        // Tạo màu cho tiêu đề bảng
         table_KhachHang.getTableHeader().setBackground(MENU_BACKGROUND);
         table_SanPham.getTableHeader().setBackground(MENU_BACKGROUND);
         table_DoanhThu.getTableHeader().setBackground(MENU_BACKGROUND);
@@ -345,8 +353,7 @@ public class ThongKeGUI {
         buttonLamMoi.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Refresh lại bảng
-
+                refreshTable();
             }
         });
         buttonLoc.addActionListener(new ActionListener() {
@@ -360,6 +367,50 @@ public class ThongKeGUI {
 
             }
         });
+    }
+
+    // Refresh lại 1 phát 3 bảng
+    public void refreshTable() {
+
+        model_DoanhThu.setRowCount(0);
+        model_KhachHang.setRowCount(0);
+        model_SanPham.setRowCount(0);
+        try {
+            KhachHangBUS khachHangBUS = new KhachHangBUS();
+            List<KhachHangDTO> khachHangList = khachHangBUS.getAllKhachHang();
+            SachBUS sachBUS = new SachBUS();
+            List<SachDTO> sachList = sachBUS.getAllSach();
+            HoaDonBUS hoaDonBUS = new HoaDonBUS();
+            List<HoaDonDTO> hoaDonList = hoaDonBUS.getAllHoaDon();
+
+            for (KhachHangDTO khachHang : khachHangList) {
+                model_KhachHang.addRow(new Object[] {
+                        khachHangList.indexOf(khachHang) + 1,
+                        khachHang.getSdt(),
+                        khachHang.getHoTen(),
+                        khachHang.getDiem()
+                });
+            }
+            for (SachDTO sach : sachList) {
+                model_SanPham.addRow(new Object[] {
+                        sachList.indexOf(sach) + 1,
+                        sach.getMaSach(),
+                        sach.getTenSach(),
+                        sach.getSoLuong(),
+                        sach.getDonGia()
+                });
+            }
+            for (HoaDonDTO hoaDon : hoaDonList) {
+                model_DoanhThu.addRow(new Object[] {
+                        hoaDonList.indexOf(hoaDon) + 1,
+                        hoaDon.getMaHD(),
+                        hoaDon.getNgayBan().toString(),
+                        hoaDon.getTongTien()
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public JPanel getPanel() {

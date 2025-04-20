@@ -11,12 +11,12 @@ public class NXBDTO {
     }
 
     // Constructor đầy đủ
-    public NXBDTO(String maNXB, String tenNXB, String diaChi, String sdt, int trangThaiXoa) {
+    public NXBDTO(String maNXB, String tenNXB, String diaChi, String sdt) {
         this.maNXB = maNXB;
         this.tenNXB = tenNXB;
         this.diaChi = diaChi;
         this.sdt = sdt;
-        this.trangThaiXoa = trangThaiXoa;
+        this.trangThaiXoa = 0;
     }
 
     // Getters và Setters

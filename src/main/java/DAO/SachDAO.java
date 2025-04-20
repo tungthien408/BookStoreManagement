@@ -113,4 +113,47 @@ public class SachDAO {
             return false;
         }
     }
+
+    public int getSoLuongTonSanPham(String maSach){
+        String sql = "SELECT SoLuong FROM sach WHERE MASACH=?";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, maSach);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("SoLuong");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+    
+    public int updateSoLuongTonSanPham(String maSach, int soLuongTon) {
+        String sql = "UPDATE sach SET SoLuong = ? WHERE MASACH = ?";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, soLuongTon);
+            ps.setString(2, maSach);
+            return ps.executeUpdate(); 
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
+    }
+
+    public boolean existsByMaSach(String maSach) {
+        String sql = "SELECT 1 FROM sach WHERE MASACH = ? AND trangThaiXoa = 0 LIMIT 1";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, maSach);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

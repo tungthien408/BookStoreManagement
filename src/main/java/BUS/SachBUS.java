@@ -86,4 +86,12 @@ public class SachBUS {
         }
         return result;
     }
+
+    public int getSoLuongTonSanPham(String maSp){
+        return sachDAO.getSoLuongTonSanPham(maSp);
+    }
+    
+    public boolean updateSoLuongTonSanPham(String maSp, int soLuongTon){
+        return sachDAO.updateSoLuongTonSanPham(maSp, soLuongTon) > 0;
+    }
 }

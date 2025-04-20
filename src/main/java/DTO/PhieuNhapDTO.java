@@ -15,13 +15,13 @@ public class PhieuNhapDTO {
     }
 
     // Constructor đầy đủ
-    public PhieuNhapDTO(String maPN, String maNV, Date ngayNhap, double tongTien, String maNXB, int trangThaiXoa) {
+    public PhieuNhapDTO(String maPN, String maNV, Date ngayNhap, double tongTien, String maNXB) {
         this.maPN = maPN;
         this.maNV = maNV;
         this.ngayNhap = ngayNhap;
         this.tongTien = tongTien;
         this.maNXB = maNXB;
-        this.trangThaiXoa = trangThaiXoa;
+        this.trangThaiXoa = 0;
     }
 
     // Getters và Setters

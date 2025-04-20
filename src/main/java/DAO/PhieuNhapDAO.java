@@ -88,4 +88,18 @@ public class PhieuNhapDAO {
             return false;
         }
     }
+
+    public boolean existsByMaPN(String maPN) {
+        String sql = "SELECT 1 FROM phieunhap WHERE MAPN = ? LIMIT 1";
+        try (Connection conn = Data.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, maPN);
+            try (ResultSet rs = ps.executeQuery()) {
+                return rs.next();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

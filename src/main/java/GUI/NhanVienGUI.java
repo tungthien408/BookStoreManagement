@@ -5,6 +5,9 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -16,10 +19,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-
-import java.awt.event.MouseEvent;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 
 import BUS.NhanVienBUS;
 import DTO.NhanVienDTO;
@@ -96,7 +95,7 @@ public class NhanVienGUI {
         table = tool.createTable(model, column);
         table.setDefaultEditor(Object.class, null); // Không cho chỉnh sửa trực tiếp trên bảng
         JScrollPane scrollPane = new JScrollPane(table);
-        scrollPane.setPreferredSize(new Dimension(850, 340));
+        scrollPane.setPreferredSize(new Dimension(850, 440));
 
         // Thêm MouseListener cho bảng
         table.addMouseListener(new MouseAdapter() {
@@ -130,12 +129,10 @@ public class NhanVienGUI {
                     // Click vào dòng mới
                     for (int i = 0; i < txt_array.length; i++) {
                         if (table.getValueAt(selectedRow, i) instanceof java.util.Date) {
-                            if (table.getValueAt(selectedRow, i) instanceof java.util.Date) {
-                                java.util.Date date = (java.util.Date) table.getValueAt(selectedRow, i);
-                                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-                                txt_array[i].setText(sdf.format(date));
-                                continue;
-                            }
+                            java.util.Date date = (java.util.Date) table.getValueAt(selectedRow, i);
+                            SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                            txt_array[i].setText(sdf.format(date));
+                            continue;
                         }
                         txt_array[i].setText((String) table.getValueAt(selectedRow, i));
                         txt_array[i].setEditable(false);
@@ -155,7 +152,7 @@ public class NhanVienGUI {
         });
 
         // Tạo khoảng cách xung quanh bảng
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(50, 40, 10, 10)); // Top, Left, Bottom, Right
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 30, 10)); // Top, Left, Bottom, Right
 
         // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
@@ -168,7 +165,7 @@ public class NhanVienGUI {
         String[] btn_txt = { "Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Hủy" };
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(btn, btn_txt, new Color(0, 36, 107), Color.WHITE, "y"));
-        panelBtn.setBorder(BorderFactory.createEmptyBorder(25, 0, 0, 0));
+        // panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         // Gắn sự kiện cho các nút
         btn[0].addActionListener(e -> addNhanVien());
@@ -180,7 +177,7 @@ public class NhanVienGUI {
     }
 
     private JPanel createPanelDetail(JTextField[] txt_array, String[] txt_label) {
-        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, 850, 300, 0.5, 3, true);
+        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, 850, 200, 0.5, 3, false);
 
         // JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         // wrappedPanel.add(panelDetail);
