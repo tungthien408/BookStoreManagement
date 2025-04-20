@@ -5,23 +5,26 @@ package GUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.Dimension;
+
 import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.SwingConstants;
-import javax.swing.JDialog;
-import javax.swing.ImageIcon;
-import java.awt.Image;
+
+import DTO.TaiKhoanNVDTO;
 
 public class MenuGUI {
     String array_function[] = { "Bán sách", "Nhập sách", "Sách", "Nhà xuất bản", "Tác giả", "Hóa đơn nhập",
@@ -33,7 +36,7 @@ public class MenuGUI {
     private static final Color MENU_BACKGROUND = new Color(0, 36, 107);
     private static final Color MENU_HOVER = new Color(15, 76, 104);
 
-    public MenuGUI() {
+    public MenuGUI(TaiKhoanNVDTO account) {
         Tool tool = new Tool();
         int length = array_function.length;
         int width = 1200;
@@ -62,7 +65,7 @@ public class MenuGUI {
         panel_logo.setBackground(new Color(0, 0, 0, 0)); // Trong suốt
         panel_logo.setPreferredSize(new Dimension(130, 130));
         ImageIcon Logo = new ImageIcon(
-                "D:/CodeNProjects/Codes/JavaCourse/BaiTapCoHieu/Project/BookStoreManagement/images/book-icon-transparent-image.png");
+                "images/book-icon-transparent-image.png");
         Image image = Logo.getImage();
         Image Logo_newImage = image.getScaledInstance(110, 110, Image.SCALE_SMOOTH);
         Logo = new ImageIcon(Logo_newImage);
@@ -75,10 +78,10 @@ public class MenuGUI {
         for (int i = 0; i < length; i++) {
             switch (i) {
                 case 0:
-                    panel_content[i] = new BanSachGUI().getPanel();
+                    panel_content[i] = new BanSachGUI(account).getPanel();
                     break;
                 case 1:
-                    panel_content[i] = new NhapSachGUI().getPanel();
+                    panel_content[i] = new NhapSachGUI(account).getPanel();
                     break;
                 case 2:
                     panel_content[i] = new SachGUI().getPanel();
@@ -185,10 +188,12 @@ public class MenuGUI {
             panel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         }
 
-        JScrollPane scrollPane = new JScrollPane(sideMenu);
+        sideMenu.setPreferredSize(new Dimension(160, Math.max(height, sideMenu.getPreferredSize().height)));
+        JScrollPane scrollPane = new JScrollPane();
+        scrollPane.setViewportView(sideMenu);
         scrollPane.setBorder(null);
-        scrollPane.setPreferredSize(new Dimension(160, height));
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollPane.getVerticalScrollBar().setUnitIncrement(16); // Smooth scrolling
         mainPanel.add(scrollPane, BorderLayout.WEST);
         mainPanel.add(menuContent, BorderLayout.CENTER);
         frame.add(mainPanel);
