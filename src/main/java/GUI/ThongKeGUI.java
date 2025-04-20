@@ -1,3 +1,4 @@
+
 package GUI;
 
 import javax.swing.*;
@@ -204,6 +205,7 @@ public class ThongKeGUI {
         String[] columnNames_SanPham = { "STT", "Mã Sách", "Tên Sách", "Số lượng Nhập", "Số lượng Bán" };
         String[] columnNames_KhachHang = { "STT", "SĐT", "Tên Khách Hàng", "Điểm tích lũy" };
         String[] columnNames_DoanhThu = { "STT", "Mã Hóa Đơn", "Ngày", "Tổng Tiền" };
+
         // =====================================Lấy và thêm dữ liệu từ database vào
         // bảng=====================================
         // Sách

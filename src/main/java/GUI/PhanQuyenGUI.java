@@ -9,6 +9,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableCellRenderer;
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class PhanQuyenGUI {
     Tool tool = new Tool();
@@ -28,7 +30,7 @@ public class PhanQuyenGUI {
         panel_table = tool.createPanel(width - width_sideMenu, height - 50, new BorderLayout());
         // Thêm các nội dung vào các panel
         panel_buttons.setBorder(BorderFactory.createEmptyBorder(7, 3, 10, 10));
-        panel_table.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+        panel_table.setBorder(BorderFactory.createEmptyBorder(20, 10, 0, 10));
         btn_add = new JButton("THÊM");
         btn_edit = new JButton("SỬA");
         btn_delete = new JButton("XÓA");
@@ -51,6 +53,9 @@ public class PhanQuyenGUI {
         btn_add.setPreferredSize(buttonSize);
         btn_edit.setPreferredSize(buttonSize);
         btn_delete.setPreferredSize(buttonSize);
+        btn_add.setBorderPainted(false);
+        btn_edit.setBorderPainted(false);
+        btn_delete.setBorderPainted(false);
         // Hiệu ứng nút bấm
         btn_add.addMouseListener(new MouseAdapter() {
             @Override
@@ -65,21 +70,28 @@ public class PhanQuyenGUI {
         btn_edit.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                btn_add.setBackground(MENU_HOVER);
+                btn_edit.setBackground(MENU_HOVER);
             }
 
             public void mouseExited(MouseEvent e) {
-                btn_add.setBackground(MENU_BACKGROUND);
+                btn_edit.setBackground(MENU_BACKGROUND);
             }
         });
+
         btn_delete.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                btn_add.setBackground(MENU_HOVER);
+                btn_delete.setBackground(MENU_HOVER);
             }
 
             public void mouseExited(MouseEvent e) {
-                btn_add.setBackground(MENU_BACKGROUND);
+                btn_delete.setBackground(MENU_BACKGROUND);
+            }
+        });
+        btn_edit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new EditPhanQuyenGUI();
             }
         });
         panel_buttons.add(btn_add); // Thêm nút thêm
@@ -102,8 +114,7 @@ public class PhanQuyenGUI {
         table.getTableHeader().setResizingAllowed(false);
         table.getTableHeader().setReorderingAllowed(false);
         table.setDefaultEditor(Object.class, null);
-        table.setShowGrid(false);
-        table.setGridColor(Color.BLACK);
+        table.setShowGrid(true);
         table.setRowSelectionAllowed(true);
         table.setSelectionBackground(new Color(240, 240, 240));
         table.setSelectionForeground(Color.BLACK);
@@ -113,7 +124,6 @@ public class PhanQuyenGUI {
         table.setCursor(new Cursor(Cursor.HAND_CURSOR));
         table.setDragEnabled(false);
         table.setFocusable(false);
-        table.setBackground(MENU_BACKGROUND);
         DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
         centerRenderer.setHorizontalAlignment(JLabel.CENTER);
         table.getColumnModel().getColumn(0).setCellRenderer(centerRenderer);
@@ -122,12 +132,16 @@ public class PhanQuyenGUI {
             table.setRowSelectionInterval(0, 0);
         }
         JScrollPane scrollPane = new JScrollPane(table);
-
-        panel_table.add(scrollPane, BorderLayout.CENTER);
+        scrollPane.setPreferredSize(new Dimension(width - width_sideMenu - 40, height - 120));
+        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        panel_table.add(scrollPane, BorderLayout.NORTH);
         panel.add(panel_table, BorderLayout.SOUTH);
         panel.add(panel_buttons, BorderLayout.NORTH);
 
     }
+
+    /******* 4b0c9ffb-f370-424c-a1b2-6948671e1189 *******/
 
     public JPanel getPanel() {
         return this.panel;

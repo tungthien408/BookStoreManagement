@@ -50,7 +50,7 @@ public class MenuGUI {
         sideMenu.setPreferredSize(null);
 
         GridBagConstraints c = new GridBagConstraints();
-        c.insets = new Insets(10, 20, 10, 20);
+        c.insets = new Insets(8, 20, 10, 20);
         c.gridx = 0;
         c.gridy = 0;
         // c.weightx = 0.5;
@@ -188,7 +188,7 @@ public class MenuGUI {
         JScrollPane scrollPane = new JScrollPane(sideMenu);
         scrollPane.setBorder(null);
         scrollPane.setPreferredSize(new Dimension(160, height));
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         mainPanel.add(scrollPane, BorderLayout.WEST);
         mainPanel.add(menuContent, BorderLayout.CENTER);
         frame.add(mainPanel);

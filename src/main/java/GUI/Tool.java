@@ -32,9 +32,11 @@ import javax.swing.table.JTableHeader;
 import com.toedter.calendar.JCalendar;
 
 public class Tool {
-	public Tool() {}
+	public Tool() {
+	}
+
 	public JFrame createFrame(String title, int width, LayoutManager layout) {
-		int height = (int)(width * 0.625);
+		int height = (int) (width * 0.625);
 		JFrame frame = new JFrame(title);
 		if (layout == null) {
 			layout = new FlowLayout();
@@ -108,46 +110,46 @@ public class Tool {
 		return table;
 	}
 
+	public JPanel createSearchTextField(int x, int y, String[] list) {
+		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-	public JPanel createSearchTextField(int x, int y,String[] list) {
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        
-        JTextField textField = new JTextField(20);
-        textField.setPreferredSize(new Dimension(120, 30));
-        textField.setBackground(new Color(202, 220, 252));
+		JTextField textField = new JTextField(20);
+		textField.setPreferredSize(new Dimension(120, 30));
+		textField.setBackground(new Color(202, 220, 252));
 		// textField.setForeground(new Color(192, 79, 21));
-        JComboBox<String> comboBox = new JComboBox<>(list);
+		JComboBox<String> comboBox = new JComboBox<>(list);
 		comboBox.setBackground(new Color(202, 220, 252));
-        comboBox.setPreferredSize(new Dimension(120, 30));
-        
-        // Thêm sự kiện tìm kiếm
-        // textField.addActionListener(new ActionListener() {
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         String searchText = textField.getText().trim();
-        //         String searchCriteria = (String) comboBox.getSelectedItem();
-        //         System.out.println("Tìm kiếm: " + searchText + " theo " + searchCriteria);
-        //         // TODO: Thêm logic lọc dữ liệu trong JTable tại đây
-        //     }
-        // });
-        
-        searchPanel.add(textField);
-        searchPanel.add(comboBox);
-        return searchPanel;
-    }
-	
-	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label, ImageIcon img, int width,int height, double weightx, final int TEXTFIELD_CAPACITY, boolean newLine) {
+		comboBox.setPreferredSize(new Dimension(120, 30));
+
+		// Thêm sự kiện tìm kiếm
+		// textField.addActionListener(new ActionListener() {
+		// @Override
+		// public void actionPerformed(ActionEvent e) {
+		// String searchText = textField.getText().trim();
+		// String searchCriteria = (String) comboBox.getSelectedItem();
+		// System.out.println("Tìm kiếm: " + searchText + " theo " + searchCriteria);
+		// // TODO: Thêm logic lọc dữ liệu trong JTable tại đây
+		// }
+		// });
+
+		searchPanel.add(textField);
+		searchPanel.add(comboBox);
+		return searchPanel;
+	}
+
+	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label, ImageIcon img, int width, int height,
+			double weightx, final int TEXTFIELD_CAPACITY, boolean newLine) {
 		// final int TEXTFIELD_CAPACITY = 3;
 		JPanel panelDetail = createPanel(width, height, new GridBagLayout());
-        JPanel panel_detail = new JPanel(new GridBagLayout());
+		JPanel panel_detail = new JPanel(new GridBagLayout());
 
-        GridBagConstraints c = new GridBagConstraints();
-        c.gridx = 0;
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
 		c.gridy = 0;
-        c.weightx = weightx;
-        c.weighty = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
-        c.insets = new Insets(5, 0, 5, 10);
+		c.weightx = weightx;
+		c.weighty = 0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(5, 0, 5, 10);
 
 		// Image
 		if (img != null) {
@@ -159,14 +161,13 @@ public class Tool {
 			// add image inside panelImg
 			panelDetail.add(panelImg, c);
 		}
-		
-        
-        for (int i = 0; i < txt_array.length; i++) {
-            txt_array[i] = new JTextField(15);
+
+		for (int i = 0; i < txt_array.length; i++) {
+			txt_array[i] = new JTextField(15);
 			txt_array[i].setBackground(new Color(202, 220, 252));
-            txt_array[i].setPreferredSize(new Dimension(182, 30));
+			txt_array[i].setPreferredSize(new Dimension(182, 30));
 			txt_array[i].setEditable(false);
-        }
+		}
 
 		int count = 0;
 
@@ -183,65 +184,66 @@ public class Tool {
 				} else {
 					c.gridx += 1;
 					panel_detail.add(txt_array[i], c);
-					c.gridx--;	
+					c.gridx--;
 				}
-			}	
+			}
 
 			c.fill = GridBagConstraints.VERTICAL;
 			c.gridx++;
 			c.gridy = 0;
 			panelDetail.add(panel_detail, c);
 			c.fill = GridBagConstraints.HORIZONTAL;
-	
+
 			panel_detail = new JPanel(new GridBagLayout());
-	
+
 		}
 
-        JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        wrappedPanel.add(panelDetail);
-        wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
+		JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		wrappedPanel.add(panelDetail);
+		wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
 
 		return wrappedPanel;
 	}
-	
+
 	private void addCalendarToPanel(JPanel panel, JCalendar cal, GridBagConstraints c, boolean newLine) {
-	    if (newLine) {
-	        c.gridy += 1;
-	        panel.add(cal, c);
-	    } else {
-	        c.gridx += 1;
-	        panel.add(cal, c);
-	        c.gridx--; // Reset to original position
-	    }
+		if (newLine) {
+			c.gridy += 1;
+			panel.add(cal, c);
+		} else {
+			c.gridx += 1;
+			panel.add(cal, c);
+			c.gridx--; // Reset to original position
+		}
 	}
 
-	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label, JCalendar cal, ImageIcon img, int width, int height, double weightx, final int TEXTFIELD_CAPACITY, boolean newLine) {
-	    JPanel panelDetail = createPanel(width, height, new GridBagLayout());
-	    JPanel panel_detail = new JPanel(new GridBagLayout());
+	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label, JCalendar cal, ImageIcon img, int width,
+			int height, double weightx, final int TEXTFIELD_CAPACITY, boolean newLine) {
+		JPanel panelDetail = createPanel(width, height, new GridBagLayout());
+		JPanel panel_detail = new JPanel(new GridBagLayout());
 
-	    GridBagConstraints c = new GridBagConstraints();
-	    c.gridx = 0;
-	    c.gridy = 0;
-	    c.weightx = weightx;
-	    c.weighty = 0;
-	    c.fill = GridBagConstraints.HORIZONTAL;
-	    c.insets = new Insets(5, 0, 5, 10);
+		GridBagConstraints c = new GridBagConstraints();
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = weightx;
+		c.weighty = 0;
+		c.fill = GridBagConstraints.HORIZONTAL;
+		c.insets = new Insets(5, 0, 5, 10);
 
-	    // Add Image
-	    if (img != null) {
-	        JLabel label_img = new JLabel(img);
-	        JPanel panelImg = new JPanel();
-	        panelImg.add(label_img);
-	        panelDetail.add(panelImg, c);
-	    }
+		// Add Image
+		if (img != null) {
+			JLabel label_img = new JLabel(img);
+			JPanel panelImg = new JPanel();
+			panelImg.add(label_img);
+			panelDetail.add(panelImg, c);
+		}
 
-	    // Initialize TextFields
-	    for (int i = 0; i < txt_array.length; i++) {
-	        txt_array[i] = new JTextField(15);
-	        txt_array[i].setBackground(new Color(202, 220, 252));
-	        txt_array[i].setPreferredSize(new Dimension(182, 30));
-	        txt_array[i].setEditable(false);
-	    }
+		// Initialize TextFields
+		for (int i = 0; i < txt_array.length; i++) {
+			txt_array[i] = new JTextField(15);
+			txt_array[i].setBackground(new Color(202, 220, 252));
+			txt_array[i].setPreferredSize(new Dimension(182, 30));
+			txt_array[i].setEditable(false);
+		}
 
 		int count = 0;
 
@@ -253,7 +255,7 @@ public class Tool {
 				c.gridy += 1;
 				JLabel label = new JLabel(txt_label[i]);
 				panel_detail.add(label, c);
-	
+
 				if (newLine) {
 					c.gridy += 1;
 					panel_detail.add(txt_array[i], c);
@@ -262,25 +264,25 @@ public class Tool {
 					panel_detail.add(txt_array[i], c);
 					c.gridx--;
 				}
-	
+
 				// Add Calendar if applicable
 				if (i == txt_array.length - 1 && cal != null) {
 					addCalendarToPanel(panel_detail, cal, c, newLine);
 				}
 			}
-			
+
 			c.fill = GridBagConstraints.VERTICAL;
 			c.gridx++;
 			c.gridy = 0;
 			panelDetail.add(panel_detail, c);
 			c.fill = GridBagConstraints.HORIZONTAL;
-	
+
 			panel_detail = new JPanel(new GridBagLayout());
 		}
 
-	    JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        wrappedPanel.add(panelDetail);
-        wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
+		JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		wrappedPanel.add(panelDetail);
+		wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
 
 		return wrappedPanel;
 	}
@@ -289,60 +291,60 @@ public class Tool {
 		final int TEXTFIELD_CAPACITY = 5;
 		JPanel panelDetail = createPanel(400, 250, new GridBagLayout());
 		JPanel panel_detail = new JPanel(new GridBagLayout());
-	
+
 		GridBagConstraints c = new GridBagConstraints();
-		c.gridx = 0;  // Cột bắt đầu
-		c.gridy = 0;  // Dòng bắt đầu
+		c.gridx = 0; // Cột bắt đầu
+		c.gridy = 0; // Dòng bắt đầu
 		c.weightx = 0.5;
 		c.weighty = 0;
 		c.fill = GridBagConstraints.HORIZONTAL;
-		c.insets = new Insets(5, 5, 5, 5);  // Khoảng cách xung quanh
-	
+		c.insets = new Insets(5, 5, 5, 5); // Khoảng cách xung quanh
+
 		// Khởi tạo các ô nhập liệu
 		for (int i = 0; i < txt_array.length; i++) {
 			txt_array[i] = new JTextField();
 			txt_array[i].setBackground(new Color(202, 220, 252));
 			txt_array[i].setPreferredSize(new Dimension(182, 30));
-			txt_array[i].setEditable(false);  // Không cho chỉnh sửa
+			txt_array[i].setEditable(false); // Không cho chỉnh sửa
 		}
-	
+
 		int count = 0;
-	
+
 		while (count < txt_array.length) {
 			int index = count;
 			count = ((count + TEXTFIELD_CAPACITY) < txt_array.length) ? count + TEXTFIELD_CAPACITY : txt_array.length;
-			
+
 			for (int i = index; i < count; i++) {
 				// Đặt lại vị trí cột cho mỗi cặp nhãn-ô nhập liệu
 				c.gridx = 0;
 				// Thêm nhãn
 				JLabel label = new JLabel(txt_label[i]);
 				panel_detail.add(label, c);
-				
+
 				// Chuyển sang cột tiếp theo trên cùng dòng cho ô nhập liệu
 				c.gridx = 1;
 				panel_detail.add(txt_array[i], c);
-				
+
 				// Chuyển xuống dòng tiếp theo cho cặp tiếp theo
 				c.gridy++;
-			}   
-	
+			}
+
 			c.fill = GridBagConstraints.VERTICAL;
-			c.gridx = 0;  // Đặt lại về cột đầu tiên
-			c.gridy = 0;  // Đặt lại về dòng đầu tiên
+			c.gridx = 0; // Đặt lại về cột đầu tiên
+			c.gridy = 0; // Đặt lại về dòng đầu tiên
 			panelDetail.add(panel_detail, c);
 			c.fill = GridBagConstraints.HORIZONTAL;
-	
+
 			panel_detail = new JPanel(new GridBagLayout());
 		}
-	
+
 		JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
 		wrappedPanel.add(panelDetail);
 		wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
-	
+
 		return panelDetail;
 	}
-	
+
 	public JPanel createButtonPanel(JButton[] button, String[] txt_btn, Color bg, Color fg, String xy) {
 		// TODO: Thiếu việc gán event vào nút
 		int btn_width = 130;
@@ -351,23 +353,24 @@ public class Tool {
 		GridBagConstraints c = new GridBagConstraints(); // Để các nút có thể được thêm ngay phía dưới
 
 		c.insets = new Insets(10, 10, 10, 10);
-        c.gridx = 0;
-        c.gridy = 0;
-        c.weightx = 0.5;
-        c.weighty = 0;
-        c.fill = GridBagConstraints.HORIZONTAL;
+		c.gridx = 0;
+		c.gridy = 0;
+		c.weightx = 0.5;
+		c.weighty = 0;
+		c.fill = GridBagConstraints.HORIZONTAL;
 
-		for (int i = 0; i < button.length ; i++) {
+		for (int i = 0; i < button.length; i++) {
 			if (xy.equals("y"))
-				c.gridy += 1; 
-			else c.gridx += 1; 
+				c.gridy += 1;
+			else
+				c.gridx += 1;
 			button[i] = new JButton(txt_btn[i]);
 			button[i].setFocusable(false);
 			button[i].setPreferredSize(new Dimension(btn_width, btn_height));
 			button[i].setBackground(bg);
 			button[i].setForeground(fg);
-	
-			panel.add(button[i], c);		
+
+			panel.add(button[i], c);
 		}
 
 		return panel;
@@ -379,17 +382,16 @@ public class Tool {
 			txt.setText("");
 		}
 	}
-	
-	public void clearButtons(JButton[] buttons)
-	{
+
+	public void clearButtons(JButton[] buttons) {
 		for (JButton bt : buttons) {
 			bt.setBackground(new Color(0, 36, 107));
 			bt.setForeground(Color.WHITE);
 			bt.setVisible(true);
 		}
 	}
-	
-	public void Editable(JTextField[] txt_array,boolean TF){
+
+	public void Editable(JTextField[] txt_array, boolean TF) {
 
 		for (JTextField txt : txt_array) {
 			txt.setEditable(TF);
