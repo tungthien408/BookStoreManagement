@@ -11,9 +11,15 @@ import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.LayoutManager;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -30,6 +36,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import com.toedter.calendar.JCalendar;
+
+import DTO.SachDTO;
 
 public class Tool {
 	public Tool() {}
@@ -434,5 +442,133 @@ public class Tool {
 			return false;
 		}
 		return true;
+	}
+
+	public ImageIcon showImage(SachDTO sach, JPanel imagePanel) {
+		// --- Load, Resize, and Update Image using BufferedImage ---
+		ImageIcon finalIcon = null; // This will hold the final icon (scaled or default)
+		BufferedImage originalImage = null;
+		String bookId = sach.getMaSach();
+
+		try {
+			String imgName = sach.getImg();
+			if (imgName != null && !imgName.trim().isEmpty()) {
+				// *** Construct the ABSOLUTE file path ***
+				String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/" + imgName;
+				File imageFile = new File(absoluteImagePath);
+
+				if (imageFile.exists() && imageFile.isFile()) {
+					// Read the image using ImageIO
+					originalImage = ImageIO.read(imageFile);
+
+					if (originalImage != null) {
+						System.out.println("Successfully read image file: " + absoluteImagePath);
+
+						// Get target dimensions from the imagePanel's preferred size
+						// Ensure imagePanel has a preferred size set during layout!
+						int targetWidth = imagePanel.getPreferredSize().width;
+						int targetHeight = imagePanel.getPreferredSize().height;
+
+						// Provide default dimensions if preferred size is 0 (e.g., before layout)
+						if (targetWidth <= 0) targetWidth = 200; // Fallback width
+						if (targetHeight <= 0) targetHeight = 250; // Fallback height
+
+						// Scale the image
+						Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+
+						// Create the ImageIcon from the scaled Image
+						finalIcon = new ImageIcon(scaledImage);
+						System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
+
+					} else {
+						System.err.println("ImageIO.read returned null for file: " + absoluteImagePath + ". Image format might not be supported or file is corrupt.");
+					}
+				} else {
+					System.err.println("Image file not found or is not a file: " + absoluteImagePath);
+				}
+			} else {
+				System.err.println("Image name is null or empty for book: " + bookId);
+			}
+		} catch (IOException ioEx) {
+			System.err.println("IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
+			ioEx.printStackTrace(); // More details on IO error
+		} catch (Exception ex) {
+			// Catch other potential errors during loading/scaling
+			System.err.println("General error processing image " + sach.getImg() + ": " + ex.getMessage());
+			ex.printStackTrace();
+		}
+
+		// --- Load and Scale Default Image if necessary ---
+		if (finalIcon == null) {
+			System.err.println("Attempting to load and scale default image...");
+			try {
+				BufferedImage defaultOriginal = null;
+				// Assuming default.jpg is a RESOURCE in src/main/resources/images/Book
+				URL defaultUrl = getClass().getResource("/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/default.jpg");
+				if (defaultUrl != null) {
+					defaultOriginal = ImageIO.read(defaultUrl);
+				} else {
+					System.err.println("Default image resource not found!");
+				}
+
+				if (defaultOriginal != null) {
+					// Scale the default image
+					int targetWidth = imagePanel.getPreferredSize().width;
+					int targetHeight = imagePanel.getPreferredSize().height;
+					if (targetWidth <= 0) targetWidth = 200;
+					if (targetHeight <= 0) targetHeight = 250;
+
+					Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+					finalIcon = new ImageIcon(scaledDefault);
+					System.out.println("Loaded and scaled default image.");
+				}
+			} catch (IOException ioEx) {
+				System.err.println("IOException reading default image: " + ioEx.getMessage());
+			} catch (Exception ex) {
+				System.err.println("General error processing default image: " + ex.getMessage());
+			}
+		}
+		return finalIcon;
+	}
+
+	public ImageIcon showDefaultImage(String absoluteImagePath) {
+		ImageIcon finalIcon = null; // This will hold the final icon (scaled or default)
+		BufferedImage originalImage = null;
+		File imageFile = new File(absoluteImagePath);
+
+		if (imageFile.exists() && imageFile.isFile()) {
+			// Read the image using ImageIO
+			try {
+				originalImage = ImageIO.read(imageFile);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+			if (originalImage != null) {
+				System.out.println("Successfully read image file: " + absoluteImagePath);
+
+				// Get target dimensions from the imagePanel's preferred size
+				// Ensure imagePanel has a preferred size set during layout!
+				int targetWidth = 200;
+				int targetHeight = 260;
+
+				// Provide default dimensions if preferred size is 0 (e.g., before layout)
+				if (targetWidth <= 0) targetWidth = 200; // Fallback width
+				if (targetHeight <= 0) targetHeight = 250; // Fallback height
+
+				// Scale the image
+				Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+
+				// Create the ImageIcon from the scaled Image
+				finalIcon = new ImageIcon(scaledImage);
+				System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
+
+			} else {
+				System.err.println("ImageIO.read returned null for file: " + absoluteImagePath + ". Image format might not be supported or file is corrupt.");
+			}
+		} else {
+			System.err.println("Image file not found or is not a file: " + absoluteImagePath);
+		}
+		return finalIcon;
 	}
 }

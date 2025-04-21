@@ -4,19 +4,13 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -197,82 +191,8 @@ public class BanSachGUI {
                     SachDTO sach = sachBUS.getSachByMaSach(bookId);
 
                     if (sach != null) {
-                        // --- Load, Resize, and Update Image using BufferedImage ---
-                        ImageIcon finalIcon = null;
-                        BufferedImage originalImage = null;
-                        try {
-                            String imgName = sach.getImg();
-                            if (imgName != null && !imgName.trim().isEmpty()) {
-                                String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/" + imgName;
-                                File imageFile = new File(absoluteImagePath);
-                                if (imageFile.exists() && imageFile.isFile()) {
-                                    originalImage = ImageIO.read(imageFile);
-                                    if (originalImage != null) {
-                                        System.out.println("Successfully read image file: " + absoluteImagePath);
-                                        int targetWidth = imagePanel.getPreferredSize().width;
-                                        int targetHeight = imagePanel.getPreferredSize().height;
-                                        if (targetWidth <= 0) targetWidth = 200;
-                                        if (targetHeight <= 0) targetHeight = 250;
-                                        Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
-                                        finalIcon = new ImageIcon(scaledImage);
-                                        System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
-                                    } else {
-                                        System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
-                                    }
-                                } else {
-                                    System.err.println("Image file not found or is not a file: " + absoluteImagePath);
-                                }
-                            } else {
-                                System.err.println("Image name is null or empty for book: " + bookId);
-                            }
-                        } catch (IOException ioEx) {
-                            System.err.println("IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
-                            ioEx.printStackTrace();
-                        } catch (Exception ex) {
-                            System.err.println("General error processing image " + sach.getImg() + ": " + ex.getMessage());
-                            ex.printStackTrace();
-                        }
-
-                        // --- Load and Scale Default Image if necessary ---
-                        if (finalIcon == null) {
-                            System.err.println("Attempting to load and scale default image...");
-                            try {
-                                BufferedImage defaultOriginal = null;
-                                // Assuming default.jpg is a RESOURCE
-                                URL defaultUrl = getClass().getResource("/images/Book/default.jpg");
-                                if (defaultUrl != null) {
-                                    defaultOriginal = ImageIO.read(defaultUrl);
-                                } else {
-                                    System.err.println("Default image resource not found!");
-                                }
-                                // --- OR --- If default.jpg is also an ABSOLUTE path file:
-                                /*
-                                String defaultImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/default.jpg";
-                                File defaultImageFile = new File(defaultImagePath);
-                                if (defaultImageFile.exists()) {
-                                    defaultOriginal = ImageIO.read(defaultImageFile);
-                                } else {
-                                    System.err.println("Default image file not found at: " + defaultImagePath);
-                                }
-                                */
-                                if (defaultOriginal != null) {
-                                    int targetWidth = imagePanel.getPreferredSize().width;
-                                    int targetHeight = imagePanel.getPreferredSize().height;
-                                    if (targetWidth <= 0) targetWidth = 200;
-                                    if (targetHeight <= 0) targetHeight = 250;
-                                    Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
-                                    finalIcon = new ImageIcon(scaledDefault);
-                                    System.out.println("Loaded and scaled default image.");
-                                }
-                            } catch (IOException ioEx) {
-                                System.err.println("IOException reading default image: " + ioEx.getMessage());
-                            } catch (Exception ex) {
-                                System.err.println("General error processing default image: " + ex.getMessage());
-                            }
-                        }
-
                         // --- Update the existing imageLabel ---
-                        imageLabel.setIcon(finalIcon);
+                        imageLabel.setIcon(tool.showImage(sach, imagePanel));
 
                         // --- Refresh the panel containing the imageLabel ---
                         imagePanel.revalidate();
