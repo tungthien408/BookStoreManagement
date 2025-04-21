@@ -4,14 +4,20 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -29,9 +35,9 @@ public class SachGUI {
     private static final int SIDE_MENU_WIDTH = 151;
     private static final int HEIGHT = (int) (WIDTH * 0.625);
     private static final int TABLE_WIDTH = 850;
-    private static final int TABLE_HEIGHT = 540;
+    private static final int TABLE_HEIGHT = 300;
     private static final int DETAIL_PANEL_WIDTH = 850;
-    private static final int DETAIL_PANEL_HEIGHT = 90;
+    private static final int DETAIL_PANEL_HEIGHT = 150;
     private static final String DEFAULT_IMAGE_PATH = "/images/Book/the_little_prince.jpg";
 
     private Tool tool = new Tool();
@@ -50,6 +56,8 @@ public class SachGUI {
     private boolean update = false;
     private boolean delete = false;
     private int count = 0;
+    private JLabel imageLabel; // For displaying the book image
+    private JPanel imagePanel; // Panel to hold the image
 
     public String getID() {
         String str = String.valueOf(count);
@@ -66,9 +74,23 @@ public class SachGUI {
         initializeData();
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         panel.add(createBookTable(), BorderLayout.WEST);
-        panel.add(createPanelButton(), BorderLayout.CENTER);
+        panel.add(createPanelButton(), BorderLayout.EAST);
         String[] txt_label = {"Mã sách", "Tên sách", "Thể loại", "Số lượng", "Đơn giá", "Mã tác giả"};
+        JPanel lowerPanel = new JPanel(new BorderLayout(10, 0));
+        lowerPanel.add(createDetailPanel(txt_array, txt_label), BorderLayout.SOUTH);
         panel.add(createDetailPanel(txt_array, txt_label), BorderLayout.SOUTH);
+
+        // Initialize the image panel
+        imagePanel = new JPanel(new BorderLayout());
+        imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(JLabel.CENTER);
+        imageLabel.setVerticalAlignment(JLabel.CENTER);
+        imagePanel.setPreferredSize(new Dimension(200, 260)); // Adjust size as needed
+        imagePanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 0, 0));
+        imagePanel.add(imageLabel, BorderLayout.CENTER);
+        lowerPanel.add(imagePanel, BorderLayout.WEST); // Add the image panel to the right
+
+        // panel.add(lowerPanel, BorderLayout.CENTER);
     }
 
     private void initializeTextFields() {
@@ -92,7 +114,7 @@ public class SachGUI {
     }
 
     private JPanel createBookTable() {
-        String[] columns = {"Mã sách", "Tên sách", "Thể loại", "Số lượng","Đơn giá", "Mã tác giả"};
+        String[] columns = {"Mã sách", "Tên sách", "Thể loại", "Số lượng", "Đơn giá", "Mã tác giả"};
         DefaultTableModel model = new DefaultTableModel(columns, 0);
 
         try {
@@ -140,6 +162,9 @@ public class SachGUI {
                     }
 
                     lastSelectedRow = -1;
+                    imageLabel.setIcon(null); // Clear the image
+                    imagePanel.revalidate();
+                    imagePanel.repaint();
                 } else if (selectedRow >= 0) {
                     for (int i = 0; i < txt_array.length; i++) {
                         txt_array[i].setText(String.valueOf(table.getValueAt(selectedRow, i)));
@@ -154,6 +179,75 @@ public class SachGUI {
                     }
 
                     lastSelectedRow = selectedRow;
+
+                    // --- Load and Display the Image ---
+                    String bookId = table.getValueAt(selectedRow, 0).toString();
+                    SachDTO sach = sachBUS.getSachByMaSach(bookId);
+
+                    if (sach != null) {
+                        ImageIcon finalIcon = null;
+                        BufferedImage originalImage = null;
+
+                        try {
+                            String imgName = sach.getImg();
+                            if (imgName != null && !imgName.trim().isEmpty()) {
+                                String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/" + imgName;
+                                File imageFile = new File(absoluteImagePath);
+
+                                if (imageFile.exists() && imageFile.isFile()) {
+                                    originalImage = ImageIO.read(imageFile);
+
+                                    if (originalImage != null) {
+                                        int targetWidth = imagePanel.getPreferredSize().width;
+                                        int targetHeight = imagePanel.getPreferredSize().height;
+                                        if (targetWidth <= 0) targetWidth = 200;
+                                        if (targetHeight <= 0) targetHeight = 250;
+
+                                        Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                                        finalIcon = new ImageIcon(scaledImage);
+                                    } else {
+                                        System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
+                                    }
+                                } else {
+                                    System.err.println("Image file not found or is not a file: " + absoluteImagePath);
+                                }
+                            } else {
+                                System.err.println("Image name is null or empty for book: " + bookId);
+                            }
+                        } catch (IOException ioEx) {
+                            System.err.println("IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
+                            ioEx.printStackTrace();
+                        }
+
+                        // Load default image if necessary
+                        if (finalIcon == null) {
+                            try {
+                                BufferedImage defaultOriginal = null;
+                                String defaultImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/default.jpg";
+                                File defaultImageFile = new File(defaultImagePath);
+                                if (defaultImageFile.exists()) {
+                                    defaultOriginal = ImageIO.read(defaultImageFile);
+                                }
+
+                                if (defaultOriginal != null) {
+                                    int targetWidth = imagePanel.getPreferredSize().width;
+                                    int targetHeight = imagePanel.getPreferredSize().height;
+                                    if (targetWidth <= 0) targetWidth = 200;
+                                    if (targetHeight <= 0) targetHeight = 250;
+
+                                    Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                                    finalIcon = new ImageIcon(scaledDefault);
+                                }
+                            } catch (IOException ioEx) {
+                                System.err.println("IOException reading default image: " + ioEx.getMessage());
+                            }
+                        }
+
+                        // Update the image label
+                        imageLabel.setIcon(finalIcon);
+                        imagePanel.revalidate();
+                        imagePanel.repaint();
+                    }
                 }
             }
         });
@@ -180,13 +274,7 @@ public class SachGUI {
     }
 
     private JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label) {
-        ImageIcon img = null;
-        try {
-            img = new ImageIcon(getClass().getResource(DEFAULT_IMAGE_PATH));
-        } catch (Exception e) {
-            System.err.println("Image not found: " + e.getMessage());
-        }
-        panelDetail = tool.createDetailPanel(txt_array, txt_label, img, DETAIL_PANEL_WIDTH, DETAIL_PANEL_HEIGHT, 0.5, 2, false);
+        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, DETAIL_PANEL_WIDTH, DETAIL_PANEL_HEIGHT, 0.5, 3, false);
 
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
