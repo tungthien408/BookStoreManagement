@@ -4,13 +4,24 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.time.LocalDate;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -26,6 +37,7 @@ import BUS.KhachHangBUS;
 import BUS.SachBUS;
 import DTO.ChiTietHoaDonDTO;
 import DTO.HoaDonDTO;
+import DTO.KhachHangDTO;
 import DTO.SachDTO;
 
 public class HoaDonBanGUI {
@@ -44,8 +56,8 @@ public class HoaDonBanGUI {
     private DefaultTableModel tableModel;
     private List<HoaDonDTO> hoaDonList;
     private HoaDonBUS hoaDonBUS = new HoaDonBUS();
-    private  SachBUS sachBUS = new SachBUS();
-    private  KhachHangBUS khachHangBUS = new KhachHangBUS();
+    private SachBUS sachBUS = new SachBUS();
+    private KhachHangBUS khachHangBUS = new KhachHangBUS();
     private ChiTietHoaDonBUS chiTietHoaDonBUS = new ChiTietHoaDonBUS();
 
     public HoaDonBanGUI() {
@@ -66,7 +78,7 @@ public class HoaDonBanGUI {
     }
 
     private JPanel createHoaDonBanTable() {
-        String[] columns = {"Mã hóa đơn", "Mã nhân viên", "Mã khách hàng", "Ngày bán", "Tổng tiền"};
+        String[] columns = { "Mã hóa đơn", "Mã nhân viên", "Mã khách hàng", "Ngày bán", "Tổng tiền" };
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -77,7 +89,7 @@ public class HoaDonBanGUI {
         try {
             if (hoaDonList != null) {
                 for (HoaDonDTO hoaDon : hoaDonList) {
-                    tableModel.addRow(new Object[]{
+                    tableModel.addRow(new Object[] {
                             hoaDon.getMaHD(),
                             hoaDon.getMaNV(),
                             hoaDon.getMaKH(),
@@ -102,7 +114,7 @@ public class HoaDonBanGUI {
     }
 
     private JPanel createPanelButton() {
-        String[] btnText = {"Chi tiết", "Nhập Excel", "Xuất Excel"};
+        String[] btnText = { "Chi tiết", "Nhập Excel", "Xuất Excel" };
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(buttons, btnText, new Color(0, 36, 107), Color.WHITE, "y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -131,7 +143,7 @@ public class HoaDonBanGUI {
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = {"Mã nhân viên", "SĐT khách hàng"};
+        String[] searchOptions = { "Mã nhân viên", "SĐT khách hàng" };
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
         searchPanel.add(tool.createSearchTextField(300, 30, searchOptions));
@@ -145,7 +157,7 @@ public class HoaDonBanGUI {
                 String maHD = hoaDon.getMaHD().toLowerCase();
                 String maNV = hoaDon.getMaNV().toLowerCase();
                 if (maHD.contains(query) || maNV.contains(query)) {
-                    tableModel.addRow(new Object[]{
+                    tableModel.addRow(new Object[] {
                             hoaDon.getMaHD(),
                             hoaDon.getMaNV(),
                             hoaDon.getMaKH(),
@@ -161,34 +173,126 @@ public class HoaDonBanGUI {
     }
 
     private void showInvoiceDetails() {
-        int selectedRow = table.getSelectedRow();
-        if (selectedRow < 0) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hóa đơn để xem chi tiết!");
+        // 1. Tạo ảnh trống RGB với nền trắng
+        BufferedImage img = new BufferedImage(600, 800, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = img.createGraphics();
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, 600, 800);
+
+        // 2. Vẽ header
+        g.setColor(Color.BLACK);
+        g.setFont(new Font("Arial", Font.BOLD, 24));
+        // headerX = 600/2 - 100 = 200, headerY = 50
+        g.drawString("HÓA ĐƠN BÁN HÀNG", 200, 50);
+
+        // 3. Khung thông tin khách hàng
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        // infoX = 30, infoY = 80, infoW = 600-60 = 540, infoH = 80
+        g.drawRect(30, 80, 540, 80);
+
+        int sel = table.getSelectedRow();
+        if (sel == -1) {
+            JOptionPane.showMessageDialog(null,
+                    "Vui lòng chọn một hóa đơn để xem chi tiết!",
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        String maKH = (String) table.getValueAt(sel, 2);
+        KhachHangBUS khBUS = new KhachHangBUS();
+        KhachHangDTO kh = khBUS.getKhachHangByMaKH(maKH);
+        if (kh != null) {
+            // infoTextX = 30 + 10 = 40, infoTextY = 80 + 20 = 100
+            g.drawString("Tên khách hàng: " + kh.getHoTen(), 40, 100);
+            g.drawString("SĐT: " + kh.getSdt(), 40, 125);
+        }
+
+        // 4. Bảng chi tiết sản phẩm
+        // tableX = 30, tableY = 180, tableW = 540, tableH = 300
+        g.drawRect(30, 180, 540, 300);
+
+        g.setFont(new Font("Arial", Font.BOLD, 14));
+        // colX = {30, 140, 250, 380, 480, 570}
+        int[] colX = { 30, 140, 250, 380, 480, 570 };
+        for (int x : colX) {
+            g.drawLine(x, 180, x, 180 + 300);
+        }
+
+        // lấy rows đã chọn
+        int[] rows = table.getSelectedRows();
+        int n = rows.length;
+        if (n == 0) {
+            JOptionPane.showMessageDialog(null,
+                    "Vui lòng chọn một hóa đơn để xem chi tiết!",
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+        if (n > 5) {
+            JOptionPane.showMessageDialog(null,
+                    "Vui lòng chọn không quá 5 hóa đơn để xem chi tiết!",
+                    "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
-        String maHD = (String) tableModel.getValueAt(selectedRow, 0);
-        try {
-            // Assume a method to get invoice details
-            List<ChiTietHoaDonDTO> chiTietList = chiTietHoaDonBUS.getChiTietByMaHD(maHD);
-            if (chiTietList == null || chiTietList.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Không tìm thấy chi tiết hóa đơn!");
-                return;
-            }
+        // headerH = 30px, phần còn lại = 300 - 30 = 270px chia cho n
+        // detailH = 270 / n
+        int detailH = (300 - 30) / n;
+        int ascent = g.getFontMetrics().getAscent();
 
-            // Create a new dialog or panel to display details
-            StringBuilder details = new StringBuilder("Chi tiết hóa đơn " + maHD + ":\n");
-            for (ChiTietHoaDonDTO chiTiet : chiTietList) {
-                SachDTO sach = sachBUS.getSachByMaSach(chiTiet.getMaSach());
-                details.append("Sách: ").append(sach != null ? sach.getTenSach() : chiTiet.getMaSach())
-                        .append(", Số lượng: ").append(chiTiet.getSoLuong())
-                        .append(", Đơn giá: ").append(chiTiet.getGia())
-                        .append("\n");
+        // vẽ ngang: 1 line header tại y = 180 + 30 = 210
+        g.drawLine(30, 210, 30 + 540, 210);
+        // n dòng detail
+        for (int i = 1; i <= n; i++) {
+            int y = 180 + 30 + i * detailH;
+            g.drawLine(30, y, 30 + 540, y);
+        }
+
+        // in tiêu đề cột: yLabel = 180 + (30 + ascent)/2
+        String[] labels = {
+                "Mã Đơn Hàng", "Mã Nhân Viên",
+                "Mã Khách Hàng", "Ngày bán", "Tổng tiền"
+        };
+        int yLabel = 180 + (30 + ascent) / 2;
+        for (int c = 0; c < labels.length; c++) {
+            g.drawString(labels[c], colX[c] + 10, yLabel);
+        }
+
+        // in detail rows, căn giữa theo detailH
+        g.setFont(new Font("Arial", Font.BOLD, 14));
+        for (int i = 0; i < n; i++) {
+            int rowIndex = rows[i];
+            // yRow = 180 + 30 + i*detailH + (detailH + ascent)/2
+            int yRow = 180 + 30 + i * detailH + (detailH + ascent) / 2;
+            for (int c = 0; c < labels.length; c++) {
+                String txt = table.getValueAt(rowIndex, c).toString();
+                g.drawString(txt, colX[c] + 10, yRow);
             }
-            JOptionPane.showMessageDialog(null, details.toString());
-        } catch (Exception e) {
+        }
+
+        // 5. Tổng cộng và ký tên
+        // yTotal = 180 + 300 + 40 = 520, totalX = 30 + 300 = 330
+        g.drawString("Ký tên:", 330, 520);
+        LocalDate t = LocalDate.now();
+        String dateStr = "Ngày " + t.getDayOfMonth()
+                + " Tháng " + t.getMonthValue()
+                + " Năm " + t.getYear();
+        // vẽ ở y = 520 + 120 = 640
+        g.drawString(dateStr, 330, 640);
+        g.dispose();
+
+        // 6. Xuất file
+        try {
+            ImageIO.write(img, "png", new File("HoaDonBan\\Hóa đơn bán hàng.png"));
+            JFrame frame = new JFrame("Hóa đơn bán hàng");
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.setSize(600, 800);
+            frame.setLocationRelativeTo(null);
+
+            JLabel label = new JLabel(new ImageIcon(img));
+            frame.add(label);
+
+            frame.setVisible(true);
+        } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi tải chi tiết hóa đơn: " + e.getMessage());
         }
     }
 

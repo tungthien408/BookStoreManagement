@@ -125,6 +125,7 @@ public class BanSachGUI {
     }
 
     private String getID() {
+        count++;
         return INVOICE_ID_PREFIX + String.format("%03d", count);
     }
 
@@ -401,8 +402,6 @@ public class BanSachGUI {
             for (JTextField txt : txt_array_down) {
                 txt.setText("");
             }
-
-            count++;
             txt_array_top[0].setText(getID());
             txt_array_top[3].setText(LocalDate.now().toString());
 

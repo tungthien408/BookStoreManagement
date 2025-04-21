@@ -295,6 +295,7 @@ public class ThongKeGUI {
         table_KhachHang.getTableHeader().setForeground(Color.WHITE);
         table_SanPham.getTableHeader().setForeground(Color.WHITE);
         table_DoanhThu.getTableHeader().setForeground(Color.WHITE);
+
         // Add table to scroll pane
         JScrollPane scrollPane_KhachHang = new JScrollPane(table_KhachHang);
         JScrollPane scrollPane_SanPham = new JScrollPane(table_SanPham);
@@ -371,7 +372,6 @@ public class ThongKeGUI {
 
     // Refresh lại 1 phát 3 bảng
     public void refreshTable() {
-
         model_DoanhThu.setRowCount(0);
         model_KhachHang.setRowCount(0);
         model_SanPham.setRowCount(0);
@@ -383,26 +383,29 @@ public class ThongKeGUI {
             HoaDonBUS hoaDonBUS = new HoaDonBUS();
             List<HoaDonDTO> hoaDonList = hoaDonBUS.getAllHoaDon();
 
-            for (KhachHangDTO khachHang : khachHangList) {
+            for (int i = 0; i < khachHangList.size(); i++) {
+                KhachHangDTO khachHang = khachHangList.get(i);
                 model_KhachHang.addRow(new Object[] {
-                        khachHangList.indexOf(khachHang) + 1,
+                        i + 1,
                         khachHang.getSdt(),
                         khachHang.getHoTen(),
                         khachHang.getDiem()
                 });
             }
-            for (SachDTO sach : sachList) {
+            for (int i = 0; i < sachList.size(); i++) {
+                SachDTO sach = sachList.get(i);
                 model_SanPham.addRow(new Object[] {
-                        sachList.indexOf(sach) + 1,
+                        i + 1,
                         sach.getMaSach(),
                         sach.getTenSach(),
                         sach.getSoLuong(),
                         sach.getDonGia()
                 });
             }
-            for (HoaDonDTO hoaDon : hoaDonList) {
+            for (int i = 0; i < hoaDonList.size(); i++) {
+                HoaDonDTO hoaDon = hoaDonList.get(i);
                 model_DoanhThu.addRow(new Object[] {
-                        hoaDonList.indexOf(hoaDon) + 1,
+                        i + 1,
                         hoaDon.getMaHD(),
                         hoaDon.getNgayBan().toString(),
                         hoaDon.getTongTien()

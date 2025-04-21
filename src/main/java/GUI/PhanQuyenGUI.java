@@ -201,7 +201,6 @@ public class PhanQuyenGUI {
                 }
             }
         });
-
     }
     // Làm đỡ xóa quyền cho dễ hình dung
 
