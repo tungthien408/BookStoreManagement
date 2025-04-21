@@ -9,13 +9,14 @@ public class SachDTO {
     private String maTG;
     private String maNXB;
     private int trangThaiXoa;
+    private String img;
 
     // Constructor mặc định
     public SachDTO() {
     }
 
     // Constructor đầy đủ
-    public SachDTO(String maSach, String tenSach, String theLoai, int soLuong, int donGia, String maTG, String maNXB) {
+    public SachDTO(String maSach, String tenSach, String theLoai, int soLuong, int donGia, String maTG, String maNXB, String img) {
         this.maSach = maSach;
         this.tenSach = tenSach;
         this.theLoai = theLoai;
@@ -24,6 +25,7 @@ public class SachDTO {
         this.maTG = maTG;
         this.maNXB = maNXB;
         this.trangThaiXoa = 0;
+        this.img = img;
     }
 
     // Getters và Setters
@@ -89,6 +91,14 @@ public class SachDTO {
 
     public void setTrangThaiXoa(int trangThaiXoa) {
         this.trangThaiXoa = trangThaiXoa;
+    }
+
+    public String getImg() {
+        return img;
+    }
+
+    public void setImg(String img) {
+        this.img = img;
     }
 
 }

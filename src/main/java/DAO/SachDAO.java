@@ -12,7 +12,7 @@ import Service.Data;
 public class SachDAO {
     // Thêm một sách mới
     public boolean create(SachDTO sach) {
-        String sql = "INSERT INTO sach (MASACH, TenSach, TheLoai, SoLuong, DonGia, MATG, MANXB, trangThaiXoa) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO sach (MASACH, TenSach, TheLoai, SoLuong, DonGia, MATG, MANXB, trangThaiXoa, img) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = Data.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sach.getMaSach());
@@ -23,6 +23,7 @@ public class SachDAO {
             stmt.setString(6, sach.getMaTG());
             stmt.setString(7, sach.getMaNXB());
             stmt.setInt(8, sach.getTrangThaiXoa());
+            stmt.setString(9, sach.getImg());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -47,6 +48,7 @@ public class SachDAO {
                 sach.setMaTG(rs.getString("MATG"));
                 sach.setMaNXB(rs.getString("MANXB"));
                 sach.setTrangThaiXoa(rs.getInt("trangThaiXoa"));
+                sach.setImg(rs.getString("img"));
                 list.add(sach);
             }
         } catch (SQLException e) {
@@ -72,6 +74,7 @@ public class SachDAO {
                     sach.setMaTG(rs.getString("MATG"));
                     sach.setMaNXB(rs.getString("MANXB"));
                     sach.setTrangThaiXoa(rs.getInt("trangThaiXoa"));
+                    sach.setImg(rs.getString("img"));
                     return sach;
                 }
             }
@@ -83,7 +86,7 @@ public class SachDAO {
 
     // Cập nhật thông tin sách
     public boolean update(SachDTO sach) {
-        String sql = "UPDATE sach SET TenSach = ?, TheLoai = ?, SoLuong = ?, DonGia = ?, MATG = ?, MANXB = ?, trangThaiXoa = ? WHERE MASACH = ?";
+        String sql = "UPDATE sach SET TenSach = ?, TheLoai = ?, SoLuong = ?, DonGia = ?, MATG = ?, MANXB = ?, trangThaiXoa = ?, img = ? WHERE MASACH = ?";
         try (Connection conn = Data.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sach.getTenSach());
@@ -93,7 +96,8 @@ public class SachDAO {
             stmt.setString(5, sach.getMaTG());
             stmt.setString(6, sach.getMaNXB());
             stmt.setInt(7, sach.getTrangThaiXoa());
-            stmt.setString(8, sach.getMaSach());
+            stmt.setString(8, sach.getImg());
+            stmt.setString(9, sach.getMaSach());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
