@@ -202,8 +202,9 @@ public class HoaDonBanGUI {
         KhachHangDTO kh = khBUS.getKhachHangByMaKH(maKH);
         if (kh != null) {
             // infoTextX = 30 + 10 = 40, infoTextY = 80 + 20 = 100
-            g.drawString("Tên khách hàng: " + kh.getHoTen(), 40, 100);
-            g.drawString("SĐT: " + kh.getSdt(), 40, 125);
+            g.drawString("Tên Nhân Viên: " + kh.getHoTen(), 40, 100);
+            g.drawString("Mã Nhân viên: " + kh.getSdt(), 40, 125);
+            g.drawString("Ngày xuất đơn: " + table.getValueAt(sel, 3), 40, 150);
         }
 
         // 4. Bảng chi tiết sản phẩm
