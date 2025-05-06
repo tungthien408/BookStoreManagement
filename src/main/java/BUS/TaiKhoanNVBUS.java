@@ -80,4 +80,9 @@ public class TaiKhoanNVBUS {
 
         return taiKhoan.getPass().equals(pass) && taiKhoan.getTrangThaiXoa() == 0;
     }
+
+    public boolean hasPermission(String username, int maCN, String maHD){
+        return taiKhoanDAO.hasPermission(username, maCN, maHD);
+    }
+
 }

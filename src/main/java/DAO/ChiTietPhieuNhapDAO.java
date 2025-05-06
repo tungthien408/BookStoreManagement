@@ -1,14 +1,14 @@
 package DAO;
 
-import DTO.ChiTietPhieuNhapDTO;
-import Service.Data;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+
+import DTO.ChiTietPhieuNhapDTO;
+import Service.Data;
 
 public class ChiTietPhieuNhapDAO {
 
@@ -158,5 +158,22 @@ public class ChiTietPhieuNhapDAO {
             e.printStackTrace();
         }
         return list;
+    }
+
+    // Lấy tổng số lượng sách đã bán theo MASACH
+    public int getSoLuongByMaSach(String maSach) {
+        String sql = "SELECT SUM(SoLuong) AS Total FROM chitietphieunhap WHERE MASACH = ?";
+        try (Connection conn = Data.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setString(1, maSach);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("Total");
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0;
     }
 }

@@ -20,6 +20,152 @@ USE `book`;
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `QUYEN`
+--
+CREATE TABLE QUYEN (
+    `maQuyen` INT NOT NULL PRIMARY KEY,
+    `tenQuyen` NVARCHAR(50) NOT NULL,
+    `trangThaiXoa` INT NOT NULL DEFAULT 0
+);
+
+INSERT INTO QUYEN (maQuyen, tenQuyen) VALUES
+(1, N'Quản trị viên (admin)'),
+(2, N'Quản lý'),
+(3, N'Bán hàng'),
+(4, N'Kế toán');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `CHUCNANG`
+--
+CREATE TABLE CHUCNANG (
+    `maCN` INT NOT NULL PRIMARY KEY,
+    `tenCN` NVARCHAR(50) NOT NULL,
+    `trangThaiXoa` INT NOT NULL DEFAULT 0
+);
+
+INSERT INTO CHUCNANG (maCN, tenCN) VALUES
+(1, N'Quản Lí Sản Phẩm'),
+(2, N'Quản Lí Cấu Hình'),
+(3, N'Quản Lí Khách Hàng'),
+(4, N'Quản Lí Nhân Viên'),
+(5, N'Quản Lí Tài Khoản'),
+(6, N'Quản Lí Nhà Cung Cấp'),
+(7, N'Quản Lí Nhập Hàng'),
+(8, N'Quản Lí Xuất Hàng'),
+(9, N'Quản Lí Phân Quyền'),
+(10, N'Quản Lí Bảo Hành'),
+(11, N'Quản Lí Thống Kê');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `HANHDONG`
+--
+CREATE TABLE HANHDONG (
+    `maHD` VARCHAR(10) PRIMARY KEY,
+    `tenHD` NVARCHAR(30) NOT NULL,
+    `trangThaiXoa` INT NOT NULL DEFAULT 0
+);
+
+INSERT INTO HANHDONG (`maHD`, `tenHD`) VALUES
+('view', N'XEM'), 
+('add', N'THÊM'), 
+('edit', N'SỬA'), 
+('delete', N'XÓA');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `CHITIETCHUCNANG`
+--
+CREATE TABLE CHITIETCHUCNANG (
+    `maCN` INT NOT NULL,
+    `maQuyen` INT NOT NULL,
+    `maHD` VARCHAR(10) NOT NULL,
+    `trangThaiXoa` INT NOT NULL DEFAULT 0,
+    PRIMARY KEY (`maCN`, `maQuyen`, `maHD`),
+    FOREIGN KEY (`maCN`) REFERENCES CHUCNANG(`maCN`),
+    FOREIGN KEY (`maQuyen`) REFERENCES QUYEN(`maQuyen`),
+    FOREIGN KEY (`maHD`) REFERENCES HANHDONG(`maHD`)
+);
+
+INSERT INTO CHITIETCHUCNANG (`maCN`, `maQuyen`, `maHD`) VALUES
+(1, 1, 'add'), (1, 1, 'delete'), (1, 1, 'edit'), (1, 1, 'view'),
+(1, 2, 'add'), (1, 2, 'delete'), (1, 2, 'edit'), (1, 2, 'view'),
+(1, 3, 'add'), (1, 3, 'delete'), (1, 3, 'edit'), (1, 3, 'view'),
+(2, 1, 'add'), (2, 1, 'delete'), (2, 1, 'edit'), (2, 1, 'view'),
+(2, 2, 'add'), (2, 2, 'delete'), (2, 2, 'edit'), (2, 2, 'view'),
+(2, 3, 'add'), (2, 3, 'delete'), (2, 3, 'edit'), (2, 3, 'view'),
+(3, 1, 'add'), (3, 1, 'delete'), (3, 1, 'edit'), (3, 1, 'view'),
+(3, 2, 'add'), (3, 2, 'delete'), (3, 2, 'edit'), (3, 2, 'view'),
+(3, 3, 'add'), (3, 3, 'delete'), (3, 3, 'edit'), (3, 3, 'view'),
+(4, 1, 'add'), (4, 1, 'delete'), (4, 1, 'edit'), (4, 1, 'view'),
+(4, 2, 'add'), (4, 2, 'delete'), (4, 2, 'edit'), (4, 2, 'view'),
+(5, 1, 'add'), (5, 1, 'delete'), (5, 1, 'edit'), (5, 1, 'view'),
+(6, 1, 'add'), (6, 1, 'delete'), (6, 1, 'edit'), (6, 1, 'view'),
+(7, 1, 'add'), (7, 1, 'delete'), (7, 1, 'edit'), (7, 1, 'view'),
+(7, 2, 'add'), (7, 2, 'delete'), (7, 2, 'edit'), (7, 2, 'view'),
+(8, 1, 'add'), (8, 1, 'delete'), (8, 1, 'edit'), (8, 1, 'view'),
+(8, 2, 'add'), (8, 2, 'delete'), (8, 2, 'edit'), (8, 2, 'view'),
+(8, 3, 'add'), (8, 3, 'delete'), (8, 3, 'edit'), (8, 3, 'view'),
+(9, 1, 'add'), (9, 1, 'delete'), (9, 1, 'edit'), (9, 1, 'view'),
+(10, 1, 'add'), (10, 1, 'delete'), (10, 1, 'edit'), (10, 1, 'view'),
+(10, 2, 'add'), (10, 2, 'delete'), (10, 2, 'edit'), (10, 2, 'view'),
+(11, 1, 'add'), (11, 1, 'delete'), (11, 1, 'edit'), (11, 1, 'view'),
+(11, 4, 'add'), (11, 4, 'delete'), (11, 4, 'edit'), (11, 4, 'view');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `nhanvien`
+--
+CREATE TABLE `nhanvien` (
+  `MaNV` VARCHAR(10) NOT NULL,
+  `HoTen` VARCHAR(255) NOT NULL,
+  `ChucVu` VARCHAR(255) NOT NULL,
+  `DiaChi` VARCHAR(255) NOT NULL,
+  `SDT` VARCHAR(10) NOT NULL,
+  `Cccd` VARCHAR(12) NOT NULL,
+  `NgaySinh` DATE NOT NULL,
+  `trangThaiXoa` INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`MaNV`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `nhanvien` (`MaNV`, `HoTen`, `ChucVu`, `DiaChi`, `SDT`, `Cccd`, `NgaySinh`, `trangThaiXoa`) VALUES
+('NV01', 'Nguyễn Thành Nam', 'Quản lý', '12 Nguyễn Trãi, Hà Nội', '0912345678', '010123456789', '1990-05-15', 0),
+('NV02', 'Trần Thị Mai', 'Nhân viên bán hàng', '45 Lê Lợi, TP.HCM', '0987654321', '020234567890', '1995-08-20', 0),
+('NV03', 'Lê Văn Hùng', 'Kế toán', '78 Hùng Vương, Đà Nẵng', '0935432109', '040345678901', '1992-03-10', 0),
+('NV04', 'Phạm Thị Lan', 'Nhân viên kho', '56 Trần Phú, Nha Trang', '0901234567', '060456789012', '1998-11-25', 0),
+('NV05', 'Hoàng Văn Long', 'Nhân viên bán hàng', '23 Bà Triệu, Hà Nội', '0923456789', '080567890123', '1993-07-30', 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `taikhoannv`
+--
+CREATE TABLE `taikhoannv` (
+  `tenDangNhap` VARCHAR(50) NOT NULL,
+  `MANV` VARCHAR(10) NOT NULL,
+  `PASS` VARCHAR(255) NOT NULL,
+  `trangThaiXoa` INT NOT NULL DEFAULT 0,
+  `maQuyen` INT NOT NULL,
+  FOREIGN KEY (`maQuyen`) REFERENCES QUYEN(`maQuyen`),
+  PRIMARY KEY (`MANV`),
+  FOREIGN KEY (`MANV`) REFERENCES `nhanvien` (`MaNV`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `taikhoannv` (`tenDangNhap`,`MANV`, `PASS`, `maQuyen`, `trangThaiXoa`) VALUES
+('ad','NV01', 'admin', 1, 0),
+('ad1','NV02', 'hashed_password_2', 2, 0),
+('ad2','NV03', 'hashed_password_3', 2, 0),
+('ad3','NV04', 'hashed_password_4', 3, 0),
+('ad4','NV05', 'hashed_password_5', 4, 0);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `nhaxuatban`
 --
 CREATE TABLE `nhaxuatban` (
@@ -31,9 +177,6 @@ CREATE TABLE `nhaxuatban` (
   PRIMARY KEY (`MANXB`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `nhaxuatban`
---
 INSERT INTO `nhaxuatban` (`MANXB`, `TenNXB`, `DiaChi`, `SDT`, `trangThaiXoa`) VALUES
 ('NXB01', 'Nhà Xuất Bản Kim Đồng', '55 Quang Trung, Hà Nội', '0243822309', 0),
 ('NXB02', 'Nhà Xuất Bản Trẻ', '161B Lý Chính Thắng, TP.HCM', '0283931628', 0),
@@ -55,9 +198,6 @@ CREATE TABLE `tacgia` (
   PRIMARY KEY (`MATG`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `tacgia`
---
 INSERT INTO `tacgia` (`MATG`, `TenTG`, `DiaChi`, `SDT`, `trangThaiXoa`) VALUES
 ('TG01', 'Nguyễn Nhật Ánh', '123 Lê Lợi, TP.HCM', '0901234567', 0),
 ('TG02', 'Tô Hoài', '45 Hàng Bông, Hà Nội', '0912345678', 0),
@@ -68,7 +208,6 @@ INSERT INTO `tacgia` (`MATG`, `TenTG`, `DiaChi`, `SDT`, `trangThaiXoa`) VALUES
 ('TG07', 'Vũ Trọng Phụng', '78 Hàng Đào, Hà Nội', '0978901234', 0),
 ('TG08', 'Nguyễn Công Hoan', '90 Nguyễn Huệ, TP.HCM', '0989012345', 0),
 ('TG09', 'Hồ Biểu Chánh', '12 Lê Lợi, Hà Nội', '0990123456', 0);
-
 
 -- --------------------------------------------------------
 
@@ -90,46 +229,43 @@ CREATE TABLE `sach` (
   FOREIGN KEY (`MANXB`) REFERENCES `nhaxuatban` (`MANXB`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `sach`
---
 INSERT INTO `sach` (`MASACH`, `TenSach`, `TheLoai`, `SoLuong`, `DonGia`, `MATG`, `MANXB`, `trangThaiXoa`, `img`) VALUES
-('S001', 'Cho Tôi Xin Một Vé Đi Tuổi Thơ', 'Truyện dài', 100, 85000, 'TG01', 'NXB01', 0, 'Cho_tôi_xin_một_vé_đi_tuổi_thơ.jpg'),
-('S002', 'Dế Mèn Phiêu Lưu Ký', 'Truyện thiếu nhi', 150, 65000, 'TG02', 'NXB01', 0, 'Dế_Mèn_Phiêu_Lưu_Ký.jpg'),
-('S003', 'Chí Phèo', 'Truyện ngắn', 80, 45000, 'TG03', 'NXB04', 0, 'Chí_Phèo.jpg'),
-('S004', 'Tắt Đèn', 'Tiểu thuyết', 60, 75000, 'TG04', 'NXB04', 0, 'Tắt_Đèn.jpg'),
-('S005', 'Cô Gái Đến Từ Hôm Qua', 'Truyện dài', 120, 80000, 'TG01', 'NXB02', 0, 'Cô_Gái_Đến_Từ_Hôm_Qua.jpg'),
-('S006', 'Mắt Biếc', 'Truyện dài', 90, 82000, 'TG01', 'NXB03', 0, 'Mắt_Biếc.jpg'),
-('S007', 'Tôi Là Bêtô', 'Truyện thiếu nhi', 110, 70000, 'TG01', 'NXB01', 0, 'Tôi_Là_Bêtô.jpg'),
-('S008', 'Tôi Thấy Hoa Vàng Trên Cỏ Xanh', 'Truyện dài', 95, 85000, 'TG01', 'NXB02', 0, 'Tôi_Thấy_Hoa_Vàng_Trên_Cỏ_Xanh.jpg'),
-('S009', 'Nhà Chử', 'Tiểu thuyết', 70, 60000, 'TG02', 'NXB03', 0, 'Nhà_Chử.jpg'),
-('S010', 'Truyện Tây Bắc', 'Truyện ngắn', 100, 65000, 'TG02', 'NXB05', 0, 'Truyện_Tây_Bắc.jpg'),
-('S011', 'Kim Đồng', 'Truyện thiếu nhi', 130, 60000, 'TG02', 'NXB01', 0, 'Kim_Đồng.jpg'),
-('S012', 'Chiều Chiều', 'Truyện ngắn', 75, 58000, 'TG02', 'NXB02', 0, 'Chiều_Chiều.jpeg'),
-('S013', 'Giấc Mộng Ông Thợ Dìu', 'Truyện ngắn', 60, 62000, 'TG02', 'NXB03', 0, 'Giấc_Mộng_Ông_Thợ_Dìu.jpg'),
-('S014', 'Giữ Gìn 36 Phố Phường', 'Tùy bút', 90, 70000, 'TG02', 'NXB04', 0, 'Giữ_Gìn_36_Phố_Phường.jpg'),
-('S015', 'Lão Hạc', 'Truyện ngắn', 80, 50000, 'TG03', 'NXB05', 0, 'Lão_Hạc.jpg'),
-('S016', 'Sống Mòn', 'Tiểu thuyết', 70, 75000, 'TG03', 'NXB01', 0, 'Sống_Mòn.jpg'),
-('S017', 'Đêm Hội Long Trì', 'Tiểu thuyết lịch sử', 65, 80000, 'TG05', 'NXB02', 0, 'Đêm_hội_Long_Trì.jpg'),
-('S018', 'An Tư', 'Tiểu thuyết lịch sử', 60, 78000, 'TG05', 'NXB03', 0, 'An_Tư.jpg'),
-('S019', 'Vũ Như Tô', 'Kịch', 50, 70000, 'TG05', 'NXB04', 0, 'Vũ_Như_Tô.jpg'),
-('S020', 'Sống Mãi Với Thủ Đô', 'Truyện ngắn', 85, 65000, 'TG05', 'NXB05', 0, 'Song_mai_voi_thu_do.jpg'),
-('S021', 'Vang Bóng Một Thời', 'Tùy bút', 90, 72000, 'TG06', 'NXB01', 0, 'Vang_Bóng_Một_Thời.jpg'),
-('S022', 'Chùa Đàn', 'Tiểu thuyết', 70, 68000, 'TG06', 'NXB02', 0, 'Chùa_Đàn.jpg'),
-('S023', 'Chiếc Lư Đồng Mắt Cua', 'Tùy bút', 80, 70000, 'TG06', 'NXB03', 0, 'Chiếc_Lư_Đồng_Mắt_Cua.jpg'),
-('S024', 'Giông Tố', 'Tiểu thuyết', 75, 75000, 'TG07', 'NXB04', 0, 'Giông_Tố.jpg'),
-('S025', 'Làm Đĩ', 'Tiểu thuyết', 65, 72000, 'TG07', 'NXB05', 0, 'Làm_Đĩ.jpg'),
-('S026', 'Số Đỏ', 'Tiểu thuyết', 90, 80000, 'TG07', 'NXB01', 0, 'Số_Đỏ.jpg'),
-('S027', 'Bước Đường Cùng', 'Tiểu thuyết', 70, 70000, 'TG08', 'NXB02', 0, 'Bước_Đường_Cùng.jpg'),
-('S028', 'Kép Tư Bền', 'Truyện ngắn', 85, 60000, 'TG08', 'NXB03', 0, 'Kép_Tư_Bền.jpg'),
-('S029', 'Người Ngựa Ngựa Người', 'Truyện ngắn', 80, 65000, 'TG08', 'NXB04', 0, 'Người_Ngựa_Ngựa_Người.jpg'),
-('S030', 'Con Nhà Nghèo', 'Tiểu thuyết', 90, 75000, 'TG09', 'NXB05', 0, 'Con_Nhà_Nghèo.jpg'),
-('S031', 'Lòng Dạ Đàn Bà', 'Tiểu thuyết', 70, 72000, 'TG09', 'NXB01', 0, 'Lòng_Dạ_Đàn_Bà.jpg'),
-('S032', 'Tại Tôi', 'Tiểu thuyết', 65, 70000, 'TG09', 'NXB02', 0, 'Tại_Tôi.jpg'),
-('S033', 'Hai Khối Tình', 'Tiểu thuyết', 80, 73000, 'TG09', 'NXB03', 0, 'Hai_Khối_Tình.jpg'),
-('S034', 'Nợ Đời', 'Tiểu thuyết', 75, 74000, 'TG09', 'NXB04', 0, 'Nợ_Đời.jpg'),
-('S035', 'Chị Đào Chị Lý', 'Tiểu thuyết', 85, 71000, 'TG09', 'NXB05', 0, 'Chị_Đào_Chị_Lý.jpg'),
-('S036', 'Chút Phận Linh Đinh', 'Tiểu thuyết', 70, 72000, 'TG09', 'NXB01', 0, 'Chút_Phận_Linh_Đinh.jpg');
+('S001', 'Cho Tôi Xin Một Vé Đi Tuổi Thơ', 'Truyện dài', 100, 85000, 'TG01', 'NXB01', 0, 'cho_toi_xin_mot_ve_di_tuoi_tho.jpg'),
+('S002', 'Dế Mèn Phiêu Lưu Ký', 'Truyện thiếu nhi', 150, 65000, 'TG02', 'NXB01', 0, 'de_men_phieu_luu_ky.jpg'),
+('S003', 'Chí Phèo', 'Truyện ngắn', 80, 45000, 'TG03', 'NXB04', 0, 'chi_pheo.jpg'),
+('S004', 'Tắt Đèn', 'Tiểu thuyết', 60, 75000, 'TG04', 'NXB04', 0, 'tat_den.jpg'),
+('S005', 'Cô Gái Đến Từ Hôm Qua', 'Truyện dài', 120, 80000, 'TG01', 'NXB02', 0, 'co_gai_den_tu_hom_qua.jpg'),
+('S006', 'Mắt Biếc', 'Truyện dài', 90, 82000, 'TG01', 'NXB03', 0, 'mat_biec.jpg'),
+('S007', 'Tôi Là Bêtô', 'Truyện thiếu nhi', 110, 70000, 'TG01', 'NXB01', 0, 'toi_la_beto.jpg'),
+('S008', 'Tôi Thấy Hoa Vàng Trên Cỏ Xanh', 'Truyện dài', 95, 85000, 'TG01', 'NXB02', 0, 'toi_thay_hoa_vang_tren_co_xanh.jpg'),
+('S009', 'Nhà Chử', 'Tiểu thuyết', 70, 60000, 'TG02', 'NXB03', 0, 'nha_chu.jpg'),
+('S010', 'Truyện Tây Bắc', 'Truyện ngắn', 100, 65000, 'TG02', 'NXB05', 0, 'truyen_tay_bac.jpg'),
+('S011', 'Kim Đồng', 'Truyện thiếu nhi', 130, 60000, 'TG02', 'NXB01', 0, 'kim_dong.jpg'),
+('S012', 'Chiều Chiều', 'Truyện ngắn', 75, 58000, 'TG02', 'NXB02', 0, 'chieu_chieu.jpg'),
+('S013', 'Giấc Mộng Ông Thợ Dìu', 'Truyện ngắn', 60, 62000, 'TG02', 'NXB03', 0, 'giac_mong_ong_tho_diu.jpg'),
+('S014', 'Giữ Gìn 36 Phố Phường', 'Tùy bút', 90, 70000, 'TG02', 'NXB04', 0, 'giu_gin_36_pho_phuong.jpg'),
+('S015', 'Lão Hạc', 'Truyện ngắn', 80, 50000, 'TG03', 'NXB05', 0, 'lao_hac.jpg'),
+('S016', 'Sống Mòn', 'Tiểu thuyết', 70, 75000, 'TG03', 'NXB01', 0, 'song_mon.jpg'),
+('S017', 'Đêm Hội Long Trì', 'Tiểu thuyết lịch sử', 65, 80000, 'TG05', 'NXB02', 0, 'dem_hoi_long_tri.jpg'),
+('S018', 'An Tư', 'Tiểu thuyết lịch sử', 60, 78000, 'TG05', 'NXB03', 0, 'an_tu.jpg'),
+('S019', 'Vũ Như Tô', 'Kịch', 50, 70000, 'TG05', 'NXB04', 0, 'vu_nhu_to.jpg'),
+('S020', 'Sống Mãi Với Thủ Đô', 'Truyện ngắn', 85, 65000, 'TG05', 'NXB05', 0, 'song_mai_voi_thu_do.jpg'),
+('S021', 'Vang Bóng Một Thời', 'Tùy bút', 90, 72000, 'TG06', 'NXB01', 0, 'vang_bong_mot_thoi.jpg'),
+('S022', 'Chùa Đàn', 'Tiểu thuyết', 70, 68000, 'TG06', 'NXB02', 0, 'chua_dan.jpg'),
+('S023', 'Chiếc Lư Đồng Mắt Cua', 'Tùy bút', 80, 70000, 'TG06', 'NXB03', 0, 'chiec_lu_dong_mat_cua.jpg'),
+('S024', 'Giông Tố', 'Tiểu thuyết', 75, 75000, 'TG07', 'NXB04', 0, 'giong_to.jpg'),
+('S025', 'Làm Đĩ', 'Tiểu thuyết', 65, 72000, 'TG07', 'NXB05', 0, 'lam_di.jpg'),
+('S026', 'Số Đỏ', 'Tiểu thuyết', 90, 80000, 'TG07', 'NXB01', 0, 'so_do.jpg'),
+('S027', 'Bước Đường Cùng', 'Tiểu thuyết', 70, 70000, 'TG08', 'NXB02', 0, 'buoc_duong_cung.jpg'),
+('S028', 'Kép Tư Bền', 'Truyện ngắn', 85, 60000, 'TG08', 'NXB03', 0, 'kep_tu_ben.jpg'),
+('S029', 'Người Ngựa Ngựa Người', 'Truyện ngắn', 80, 65000, 'TG08', 'NXB04', 0, 'nguoi_ngua_ngua_nguoi.jpg'),
+('S030', 'Con Nhà Nghèo', 'Tiểu thuyết', 90, 75000, 'TG09', 'NXB05', 0, 'con_nha_ngheo.jpg'),
+('S031', 'Lòng Dạ Đàn Bà', 'Tiểu thuyết', 70, 72000, 'TG09', 'NXB01', 0, 'long_da_dan_ba.jpg'),
+('S032', 'Tại Tôi', 'Tiểu thuyết', 65, 70000, 'TG09', 'NXB02', 0, 'tai_toi.jpg'),
+('S033', 'Hai Khối Tình', 'Tiểu thuyết', 80, 73000, 'TG09', 'NXB03', 0, 'hai_khoi_tinh.jpg'),
+('S034', 'Nợ Đời', 'Tiểu thuyết', 75, 74000, 'TG09', 'NXB04', 0, 'no_doi.jpg'),
+('S035', 'Chị Đào Chị Lý', 'Tiểu thuyết', 85, 71000, 'TG09', 'NXB05', 0, 'chi_dao_chi_ly.jpg'),
+('S036', 'Chút Phận Linh Đinh', 'Tiểu thuyết', 70, 72000, 'TG09', 'NXB01', 0, 'chut_phan_linh_dinh.jpg');
 
 -- --------------------------------------------------------
 
@@ -145,9 +281,6 @@ CREATE TABLE `khachhang` (
   PRIMARY KEY (`MAKH`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `khachhang`
---
 INSERT INTO `khachhang` (`MAKH`, `SDT`, `HoTen`, `Diem`, `trangThaiXoa`) VALUES
 ('KH001', '0912345678', 'Nguyễn Văn An', 100, 0),
 ('KH002', '0987654321', 'Trần Thị Bình', 50, 0),
@@ -189,56 +322,6 @@ INSERT INTO `khachhang` (`MAKH`, `SDT`, `HoTen`, `Diem`, `trangThaiXoa`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `nhanvien`
---
-CREATE TABLE `nhanvien` (
-  `MaNV` VARCHAR(10) NOT NULL,
-  `HoTen` VARCHAR(255) NOT NULL,
-  `ChucVu` VARCHAR(255) NOT NULL,
-  `DiaChi` VARCHAR(255) NOT NULL,
-  `SDT` VARCHAR(10) NOT NULL,
-  `Cccd` VARCHAR(12) NOT NULL,
-  `NgaySinh` DATE NOT NULL,
-  `trangThaiXoa` INT NOT NULL DEFAULT 0,
-  PRIMARY KEY (`MaNV`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `nhanvien`
---
-INSERT INTO `nhanvien` (`MaNV`, `HoTen`, `ChucVu`, `DiaChi`, `SDT`, `Cccd`, `NgaySinh`, `trangThaiXoa`) VALUES
-('NV01', 'Nguyễn Thành Nam', 'Quản lý', '12 Nguyễn Trãi, Hà Nội', '0912345678', '010123456789', '1990-05-15', 0),
-('NV02', 'Trần Thị Mai', 'Nhân viên bán hàng', '45 Lê Lợi, TP.HCM', '0987654321', '020234567890', '1995-08-20', 0),
-('NV03', 'Lê Văn Hùng', 'Kế toán', '78 Hùng Vương, Đà Nẵng', '0935432109', '040345678901', '1992-03-10', 0),
-('NV04', 'Phạm Thị Lan', 'Nhân viên kho', '56 Trần Phú, Nha Trang', '0901234567', '060456789012', '1998-11-25', 0),
-('NV05', 'Hoàng Văn Long', 'Nhân viên bán hàng', '23 Bà Triệu, Hà Nội', '0923456789', '080567890123', '1993-07-30', 0);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `taikhoannv`
---
-CREATE TABLE `taikhoannv` (
-  `MANV` VARCHAR(10) NOT NULL,
-  `PASS` VARCHAR(255) NOT NULL,
-  `trangThaiXoa` INT NOT NULL DEFAULT 0,
-  PRIMARY KEY (`MANV`),
-  FOREIGN KEY (`MANV`) REFERENCES `nhanvien` (`MaNV`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `taikhoannv`
---
-INSERT INTO `taikhoannv` (`MANV`, `PASS`, `trangThaiXoa`) VALUES
-('NV01', 'admin', 0),
-('NV02', 'hashed_password_2', 0),
-('NV03', 'hashed_password_3', 0),
-('NV04', 'hashed_password_4', 0),
-('NV05', 'hashed_password_5', 0);
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `hoadon`
 --
 CREATE TABLE `hoadon` (
@@ -253,47 +336,44 @@ CREATE TABLE `hoadon` (
   FOREIGN KEY (`MAKH`) REFERENCES `khachhang` (`MAKH`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `hoadon`
---
 INSERT INTO `hoadon` (`MAHD`, `MANV`, `MAKH`, `NgayBan`, `TongTien`, `trangThaiXoa`) VALUES
-('HD001', 'NV02', 'KH001', '2025-04-10', 153000, 0), -- 10% discount for KH001
-('HD002', 'NV05', 'KH003', '2025-04-11', 58500, 0), -- 10% discount for KH003
-('HD003', 'NV02', 'KH002', '2025-04-12', 110000, 0), -- No discount for KH002
-('HD004', 'NV05', 'KH004', '2025-04-13', 150000, 0), -- No discount for KH004
-('HD005', 'NV03', 'KH005', '2025-04-14', 40500, 0), -- 10% discount for KH005
-('HD006', 'NV01', 'KH006', '2025-04-15', 180000, 0), -- 10% discount for KH006
-('HD007', 'NV04', 'KH007', '2025-04-16', 85000, 0), -- No discount for KH007
-('HD008', 'NV02', 'KH008', '2025-04-17', 108000, 0), -- 10% discount for KH008
-('HD009', 'NV05', 'KH009', '2025-04-18', 95000, 0), -- No discount for KH009
--- Insert the remaining invoices
-('HD010', 'NV03', 'KH010', '2025-04-19', 162000, 0), -- 10% discount for KH010
-('HD011', 'NV01', 'KH011', '2025-04-20', 70000, 0), -- No discount for KH011
-('HD012', 'NV02', 'KH012', '2025-04-21', 195000, 0), -- 10% discount for KH012
-('HD013', 'NV03', 'KH013', '2025-04-22', 140000, 0), -- 10% discount for KH013
-('HD014', 'NV04', 'KH014', '2025-04-23', 58000, 0), -- No discount for KH014
-('HD015', 'NV05', 'KH015', '2025-04-24', 100000, 0), -- 10% discount for KH015
-('HD016', 'NV01', 'KH016', '2025-04-25', 200000, 0), -- 10% discount for KH016
-('HD017', 'NV02', 'KH017', '2025-04-26', 90000, 0), -- No discount for KH017
-('HD018', 'NV03', 'KH018', '2025-04-27', 80000, 0), -- No discount for KH018
-('HD019', 'NV04', 'KH019', '2025-04-28', 70000, 0), -- No discount for KH019
-('HD020', 'NV05', 'KH020', '2025-04-29', 60000, 0), -- No discount for KH020
-('HD021', 'NV01', 'KH021', '2025-04-30', 150000, 0), -- 10% discount for KH021
-('HD022', 'NV02', 'KH022', '2025-05-01', 140000, 0), -- 10% discount for KH022
-('HD023', 'NV03', 'KH023', '2025-05-02', 130000, 0), -- 10% discount for KH023
-('HD024', 'NV04', 'KH024', '2025-05-03', 120000, 0), -- 10% discount for KH024
-('HD025', 'NV05', 'KH025', '2025-05-04', 110000, 0), -- 10% discount for KH025
-('HD026', 'NV01', 'KH026', '2025-05-05', 100000, 0), -- 10% discount for KH026
-('HD027', 'NV02', 'KH027', '2025-05-06', 90000, 0), -- No discount for KH027
-('HD028', 'NV03', 'KH028', '2025-05-07', 80000, 0), -- No discount for KH028
-('HD029', 'NV04', 'KH029', '2025-05-08', 70000, 0), -- No discount for KH029
-('HD030', 'NV05', 'KH030', '2025-05-09', 60000, 0), -- No discount for KH030
-('HD031', 'NV01', 'KH031', '2025-05-10', 50000, 0), -- No discount for KH031
-('HD032', 'NV02', 'KH032', '2025-05-11', 200000, 0), -- 10% discount for KH032
-('HD033', 'NV03', 'KH033', '2025-05-12', 150000, 0), -- 10% discount for KH033
-('HD034', 'NV04', 'KH034', '2025-05-13', 140000, 0), -- 10% discount for KH034
-('HD035', 'NV05', 'KH035', '2025-05-14', 130000, 0), -- 10% discount for KH035
-('HD036', 'NV01', 'KH036', '2025-05-15', 120000, 0); -- 10% discount for KH036
+('HD001', 'NV02', 'KH001', '2025-04-10', 153000, 0), -- 2 * 85000 * 0.9 = 153000
+('HD002', 'NV05', 'KH003', '2025-04-11', 58500, 0), -- 1 * 65000 * 0.9 = 58500
+('HD003', 'NV02', 'KH002', '2025-04-12', 155000, 0), -- (2 * 55000) + (1 * 45000) = 155000
+('HD004', 'NV05', 'KH004', '2025-04-13', 150000, 0), -- 2 * 75000 = 150000
+('HD005', 'NV03', 'KH005', '2025-04-14', 72000, 0), -- 1 * 80000 * 0.9 = 72000
+('HD006', 'NV01', 'KH006', '2025-04-15', 221400, 0), -- 3 * 82000 * 0.9 = 221400
+('HD007', 'NV04', 'KH007', '2025-04-16', 70000, 0), -- 1 * 70000 = 70000
+('HD008', 'NV02', 'KH008', '2025-04-17', 153000, 0), -- 2 * 85000 * 0.9 = 153000
+('HD009', 'NV05', 'KH009', '2025-04-18', 60000, 0), -- 1 * 60000 = 60000
+('HD010', 'NV03', 'KH010', '2025-04-19', 108000, 0), -- 2 * 60000 * 0.9 = 108000
+('HD011', 'NV01', 'KH011', '2025-04-20', 60000, 0), -- 1 * 60000 = 60000
+('HD012', 'NV02', 'KH012', '2025-04-21', 175500, 0), -- 3 * 65000 * 0.9 = 175500
+('HD013', 'NV03', 'KH013', '2025-04-22', 111600, 0), -- 2 * 62000 * 0.9 = 111600
+('HD014', 'NV04', 'KH014', '2025-04-23', 58000, 0), -- 1 * 58000 = 58000
+('HD015', 'NV05', 'KH015', '2025-04-24', 90000, 0), -- 2 * 50000 * 0.9 = 90000
+('HD016', 'NV01', 'KH016', '2025-04-25', 67500, 0), -- 1 * 75000 * 0.9 = 67500
+('HD017', 'NV02', 'KH017', '2025-04-26', 160000, 0), -- 2 * 80000 = 160000
+('HD018', 'NV03', 'KH018', '2025-04-27', 78000, 0), -- 1 * 78000 = 78000
+('HD019', 'NV04', 'KH019', '2025-04-28', 140000, 0), -- 2 * 70000 = 140000
+('HD020', 'NV05', 'KH020', '2025-04-29', 65000, 0), -- 1 * 65000 = 65000
+('HD021', 'NV01', 'KH021', '2025-04-30', 126000, 0), -- 2 * 70000 * 0.9 = 126000
+('HD022', 'NV02', 'KH022', '2025-05-01', 61200, 0), -- 1 * 68000 * 0.9 = 61200
+('HD023', 'NV03', 'KH023', '2025-05-02', 129600, 0), -- 2 * 72000 * 0.9 = 129600
+('HD024', 'NV04', 'KH024', '2025-05-03', 67500, 0), -- 1 * 75000 * 0.9 = 67500
+('HD025', 'NV05', 'KH025', '2025-05-04', 126000, 0), -- 2 * 70000 * 0.9 = 126000
+('HD026', 'NV01', 'KH026', '2025-05-05', 72000, 0), -- 1 * 80000 * 0.9 = 72000
+('HD027', 'NV02', 'KH027', '2025-05-06', 144000, 0), -- 2 * 72000 = 144000
+('HD028', 'NV03', 'KH028', '2025-05-07', 60000, 0), -- 1 * 60000 = 60000
+('HD029', 'NV04', 'KH029', '2025-05-08', 130000, 0), -- 2 * 65000 = 130000
+('HD030', 'NV05', 'KH030', '2025-05-09', 75000, 0), -- 1 * 75000 = 75000
+('HD031', 'NV01', 'KH031', '2025-05-10', 72000, 0), -- 2 * 72000 * 0.5 = 72000
+('HD032', 'NV02', 'KH032', '2025-05-11', 67500, 0), -- 1 * 75000 * 0.9 = 67500
+('HD033', 'NV03', 'KH033', '2025-05-12', 131400, 0), -- 2 * 73000 * 0.9 = 131400
+('HD034', 'NV04', 'KH034', '2025-05-13', 66600, 0), -- 1 * 74000 * 0.9 = 66600
+('HD035', 'NV05', 'KH035', '2025-05-14', 131400, 0), -- 2 * 73000 * 0.9 = 131400
+('HD036', 'NV01', 'KH036', '2025-05-15', 66600, 0); -- 1 * 74000 * 0.9 = 66600
+
 -- --------------------------------------------------------
 
 --
@@ -309,47 +389,45 @@ CREATE TABLE `chitiethoadon` (
   FOREIGN KEY (`MAHD`) REFERENCES `hoadon` (`MAHD`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `chitiethoadon`
---
 INSERT INTO `chitiethoadon` (`MASACH`, `MAHD`, `SoLuong`, `Gia`) VALUES
 ('S001', 'HD001', 2, 85000),
 ('S002', 'HD002', 1, 65000),
-('S005', 'HD003', 2, 55000),
-('S004', 'HD004', 2, 75000),
 ('S003', 'HD003', 1, 45000),
-('S005', 'HD005', 1, 55000),
-('S006', 'HD006', 3, 80000),
-('S007', 'HD007', 1, 82000),
-('S008', 'HD008', 2, 70000),
-('S009', 'HD009', 1, 85000),
+('S004', 'HD004', 2, 75000),
+('S005', 'HD003', 2, 55000),
+('S005', 'HD005', 1, 80000),
+('S006', 'HD006', 3, 82000),
+('S007', 'HD007', 1, 70000),
+('S008', 'HD008', 2, 85000),
+('S009', 'HD009', 1, 60000),
 ('S010', 'HD010', 2, 60000),
-('S011', 'HD011', 1, 55000),
+('S011', 'HD011', 1, 60000),
 ('S012', 'HD012', 3, 65000),
-('S013', 'HD013', 2, 60000),
+('S013', 'HD013', 2, 62000),
 ('S014', 'HD014', 1, 58000),
-('S015', 'HD015', 2, 62000),
-('S016', 'HD016', 1, 70000),
-('S017', 'HD017', 2, 50000),
-('S018', 'HD018', 1, 75000),
-('S019', 'HD019', 2, 80000),
-('S020', 'HD020', 1, 78000),
+('S015', 'HD015', 2, 50000),
+('S016', 'HD016', 1, 75000),
+('S017', 'HD017', 2, 80000),
+('S018', 'HD018', 1, 78000),
+('S019', 'HD019', 2, 70000),
+('S020', 'HD020', 1, 65000),
 ('S021', 'HD021', 2, 70000),
-('S022', 'HD022', 1, 65000),
+('S022', 'HD022', 1, 68000),
 ('S023', 'HD023', 2, 72000),
-('S024', 'HD024', 1, 68000),
+('S024', 'HD024', 1, 75000),
 ('S025', 'HD025', 2, 70000),
-('S026', 'HD026', 1, 75000),
+('S026', 'HD026', 1, 80000),
 ('S027', 'HD027', 2, 72000),
-('S028', 'HD028', 1, 80000),
-('S029', 'HD029', 2, 70000),
-('S030', 'HD030', 1, 60000),
-('S031', 'HD031', 2, 65000),
+('S028', 'HD028', 1, 60000),
+('S029', 'HD029', 2, 65000),
+('S030', 'HD030', 1, 75000),
+('S031', 'HD031', 2, 72000),
 ('S032', 'HD032', 1, 75000),
-('S033', 'HD033', 2, 72000),
-('S034', 'HD034', 1, 70000),
+('S033', 'HD033', 2, 73000),
+('S034', 'HD034', 1, 74000),
 ('S035', 'HD035', 2, 73000),
 ('S036', 'HD036', 1, 74000);
+
 -- --------------------------------------------------------
 
 --
@@ -367,15 +445,12 @@ CREATE TABLE `phieunhap` (
   FOREIGN KEY (`MANXB`) REFERENCES `nhaxuatban` (`MANXB`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `phieunhap`
---
 INSERT INTO `phieunhap` (`MAPN`, `MANV`, `NgayNhap`, `TongTien`, `MANXB`, `trangThaiXoa`) VALUES
-('PN01', 'NV04', '2025-04-01', 4250000.00, 'NXB01', 0),
+('PN01', 'NV04', '2025-04-01', 7500000.00, 'NXB01', 0),
 ('PN02', 'NV04', '2025-04-02', 2700000.00, 'NXB04', 0),
 ('PN03', 'NV03', '2025-04-03', 5500000.00, 'NXB05', 0),
-('PN04', 'NV04', '2025-04-04', 3900000.00, 'NXB01', 0),
-('PN05', 'NV03', '2025-04-05', 1800000.00, 'NXB04', 0);
+('PN04', 'NV04', '2025-04-04', 3750000.00, 'NXB01', 0),
+('PN05', 'NV03', '2025-04-05', 3600000.00, 'NXB04', 0);
 
 -- --------------------------------------------------------
 
@@ -392,15 +467,13 @@ CREATE TABLE `chitietphieunhap` (
   FOREIGN KEY (`MAPN`) REFERENCES `phieunhap` (`MAPN`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `chitietphieunhap`
---
 INSERT INTO `chitietphieunhap` (`MASACH`, `MAPN`, `SoLuong`, `GiaNhap`) VALUES
 ('S001', 'PN01', 50, 85000),
 ('S002', 'PN01', 50, 65000),
 ('S003', 'PN02', 60, 45000),
+('S004', 'PN04', 50, 75000),
 ('S005', 'PN03', 100, 55000),
-('S004', 'PN04', 50, 75000);
+('S005', 'PN05', 45, 80000);
 
 -- --------------------------------------------------------
 
@@ -408,35 +481,20 @@ INSERT INTO `chitietphieunhap` (`MASACH`, `MAPN`, `SoLuong`, `GiaNhap`) VALUES
 -- Indexes for dumped tables
 --
 
---
--- Indexes for table `chitiethoadon`
---
 ALTER TABLE `chitiethoadon`
   ADD INDEX `idx_mahd` (`MAHD`);
 
---
--- Indexes for table `chitietphieunhap`
---
 ALTER TABLE `chitietphieunhap`
   ADD INDEX `idx_mapn` (`MAPN`);
 
---
--- Indexes for table `hoadon`
---
 ALTER TABLE `hoadon`
   ADD INDEX `idx_manv` (`MANV`),
   ADD INDEX `idx_makh` (`MAKH`);
 
---
--- Indexes for table `sach`
---
 ALTER TABLE `sach`
   ADD INDEX `idx_matg` (`MATG`),
   ADD INDEX `idx_manxb` (`MANXB`);
 
---
--- Indexes for table `phieunhap`
---
 ALTER TABLE `phieunhap`
   ADD INDEX `idx_manv` (`MANV`),
   ADD INDEX `idx_manxb` (`MANXB`);

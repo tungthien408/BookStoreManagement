@@ -52,10 +52,10 @@ public class BanSachGUI {
     private JPanel panel, paymentPanel;
     private JTextField[] txt_array_top = new JTextField[6];
     private JTextField[] txt_array_down = new JTextField[2];
-    private JTextField[] txt_array_search = new JTextField[1];
+    // private JTextField[] txt_array_search = new JTextField[1];
     private JTextField txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_date, txt_total;
     private JTextField txt_bookId, txt_quantity;
-    private JTextField txt_search;
+    // private JTextField txt_search;
     private JButton[] buttons = new JButton[3];
     private JButton[] searchbutton = new JButton[1];
     private JTable table_down, table_top;
@@ -63,7 +63,10 @@ public class BanSachGUI {
     private JPanel imagePanel; // <<< ADD THIS
     private int selectedRow = -1;
     private int lastSelectedRow = -1;
-    private int count = 0;
+    private int count = 0;  
+    private JTextField[] txt_array_search = new JTextField[1];
+    private JTextField txt_search;
+    private JComboBox<String> comboBox;
 
     private List<SachDTO> sachList;
     private List<HoaDonDTO> hoaDonList;
@@ -80,10 +83,12 @@ public class BanSachGUI {
         initializeMainPanel();
         setupPanelLayout();
         initializeHoaDon();
+        timkiem();
     }
 
     private void initializeTextFields() {
         txt_search = new JTextField();
+        txt_array_search = new JTextField[]{txt_search};
         txt_array_top = new JTextField[]{txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_date, txt_total};
         txt_array_down = new JTextField[]{txt_bookId, txt_quantity};
         txt_array_search = new JTextField[]{txt_search};
@@ -145,11 +150,48 @@ public class BanSachGUI {
 
     private JPanel createSearchPanel() {
         String[] searchOptions = {"Mã sách", "Tên sách"};
-        JComboBox<String> comboBox = new JComboBox<>(searchOptions);
+        comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
-        searchPanel.add(tool.createSearchTextFieldTest(comboBox,searchbutton , txt_array_search));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
         return searchPanel;
+    }
+
+    private void timkiem() {
+        comboBox.addActionListener(e -> {
+            String selectedOption = (String) comboBox.getSelectedItem();
+            filterTable(txt_array_search[0].getText(), selectedOption);
+        });
+
+    }
+
+        private void filterTable(String query, String searchType) {
+            DefaultTableModel model = (DefaultTableModel) table_top.getModel();
+            model.setRowCount(0); // Xóa dữ liệu cũ
+        try {
+            for (SachDTO sach : sachList) {
+                boolean match = false;
+                switch (searchType) {
+                    case "Mã sách":
+                        match = sach.getMaSach().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Tên sách":
+                        match = sach.getTenSach().toLowerCase().contains(query.toLowerCase());
+                        break;
+                }
+                if (match) {
+                    model.addRow(new Object[]{
+                        sach.getMaSach(),
+                        sach.getTenSach(),
+                        sach.getSoLuong(),
+                        sach.getDonGia()+10000
+                    });
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage());
+        }
     }
 
     private JPanel createTable_top() {
@@ -203,7 +245,8 @@ public class BanSachGUI {
                         try {
                             String imgName = sach.getImg();
                             if (imgName != null && !imgName.trim().isEmpty()) {
-                                String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/" + imgName;
+                                // String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/" + imgName;
+                                String absoluteImagePath = "D:" + File.separator + "K2_Y2" + File.separator + "BookStoreManagement" + File.separator + "images" + File.separator + "Book" + File.separator + sach.getImg();
                                 File imageFile = new File(absoluteImagePath);
                                 if (imageFile.exists() && imageFile.isFile()) {
                                     originalImage = ImageIO.read(imageFile);

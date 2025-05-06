@@ -13,12 +13,13 @@ import Service.Data;
 public class TaiKhoanNVDAO {
     // Thêm một tài khoản nhân viên
     public boolean create(TaiKhoanNVDTO taiKhoan) {
-        String sql = "INSERT INTO taikhoannv (MANV, PASS, trangThaiXoa) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO taikhoannv (MANV, PASS,maQuyen, trangThaiXoa) VALUES (?, ?, ?)";
         try (Connection conn = Data.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, taiKhoan.getMaNV());
             stmt.setString(2, taiKhoan.getPass());
-            stmt.setInt(3, taiKhoan.getTrangThaiXoa());
+            stmt.setInt(3,taiKhoan.getMaQuyen());
+            stmt.setInt(4, taiKhoan.getTrangThaiXoa());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -37,6 +38,7 @@ public class TaiKhoanNVDAO {
                 TaiKhoanNVDTO taiKhoan = new TaiKhoanNVDTO();
                 taiKhoan.setMaNV(rs.getString("MANV"));
                 taiKhoan.setPass(rs.getString("PASS"));
+                taiKhoan.setMaQuyen(rs.getInt("maQuyen"));
                 taiKhoan.setTrangThaiXoa(rs.getInt("trangThaiXoa"));
                 list.add(taiKhoan);
             }
@@ -57,6 +59,7 @@ public class TaiKhoanNVDAO {
                     TaiKhoanNVDTO taiKhoan = new TaiKhoanNVDTO();
                     taiKhoan.setMaNV(rs.getString("MANV"));
                     taiKhoan.setPass(rs.getString("PASS"));
+                    taiKhoan.setMaQuyen(rs.getInt("maQuyen"));
                     taiKhoan.setTrangThaiXoa(rs.getInt("trangThaiXoa"));
                     return taiKhoan;
                 }
@@ -75,6 +78,7 @@ public class TaiKhoanNVDAO {
             stmt.setString(1, taiKhoan.getPass());
             stmt.setInt(2, taiKhoan.getTrangThaiXoa());
             stmt.setString(3, taiKhoan.getMaNV());
+            stmt.setInt(4, taiKhoan.getMaQuyen());
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
             e.printStackTrace();
@@ -93,5 +97,31 @@ public class TaiKhoanNVDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    public boolean hasPermission(String username, int maCN, String maHD) {
+        String sql = """
+            SELECT 1
+            FROM taikhoan tk
+            JOIN quyen q ON tk.maQuyen = q.maQuyen
+            JOIN chitietchucnang ctcn ON q.maQuyen = ctcn.maQuyen
+            WHERE ctcn.trangThaiXoa = 0
+                AND ctcn.maCN = ?
+                AND ctcn.maHD = ?
+                AND tk.tenDangNhap = ?
+            LIMIT 1
+        """;
+
+        try (Connection conn = Data.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setInt(1, maCN);
+            ps.setString(2, maHD);
+            ps.setString(3, username);
+            ResultSet rs = ps.executeQuery();
+            return rs.next(); // Có kết quả -> có quyền
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false; 
     }
 }

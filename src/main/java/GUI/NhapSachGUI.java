@@ -207,7 +207,9 @@ public class NhapSachGUI {
                             String imgName = sach.getImg();
                             if (imgName != null && !imgName.trim().isEmpty()) {
                                 // *** Construct the ABSOLUTE file path ***
-                                String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/" + imgName;
+                                // String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/" + imgName;
+                                String absoluteImagePath = "D:" + File.separator + "K2_Y2" + File.separator + "BookStoreManagement" + File.separator + "images" + File.separator + "Book" + File.separator + sach.getImg();
+
                                 File imageFile = new File(absoluteImagePath);
 
                                 if (imageFile.exists() && imageFile.isFile()) {

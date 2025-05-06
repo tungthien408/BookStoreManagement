@@ -5,21 +5,20 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import static java.lang.String.valueOf;
 import java.util.List;
-// import java.sql.SQLException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
-
-import java.awt.event.MouseEvent;
-import static java.lang.String.valueOf;
 
 import BUS.KhachHangBUS;
 import DTO.KhachHangDTO;
@@ -40,9 +39,14 @@ public class KhachHangGUI {
     private int selectedRow = -1;
     private int lastSelectedRow = -1; // Lưu dòng được chọn trước đó
     private boolean update = false;
+    private JTextField[] txt_array_search = new JTextField[1];
+    private JTextField txt_search;
+    private JComboBox<String> comboBox;
 
 
     public KhachHangGUI() {
+        txt_search = new JTextField();
+        txt_array_search = new JTextField[]{txt_search};
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel.setBackground(new Color(202, 220, 252));
         panel.add(createKhachHangTable(), BorderLayout.WEST);
@@ -56,6 +60,7 @@ public class KhachHangGUI {
       
         // Tạo thanh tìm kiếm 
         panel.add(createSearchPanel(), BorderLayout.NORTH);
+        timkiem();
     }
     
     private JPanel createKhachHangTable() {
@@ -74,7 +79,8 @@ public class KhachHangGUI {
             JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu từ cơ sở dữ liệu: " + e.getMessage());
         }
         // Bảng
-        table = tool.createTable(model, column);        table.setDefaultEditor(Object.class, null); // Không cho chỉnh sửa trực tiếp trên bảng
+        table = tool.createTable(model, column); 
+        table.setDefaultEditor(Object.class, null); // Không cho chỉnh sửa trực tiếp trên bảng
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(850, 540));
 
@@ -150,11 +156,48 @@ public class KhachHangGUI {
     }
 
     private JPanel createSearchPanel() {
-        String [] searchOptions = {"Mã khách hàng", "SĐT", "Tên khách hàng"};
-        JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panelSearch.add(Box.createHorizontalStrut(25));
-        panelSearch.add(tool.createSearchTextField(0, 0,searchOptions));
-        return panelSearch;
+        String[] searchOptions = {"Mã khách hàng", "Tên khách hàng", "SDT"};
+        comboBox = new JComboBox<>(searchOptions);
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(Box.createHorizontalStrut(33));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
+        return searchPanel;
+    }
+    private void timkiem() {
+        comboBox.addActionListener(e -> {
+            String selectedOption = (String) comboBox.getSelectedItem();
+            filterTable(txt_array_search[0].getText(), selectedOption);
+        });
+
+    }
+
+        private void filterTable(String query, String searchType) {
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.setRowCount(0); // Xóa dữ liệu cũ
+        try {
+            for (KhachHangDTO kh : khachHangList) {
+                boolean match = false;
+                switch (searchType) {
+                    case "Mã khách hàng":
+                        match = kh.getMaKH().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Tên khách hàng":
+                        match = kh.getHoTen().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "SDT":
+                        match = kh.getSdt().toLowerCase().contains(query.toLowerCase());
+                        break;
+                }
+                if (match) {
+                    model.addRow(new Object[]{
+                        kh.getMaKH(), kh.getSdt(), kh.getHoTen(), kh.getDiem()
+                    });
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage());
+        }
     }
     
     // Phương thức làm mới bảng

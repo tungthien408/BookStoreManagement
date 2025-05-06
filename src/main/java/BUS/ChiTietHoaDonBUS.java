@@ -168,4 +168,8 @@ public class ChiTietHoaDonBUS {
 
         return chiTietHoaDonDAO.deleteByMaHD(maHD);
     }
+
+    public int getSoLuongByMaSach(String maSach){
+        return chiTietHoaDonDAO.getSoLuongByMaSach(maSach);
+    }
 }

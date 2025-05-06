@@ -1,11 +1,10 @@
 package BUS;
 
-import DAO.ChiTietPhieuNhapDAO;
-import DTO.ChiTietPhieuNhapDTO;
-
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+
+import DAO.ChiTietPhieuNhapDAO;
+import DTO.ChiTietPhieuNhapDTO;
 
 public class ChiTietPhieuNhapBUS {
     private final ChiTietPhieuNhapDAO chiTietPhieuNhapDAO;
@@ -120,5 +119,9 @@ public class ChiTietPhieuNhapBUS {
             e.printStackTrace();
             return new ArrayList<>(); // Return empty list instead of null for safety
         }
+    }
+
+    public int getSoLuongByMaSach(String maSach){
+        return chiTietPhieuNhapDAO.getSoLuongByMaSach(maSach);
     }
 }
