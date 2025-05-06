@@ -34,10 +34,12 @@ import javax.swing.table.DefaultTableModel;
 import BUS.ChiTietHoaDonBUS;
 import BUS.HoaDonBUS;
 import BUS.KhachHangBUS;
+import BUS.NhanVienBUS;
 import BUS.SachBUS;
 import DTO.ChiTietHoaDonDTO;
 import DTO.HoaDonDTO;
 import DTO.KhachHangDTO;
+import DTO.NhanVienDTO;
 import DTO.SachDTO;
 
 public class HoaDonBanGUI {
@@ -190,23 +192,29 @@ public class HoaDonBanGUI {
         // infoX = 30, infoY = 80, infoW = 600-60 = 540, infoH = 80
         g.drawRect(30, 80, 540, 80);
 
-        int sel = table.getSelectedRow();
-        if (sel == -1) {
+        int[] rows = table.getSelectedRows();
+        int n = rows.length;
+        if (n == 0) {
             JOptionPane.showMessageDialog(null,
                     "Vui lòng chọn một hóa đơn để xem chi tiết!",
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        String maKH = (String) table.getValueAt(sel, 2);
-        KhachHangBUS khBUS = new KhachHangBUS();
-        KhachHangDTO kh = khBUS.getKhachHangByMaKH(maKH);
-        if (kh != null) {
-            // infoTextX = 30 + 10 = 40, infoTextY = 80 + 20 = 100
-            g.drawString("Tên Nhân Viên: " + kh.getHoTen(), 40, 100);
-            g.drawString("Mã Nhân viên: " + kh.getSdt(), 40, 125);
-            g.drawString("Ngày xuất đơn: " + table.getValueAt(sel, 3), 40, 150);
-        }
 
+        StringBuilder sbNhanVien = new StringBuilder();
+        StringBuilder sbKhachHang = new StringBuilder();
+        for (int row : rows) {
+            String maNV = (String) table.getValueAt(row, 1);
+            String maKH = (String) table.getValueAt(row, 2);
+            sbNhanVien.append(maNV).append(" - ");
+            sbKhachHang.append(maKH).append(" - ");
+        }
+        String selectedNhanVien = sbNhanVien.length() > 0 ? sbNhanVien.substring(0, sbNhanVien.length() - 3) : "";
+        String selectedKhachHang = sbKhachHang.length() > 0 ? sbKhachHang.substring(0, sbKhachHang.length() - 3) : "";
+
+        g.drawString("Mã Nhân Viên: " + selectedNhanVien, 40, 100);
+        g.drawString("Mã Khách Hàng: " + selectedKhachHang, 40, 125);
+        g.drawString("Ngày Xuất Hóa Đơn: " + LocalDate.now(), 40, 150);
         // 4. Bảng chi tiết sản phẩm
         // tableX = 30, tableY = 180, tableW = 540, tableH = 300
         g.drawRect(30, 180, 540, 300);
@@ -219,8 +227,8 @@ public class HoaDonBanGUI {
         }
 
         // lấy rows đã chọn
-        int[] rows = table.getSelectedRows();
-        int n = rows.length;
+        // int[] rows = table.getSelectedRows();
+        // int n = rows.length;
         if (n == 0) {
             JOptionPane.showMessageDialog(null,
                     "Vui lòng chọn một hóa đơn để xem chi tiết!",

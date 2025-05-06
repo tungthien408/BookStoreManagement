@@ -33,7 +33,6 @@ public class ThongKeGUI {
 
     public ThongKeGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
-        panel.setBackground(Color.RED);
 
         // Button panel at top - small height
         panel_button = tool.createPanel(width - width_sideMenu, 50, new FlowLayout(FlowLayout.LEFT, 10, 0));
@@ -120,13 +119,17 @@ public class ThongKeGUI {
         panel_Finding.setBorder(BorderFactory.createEmptyBorder(25, 0, 10, 10));
         // Create các thành phần con bên trong panel_Finding
         panel_Finding_timKiem = tool.createPanel(300, 50, new FlowLayout(FlowLayout.LEFT, 10, 0));
-        panel_Finding_locTheoNgay = tool.createPanel(300, 50, new FlowLayout(FlowLayout.LEFT, 10, 0));
+        panel_Finding_locTheoNgay = tool.createPanel(325, 50, new FlowLayout(FlowLayout.LEFT, 10, 0));
         panel_Finding_buttons = tool.createPanel(300, 42, new FlowLayout(FlowLayout.CENTER, 29, 5));
         panel_Finding_buttons.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         panel_Finding_timKiem.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.LIGHT_GRAY),
                 "Tìm kiếm"));
         JTextField textFieldTimKiem = new JTextField(20);
+        JButton buttonTimKiem = new JButton("Tìm");
+        buttonTimKiem.setPreferredSize(new Dimension(65, 25));
+        buttonTimKiem.setFont(new Font("Arial", Font.BOLD, 14));
+        buttonTimKiem.setForeground(Color.WHITE);
         textFieldTimKiem.setPreferredSize(new Dimension(200, 25));
         panel_Finding_locTheoNgay.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.LIGHT_GRAY),
@@ -134,8 +137,8 @@ public class ThongKeGUI {
         // panel_Finding_timKiem.setBackground(Color.BLACK);
         JLabel labelTu = new JLabel("Từ ngày: ");
         JLabel labelDen = new JLabel("Đến ngày: ");
-        JTextField textFieldTu = new JTextField(4);
-        JTextField textFieldDen = new JTextField(4);
+        JTextField textFieldTu = new JTextField(7);
+        JTextField textFieldDen = new JTextField(7);
         // panel_Finding_locTheoNgay.setBackground(Color.GRAY);
         panel_Finding_locTheoNgay.add(labelTu);
         panel_Finding_locTheoNgay.add(textFieldTu);
@@ -156,10 +159,14 @@ public class ThongKeGUI {
 
         buttonLamMoi.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonLoc.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonTimKiem.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonTimKiem.setFocusable(false);
         buttonLamMoi.setFocusable(false);
         buttonLoc.setFocusable(false);
         buttonLamMoi.setBorderPainted(false);
         buttonLoc.setBorderPainted(false);
+        buttonTimKiem.setBorderPainted(false);
+        buttonTimKiem.setBackground(new Color(0, 36, 107));
         buttonLamMoi.setBackground(new Color(0, 36, 107));
         buttonLoc.setBackground(new Color(0, 36, 107));
         buttonLamMoi.setForeground(Color.WHITE);
@@ -176,6 +183,20 @@ public class ThongKeGUI {
 
             public void mouseReleased(MouseEvent e) {
                 buttonLamMoi.setBackground(MENU_BACKGROUND);
+            }
+        });
+        buttonTimKiem.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                buttonTimKiem.setBackground(MENU_HOVER);
+            }
+
+            public void mouseExited(MouseEvent e) {
+                buttonTimKiem.setBackground(MENU_BACKGROUND);
+            }
+
+            public void mouseReleased(MouseEvent e) {
+                buttonTimKiem.setBackground(MENU_BACKGROUND);
             }
         });
         buttonLoc.addMouseListener(new MouseAdapter() {
@@ -198,6 +219,7 @@ public class ThongKeGUI {
         // panel_Finding_buttons.setBackground(Color.LIGHT_GRAY);
 
         panel_Finding_timKiem.add(textFieldTimKiem);
+        panel_Finding_timKiem.add(buttonTimKiem);
         panel_Finding.add(panel_Finding_timKiem);
         panel_Finding.add(panel_Finding_locTheoNgay);
         panel_Finding.add(panel_Finding_buttons);
@@ -360,12 +382,42 @@ public class ThongKeGUI {
         buttonLoc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Lọc từ các dữ kiện đã nhập trong panel_Finding_locTheoNgay,
-                // panel_Finding_timKiem
-                // và hiển thị các dữ kiện đã lọc trong panel_Table
-                // Sử dụng câu lệnh SQL để lọc và hiển thị
-                // Sử dụng phương thức setModel của JTable để hiển thị dữ liệu
+                refreshTable();
+                String startDate = textFieldTu.getText().toLowerCase();
+                String endDate = textFieldDen.getText().toLowerCase();
+                // Lọc trong bảng Doanh Thu
+                for (int i = 0; i < model_DoanhThu.getRowCount(); i++) {
+                    String date = model_DoanhThu.getValueAt(i, 2).toString().toLowerCase();
+                    if (date.compareTo(startDate) < 0 || date.compareTo(endDate) > 0) {
+                        model_DoanhThu.removeRow(i);
+                        i--;
+                    }
+                }
 
+            }
+        });
+        buttonTimKiem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refreshTable();
+                String searchText = textFieldTimKiem.getText().toLowerCase();
+                // Tìm kiếm trong bảng Doanh Thu
+                for (int i = 0; i < model_DoanhThu.getRowCount(); i++) {
+                    String maHD = model_DoanhThu.getValueAt(i, 1).toString().toLowerCase();
+                    if (!maHD.startsWith(searchText)) {
+                        model_DoanhThu.removeRow(i);
+                        i--;
+                    }
+                }
+                // Tìm kiếm trong bảng Khách Hàng
+                for (int i = 0; i < model_KhachHang.getRowCount(); i++) {
+                    String hoTen = model_KhachHang.getValueAt(i, 1).toString().toLowerCase();
+                    String sdt = model_KhachHang.getValueAt(i, 2).toString().toLowerCase();
+                    if (!hoTen.startsWith(searchText) && !sdt.startsWith(searchText)) {
+                        model_KhachHang.removeRow(i);
+                        i--;
+                    }
+                }
             }
         });
     }

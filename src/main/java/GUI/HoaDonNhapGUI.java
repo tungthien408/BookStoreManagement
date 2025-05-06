@@ -41,6 +41,7 @@ import DTO.KhachHangDTO;
 import DTO.NhanVienDTO;
 import DTO.PhieuNhapDTO;
 import DTO.SachDTO;
+import DTO.TaiKhoanNVDTO;
 
 public class HoaDonNhapGUI {
     private static final int WIDTH = 1200;
@@ -61,13 +62,14 @@ public class HoaDonNhapGUI {
     private ChiTietPhieuNhapBUS chiTietPhieuNhapBUS = new ChiTietPhieuNhapBUS();
     private NXBBUS nxbBUS = new NXBBUS();
     private SachBUS sachBUS = new SachBUS();
+    private NhanVienBUS nhanVienBUS = new NhanVienBUS();
 
     public HoaDonNhapGUI() {
         panel = tool.createPanel(WIDTH - SIDE_MENU_WIDTH, HEIGHT, new BorderLayout());
         initializeData();
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         panel.add(createHoaDonNhapTable(), BorderLayout.WEST);
-        panel.add(createPanelButton(), BorderLayout.CENTER);
+        panel.add(createPanelButton(null), BorderLayout.CENTER);
     }
 
     private void initializeData() {
@@ -115,31 +117,16 @@ public class HoaDonNhapGUI {
         return panelTable;
     }
 
-    private JPanel createPanelButton() {
-        String[] btnText = { "Chi tiết", "Nhập Excel", "Xuất Excel" };
+    private JPanel createPanelButton(TaiKhoanNVDTO account) {
+        String[] btnText = { "Chi tiết", "Nhập Excel", "Xu t Excel" };
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(buttons, btnText, new Color(0, 36, 107), Color.WHITE, "y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
         // Add action listeners for buttons
-        buttons[0].addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                showInvoiceDetails();
-            }
-        });
-        buttons[1].addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                importFromExcel();
-            }
-        });
-        buttons[2].addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                exportToExcel();
-            }
-        });
+        buttons[0].addActionListener(e -> showInvoiceDetails(account));
+        buttons[1].addActionListener(e -> importFromExcel());
+        buttons[2].addActionListener(e -> exportToExcel());
 
         return panelBtn;
     }
@@ -175,7 +162,7 @@ public class HoaDonNhapGUI {
         }
     }
 
-    private void showInvoiceDetails() {
+    private void showInvoiceDetails(TaiKhoanNVDTO account) {
         // 1. Tạo ảnh trống RGB với nền trắng
         BufferedImage img = new BufferedImage(600, 800, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = img.createGraphics();
@@ -200,13 +187,13 @@ public class HoaDonNhapGUI {
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-        String maNV = (String) table.getValueAt(sel, 1);
         NhanVienBUS nvBUS = new NhanVienBUS();
-        NhanVienDTO nv = nvBUS.getNhanVienByMaNV(maNV);
+        NhanVienDTO nv = nvBUS.getNhanVienByMaNV(account.getMaNV());
         if (nv != null) {
             // infoTextX = 30 + 10 = 40, infoTextY = 80 + 20 = 100
-            g.drawString("Mã Nhân Viên: " + nv.getMaNV(), 40, 100);
-            g.drawString("Tên Nhân Viên: " + nv.getHoTen(), 40, 150);
+            g.drawString("Tên Nhân Viên: " + nv.getHoTen(), 40, 100);
+            g.drawString("Mã Nhân viên: " + nv.getMaNV(), 40, 125);
+            g.drawString("Ngày xuất đơn: " + LocalDate.now(), 40, 150);
         }
 
         // 4. Bảng chi tiết sản phẩm

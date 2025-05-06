@@ -22,6 +22,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import java.awt.Graphics2D;
 
 import BUS.ChiTietHoaDonBUS;
 import BUS.HoaDonBUS;
@@ -410,7 +411,7 @@ public class BanSachGUI {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi thanh toán: " + e.getMessage());
         }
-
+        Inhoadon();
     }
 
     private void updateTotal() {
@@ -441,6 +442,11 @@ public class BanSachGUI {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi làm mới bảng: " + e.getMessage());
         }
+    }
+
+    public void Inhoadon() {
+
+        JOptionPane.showMessageDialog(null, "In hóa đơn thành công!");
     }
 
     public JPanel getPanel() {

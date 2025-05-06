@@ -102,10 +102,14 @@ public class KhachHangBUS {
     }
     
     // Lấy khách hàng theo MAKH
-        public KhachHangDTO getMaKhachHangBySdt(String maKH) {
+    public KhachHangDTO getMaKhachHangBySdt(String maKH) {
         if (maKH == null || maKH.trim().isEmpty()) {
             throw new IllegalArgumentException("sdt khách hàng không được để trống!");
         }
         return khachHangDAO.getmaKHBysdt(maKH);
+    }
+
+    public int getCountKhachHang() {
+        return khachHangDAO.getCountKhachHang();
     }
 }

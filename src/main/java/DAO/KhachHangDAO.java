@@ -105,8 +105,8 @@ public class KhachHangDAO {
         }
     }
 
-        // Lấy khách hàng theo MAKH
-        public KhachHangDTO getmaKHBysdt(String sdt) {
+    // Lấy khách hàng theo MAKH
+    public KhachHangDTO getmaKHBysdt(String sdt) {
             String sql = "SELECT * FROM khachhang WHERE SDT = ? AND trangThaiXoa = 0";
             try (Connection conn = Data.getConnection();
                     PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -127,4 +127,10 @@ public class KhachHangDAO {
             }
             return null;
         }
+
+    public int getCountKhachHang() {
+        List <KhachHangDTO> lists = getAll();
+        int count = lists.size();
+        return count;
+    }
 }
