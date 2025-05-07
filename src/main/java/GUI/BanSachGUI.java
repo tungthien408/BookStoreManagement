@@ -4,13 +4,19 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
@@ -233,15 +239,14 @@ public class BanSachGUI {
                     SachDTO sach = sachBUS.getSachByMaSach(bookId);
 
                     if (sach != null) {
-<<<<<<< HEAD
                         // --- Load, Resize, and Update Image using BufferedImage ---
                         ImageIcon finalIcon = null;
                         BufferedImage originalImage = null;
                         try {
                             String imgName = sach.getImg();
                             if (imgName != null && !imgName.trim().isEmpty()) {
-                                // String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/" + imgName;
-                                String absoluteImagePath = "D:" + File.separator + "K2_Y2" + File.separator + "BookStoreManagement" + File.separator + "images" + File.separator + "Book" + File.separator + sach.getImg();
+                                // String absoluteImagePath = "/D:/K2_Y2/BookStoreManagement/images/Book/" + imgName;
+                                String absoluteImagePath = "D:" + File.separator + "K2_Y2" + File.separator + "BookStoreManagement" +  File.separator + "images" + File.separator + File.separator + "Book" + File.separator + sach.getImg();
                                 File imageFile = new File(absoluteImagePath);
                                 if (imageFile.exists() && imageFile.isFile()) {
                                     originalImage = ImageIO.read(imageFile);
@@ -309,10 +314,8 @@ public class BanSachGUI {
                             }
                         }
 
-=======
->>>>>>> 95a07a9df8ff9dd68b115af66e0265971153ede1
                         // --- Update the existing imageLabel ---
-                        imageLabel.setIcon(tool.showImage(sach, imagePanel));
+                        imageLabel.setIcon(finalIcon);
 
                         // --- Refresh the panel containing the imageLabel ---
                         imagePanel.revalidate();

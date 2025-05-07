@@ -199,7 +199,6 @@ public class NhapSachGUI {
                         // --- Update TextFields (if needed for the top table selection) ---
                         // Example: txt_array_down[0].setText(sach.getMaSach());
 
-<<<<<<< HEAD
                         // --- Load, Resize, and Update Image using BufferedImage ---
                         ImageIcon finalIcon = null; // This will hold the final icon (scaled or default)
                         BufferedImage originalImage = null;
@@ -208,9 +207,7 @@ public class NhapSachGUI {
                             String imgName = sach.getImg();
                             if (imgName != null && !imgName.trim().isEmpty()) {
                                 // *** Construct the ABSOLUTE file path ***
-                                // String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/" + imgName;
-                                String absoluteImagePath = "D:" + File.separator + "K2_Y2" + File.separator + "BookStoreManagement" + File.separator + "images" + File.separator + "Book" + File.separator + sach.getImg();
-
+                                String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/" + imgName;
                                 File imageFile = new File(absoluteImagePath);
 
                                 if (imageFile.exists() && imageFile.isFile()) {
@@ -294,11 +291,9 @@ public class NhapSachGUI {
                                 System.err.println("General error processing default image: " + ex.getMessage());
                             }
                         }
-=======
->>>>>>> 95a07a9df8ff9dd68b115af66e0265971153ede1
 
                         // --- Update the existing imageLabel ---
-                        imageLabel.setIcon(tool.showImage(sach, imagePanel)); // Set the icon (will be null if both attempts failed)
+                        imageLabel.setIcon(finalIcon); // Set the icon (will be null if both attempts failed)
 
                         // --- Refresh the panel containing the imageLabel ---
                         imagePanel.revalidate();

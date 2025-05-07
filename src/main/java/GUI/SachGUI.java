@@ -79,12 +79,12 @@ public class SachGUI {
         initializeTextFields();
         initializeData();
         panel.add(createSearchPanel(), BorderLayout.NORTH);
-        panel.add(createBookTable(), BorderLayout.CENTER);
+        panel.add(createBookTable(), BorderLayout.WEST);
         panel.add(createPanelButton(), BorderLayout.EAST);
         String[] txt_label = {"Mã sách", "Tên sách", "Thể loại", "Số lượng", "Đơn giá", "Mã tác giả"};
         JPanel lowerPanel = new JPanel(new BorderLayout(10, 0));
-        lowerPanel.add(createDetailPanel(txt_array, txt_label), BorderLayout.EAST);
-        // panel.add(createDetailPanel(txt_array, txt_label), BorderLayout.SOUTH);
+        lowerPanel.add(createDetailPanel(txt_array, txt_label), BorderLayout.SOUTH);
+        panel.add(createDetailPanel(txt_array, txt_label), BorderLayout.SOUTH);
 
         // Initialize the image panel
         imagePanel = new JPanel(new BorderLayout());
@@ -92,17 +92,12 @@ public class SachGUI {
         imageLabel.setHorizontalAlignment(JLabel.CENTER);
         imageLabel.setVerticalAlignment(JLabel.CENTER);
         imagePanel.setPreferredSize(new Dimension(200, 260)); // Adjust size as needed
-        imagePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        imagePanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 0));
+        imagePanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 0, 0));
         imagePanel.add(imageLabel, BorderLayout.CENTER);
         lowerPanel.add(imagePanel, BorderLayout.WEST); // Add the image panel to the right
 
-<<<<<<< HEAD
         // panel.add(lowerPanel, BorderLayout.CENTER);
         timkiem();
-=======
-        panel.add(lowerPanel, BorderLayout.SOUTH);
->>>>>>> 95a07a9df8ff9dd68b115af66e0265971153ede1
     }
 
     private void initializeTextFields() {
@@ -265,13 +260,8 @@ public class SachGUI {
         });
 
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 30, 10));
-        // JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel panelTable = new JPanel();
+        JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelTable.add(scrollPane);
-        panelTable.setBackground(Color.GREEN);
-        panelTable.setPreferredSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT - 100));
-        panelTable.setMinimumSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT - 100));
-        panelTable.setMaximumSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT - 100));
         return panelTable;
     }
 
