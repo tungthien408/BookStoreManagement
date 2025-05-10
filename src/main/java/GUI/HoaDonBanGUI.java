@@ -11,15 +11,15 @@ import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
+import java.io.File;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -39,7 +39,6 @@ import BUS.SachBUS;
 import DTO.ChiTietHoaDonDTO;
 import DTO.HoaDonDTO;
 import DTO.KhachHangDTO;
-import DTO.NhanVienDTO;
 import DTO.SachDTO;
 
 public class HoaDonBanGUI {
@@ -54,20 +53,27 @@ public class HoaDonBanGUI {
     private Tool tool = new Tool();
     private JButton[] buttons = new JButton[3];
     private JPanel panel;
-    private JTable table;
-    private DefaultTableModel tableModel;
+    // private JTable table;
+    // private DefaultTableModel tableModel;
     private List<HoaDonDTO> hoaDonList;
+    private JTextField[] txt_array_search = new JTextField[1];
+    private JTextField txt_search;
+    private JComboBox<String> comboBox;
+    private JTable tableModel;
     private HoaDonBUS hoaDonBUS = new HoaDonBUS();
     private SachBUS sachBUS = new SachBUS();
     private KhachHangBUS khachHangBUS = new KhachHangBUS();
     private ChiTietHoaDonBUS chiTietHoaDonBUS = new ChiTietHoaDonBUS();
 
     public HoaDonBanGUI() {
+        txt_search = new JTextField();
+        txt_array_search = new JTextField[] { txt_search };
         panel = tool.createPanel(WIDTH - SIDE_MENU_WIDTH, HEIGHT, new BorderLayout());
         initializeData();
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         panel.add(createHoaDonBanTable(), BorderLayout.WEST);
         panel.add(createPanelButton(), BorderLayout.CENTER);
+        timkiem();
     }
 
     private void initializeData() {
@@ -81,17 +87,11 @@ public class HoaDonBanGUI {
 
     private JPanel createHoaDonBanTable() {
         String[] columns = { "Mã hóa đơn", "Mã nhân viên", "Mã khách hàng", "Ngày bán", "Tổng tiền" };
-        tableModel = new DefaultTableModel(columns, 0) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // Make table non-editable
-            }
-        };
-
+        DefaultTableModel model = new DefaultTableModel(columns, 0);
         try {
             if (hoaDonList != null) {
                 for (HoaDonDTO hoaDon : hoaDonList) {
-                    tableModel.addRow(new Object[] {
+                    model.addRow(new Object[] {
                             hoaDon.getMaHD(),
                             hoaDon.getMaNV(),
                             hoaDon.getMaKH(),
@@ -105,8 +105,8 @@ public class HoaDonBanGUI {
             JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu hóa đơn: " + e.getMessage());
         }
 
-        table = tool.createTable(tableModel, columns);
-        JScrollPane scrollPane = new JScrollPane(table);
+        tableModel = tool.createTable(model, columns);
+        JScrollPane scrollPane = new JScrollPane(tableModel);
         scrollPane.setPreferredSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT));
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 30, 10));
 
@@ -145,33 +145,12 @@ public class HoaDonBanGUI {
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = { "Mã nhân viên", "SĐT khách hàng" };
+        String[] searchOptions = { "Mã hóa đơn", "Mã nhân viên", "Mã khách hàng" };
+        comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
-        searchPanel.add(tool.createSearchTextField(300, 30, searchOptions));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
         return searchPanel;
-    }
-
-    private void filterTable(String query) {
-        tableModel.setRowCount(0);
-        try {
-            for (HoaDonDTO hoaDon : hoaDonList) {
-                String maHD = hoaDon.getMaHD().toLowerCase();
-                String maNV = hoaDon.getMaNV().toLowerCase();
-                if (maHD.contains(query) || maNV.contains(query)) {
-                    tableModel.addRow(new Object[] {
-                            hoaDon.getMaHD(),
-                            hoaDon.getMaNV(),
-                            hoaDon.getMaKH(),
-                            hoaDon.getNgayBan().toString(),
-                            hoaDon.getTongTien()
-                    });
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage());
-        }
     }
 
     private void showInvoiceDetails() {
@@ -192,29 +171,23 @@ public class HoaDonBanGUI {
         // infoX = 30, infoY = 80, infoW = 600-60 = 540, infoH = 80
         g.drawRect(30, 80, 540, 80);
 
-        int[] rows = table.getSelectedRows();
-        int n = rows.length;
-        if (n == 0) {
+        int sel = tableModel.getSelectedRow();
+        if (sel == -1) {
             JOptionPane.showMessageDialog(null,
                     "Vui lòng chọn một hóa đơn để xem chi tiết!",
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
-
-        StringBuilder sbNhanVien = new StringBuilder();
-        StringBuilder sbKhachHang = new StringBuilder();
-        for (int row : rows) {
-            String maNV = (String) table.getValueAt(row, 1);
-            String maKH = (String) table.getValueAt(row, 2);
-            sbNhanVien.append(maNV).append(" - ");
-            sbKhachHang.append(maKH).append(" - ");
+        String maKH = (String) tableModel.getValueAt(sel, 2);
+        KhachHangBUS khBUS = new KhachHangBUS();
+        KhachHangDTO kh = khBUS.getKhachHangByMaKH(maKH);
+        if (kh != null) {
+            // infoTextX = 30 + 10 = 40, infoTextY = 80 + 20 = 100
+            g.drawString("Tên Nhân Viên: " + kh.getHoTen(), 40, 100);
+            g.drawString("Mã Nhân viên: " + kh.getSdt(), 40, 125);
+            g.drawString("Ngày xuất đơn: " + tableModel.getValueAt(sel, 3), 40, 150);
         }
-        String selectedNhanVien = sbNhanVien.length() > 0 ? sbNhanVien.substring(0, sbNhanVien.length() - 3) : "";
-        String selectedKhachHang = sbKhachHang.length() > 0 ? sbKhachHang.substring(0, sbKhachHang.length() - 3) : "";
 
-        g.drawString("Mã Nhân Viên: " + selectedNhanVien, 40, 100);
-        g.drawString("Mã Khách Hàng: " + selectedKhachHang, 40, 125);
-        g.drawString("Ngày Xuất Hóa Đơn: " + LocalDate.now(), 40, 150);
         // 4. Bảng chi tiết sản phẩm
         // tableX = 30, tableY = 180, tableW = 540, tableH = 300
         g.drawRect(30, 180, 540, 300);
@@ -227,8 +200,8 @@ public class HoaDonBanGUI {
         }
 
         // lấy rows đã chọn
-        // int[] rows = table.getSelectedRows();
-        // int n = rows.length;
+        int[] rows = tableModel.getSelectedRows();
+        int n = rows.length;
         if (n == 0) {
             JOptionPane.showMessageDialog(null,
                     "Vui lòng chọn một hóa đơn để xem chi tiết!",
@@ -272,7 +245,7 @@ public class HoaDonBanGUI {
             // yRow = 180 + 30 + i*detailH + (detailH + ascent)/2
             int yRow = 180 + 30 + i * detailH + (detailH + ascent) / 2;
             for (int c = 0; c < labels.length; c++) {
-                String txt = table.getValueAt(rowIndex, c).toString();
+                String txt = tableModel.getValueAt(rowIndex, c).toString();
                 g.drawString(txt, colX[c] + 10, yRow);
             }
         }
@@ -315,6 +288,52 @@ public class HoaDonBanGUI {
         // Placeholder for Excel export
         JOptionPane.showMessageDialog(null, "Chức năng Xuất Excel đang được phát triển!");
         // Implement Excel export logic using a library like Apache POI
+    }
+
+    private void timkiem() {
+        comboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String selectedOption = (String) comboBox.getSelectedItem();
+                System.out.println("Tìm kiếm theo: " + selectedOption);
+                // Lọc lại bảng với nội dung hiện tại của searchField
+                filterTable(txt_array_search[0].getText(), selectedOption);
+            }
+        });
+    }
+
+    // Phương thức lọc bảng dựa trên nội dung tìm kiếm và tiêu chí
+    private void filterTable(String query, String searchType) {
+        DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
+        model.setRowCount(0); // Xóa dữ liệu cũ
+        try {
+            for (HoaDonDTO hoaDon : hoaDonList) {
+                boolean match = false;
+                switch (searchType) {
+                    case "Mã hóa đơn":
+                        match = hoaDon.getMaHD().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Mã nhân viên":
+                        match = hoaDon.getMaNV().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Mã khách hàng":
+                        match = hoaDon.getMaKH().toLowerCase().contains(query.toLowerCase());
+                        break;
+                }
+                if (match) {
+                    model.addRow(new Object[] {
+                            hoaDon.getMaHD(),
+                            hoaDon.getMaNV(),
+                            hoaDon.getMaKH(),
+                            hoaDon.getNgayBan().toString(),
+                            hoaDon.getTongTien()
+                    });
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage());
+        }
     }
 
     public JPanel getPanel() {

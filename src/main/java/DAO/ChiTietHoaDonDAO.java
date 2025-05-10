@@ -135,4 +135,21 @@ public class ChiTietHoaDonDAO {
             return false;
         }
     }
+
+        // Lấy tổng số lượng sách đã bán theo MASACH
+        public int getSoLuongByMaSach(String maSach) {
+            String sql = "SELECT SUM(SoLuong) AS Total FROM chitiethoadon WHERE MASACH = ?";
+            try (Connection conn = Data.getConnection();
+                 PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setString(1, maSach);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        return rs.getInt("Total");
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return 0;
+        }
 }

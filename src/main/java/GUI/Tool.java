@@ -5,12 +5,14 @@
 
 package GUI;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
 import java.awt.LayoutManager;
@@ -446,131 +448,42 @@ public class Tool {
 		return true;
 	}
 
-	public ImageIcon showImage(SachDTO sach, JPanel imagePanel) {
-		// --- Load, Resize, and Update Image using BufferedImage ---
-		ImageIcon finalIcon = null; // This will hold the final icon (scaled or default)
-		BufferedImage originalImage = null;
-		String bookId = sach.getMaSach();
+	public JPanel createSearchTextFieldTest(JComboBox<String> comboBox, JTextField[] textField) {
+		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
 
-		try {
-			String imgName = sach.getImg();
-			if (imgName != null && !imgName.trim().isEmpty()) {
-				// *** Construct the ABSOLUTE file path ***
-				String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/" + imgName;
-				File imageFile = new File(absoluteImagePath);
+		// JTextField textField = new JTextField(20);
+		textField[0].setPreferredSize(new Dimension(200, 30));
+		textField[0].setBackground(new Color(202, 220, 252));
+		comboBox.setBackground(new Color(202, 220, 252));
+		comboBox.setPreferredSize(new Dimension(120, 30));
+		searchPanel.add(textField[0]);
+		searchPanel.add(comboBox);
 
-				if (imageFile.exists() && imageFile.isFile()) {
-					// Read the image using ImageIO
-					originalImage = ImageIO.read(imageFile);
-
-					if (originalImage != null) {
-						System.out.println("Successfully read image file: " + absoluteImagePath);
-
-						// Get target dimensions from the imagePanel's preferred size
-						// Ensure imagePanel has a preferred size set during layout!
-						int targetWidth = imagePanel.getPreferredSize().width;
-						int targetHeight = imagePanel.getPreferredSize().height;
-
-						// Provide default dimensions if preferred size is 0 (e.g., before layout)
-						if (targetWidth <= 0) targetWidth = 200; // Fallback width
-						if (targetHeight <= 0) targetHeight = 250; // Fallback height
-
-						// Scale the image
-						Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
-
-						// Create the ImageIcon from the scaled Image
-						finalIcon = new ImageIcon(scaledImage);
-						System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
-
-					} else {
-						System.err.println("ImageIO.read returned null for file: " + absoluteImagePath + ". Image format might not be supported or file is corrupt.");
-					}
-				} else {
-					System.err.println("Image file not found or is not a file: " + absoluteImagePath);
-				}
-			} else {
-				System.err.println("Image name is null or empty for book: " + bookId);
-			}
-		} catch (IOException ioEx) {
-			System.err.println("IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
-			ioEx.printStackTrace(); // More details on IO error
-		} catch (Exception ex) {
-			// Catch other potential errors during loading/scaling
-			System.err.println("General error processing image " + sach.getImg() + ": " + ex.getMessage());
-			ex.printStackTrace();
-		}
-
-		// --- Load and Scale Default Image if necessary ---
-		if (finalIcon == null) {
-			System.err.println("Attempting to load and scale default image...");
-			try {
-				BufferedImage defaultOriginal = null;
-				// Assuming default.jpg is a RESOURCE in src/main/resources/images/Book
-				URL defaultUrl = getClass().getResource("/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/default.jpg");
-				if (defaultUrl != null) {
-					defaultOriginal = ImageIO.read(defaultUrl);
-				} else {
-					System.err.println("Default image resource not found!");
-				}
-
-				if (defaultOriginal != null) {
-					// Scale the default image
-					int targetWidth = imagePanel.getPreferredSize().width;
-					int targetHeight = imagePanel.getPreferredSize().height;
-					if (targetWidth <= 0) targetWidth = 200;
-					if (targetHeight <= 0) targetHeight = 250;
-
-					Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
-					finalIcon = new ImageIcon(scaledDefault);
-					System.out.println("Loaded and scaled default image.");
-				}
-			} catch (IOException ioEx) {
-				System.err.println("IOException reading default image: " + ioEx.getMessage());
-			} catch (Exception ex) {
-				System.err.println("General error processing default image: " + ex.getMessage());
-			}
-		}
-		return finalIcon;
+		return searchPanel;
 	}
 
-	public ImageIcon showDefaultImage(String absoluteImagePath) {
-		ImageIcon finalIcon = null; // This will hold the final icon (scaled or default)
-		BufferedImage originalImage = null;
-		File imageFile = new File(absoluteImagePath);
-
-		if (imageFile.exists() && imageFile.isFile()) {
-			// Read the image using ImageIO
-			try {
-				originalImage = ImageIO.read(imageFile);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-
-			if (originalImage != null) {
-				System.out.println("Successfully read image file: " + absoluteImagePath);
-
-				// Get target dimensions from the imagePanel's preferred size
-				// Ensure imagePanel has a preferred size set during layout!
-				int targetWidth = 200;
-				int targetHeight = 260;
-
-				// Provide default dimensions if preferred size is 0 (e.g., before layout)
-				if (targetWidth <= 0) targetWidth = 200; // Fallback width
-				if (targetHeight <= 0) targetHeight = 250; // Fallback height
-
-				// Scale the image
-				Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
-
-				// Create the ImageIcon from the scaled Image
-				finalIcon = new ImageIcon(scaledImage);
-				System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
-
-			} else {
-				System.err.println("ImageIO.read returned null for file: " + absoluteImagePath + ". Image format might not be supported or file is corrupt.");
-			}
-		} else {
-			System.err.println("Image file not found or is not a file: " + absoluteImagePath);
+	JPanel createDetailContainer(JPanel detailPanel, String[] labels) {
+		// Container chính dùng BorderLayout
+		JPanel container = new JPanel(new BorderLayout());
+		// Tạo hàng label
+		JPanel labelPanel = new JPanel(new GridLayout(1, labels.length, 10, 0));
+		for (String txt : labels) {
+			JLabel lbl = new JLabel(txt, SwingConstants.CENTER);
+			lbl.setFont(lbl.getFont().deriveFont(Font.BOLD));
+			labelPanel.add(lbl);
 		}
-		return finalIcon;
+		container.add(labelPanel, BorderLayout.NORTH);
+
+		// Đặt detailPanel xuống giữa
+		container.add(detailPanel, BorderLayout.CENTER);
+
+		// Tạo khoảng cách xung quanh
+		container.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		return container;
+	}
+
+	public JPanel createButtonPanel(int i, int height, String[] strings) {
+		// TODO Auto-generated method stub
+		throw new UnsupportedOperationException("Unimplemented method 'createButtonPanel'");
 	}
 }

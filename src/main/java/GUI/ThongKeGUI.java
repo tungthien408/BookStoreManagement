@@ -265,44 +265,7 @@ public class ThongKeGUI {
             tableData_DoanhThu[i][2] = hoaDonList.get(i).getNgayBan().toString();
             tableData_DoanhThu[i][3] = String.valueOf(hoaDonList.get(i).getTongTien());
         }
-        // ================================End thêm và lấy dữ liệu từ database vào
-        // bảng============================
-        // String[][] tableData_SanPham = {
-        // { "1", "S001", "Sách 1", "100", "50" },
-        // { "2", "S002", "Sách 2", "150", "75" },
-        // { "3", "S003", "Sách 3", "200", "100" },
-        // { "4", "S004", "Sách 4", "250", "125" },
-        // { "5", "S005", "Sách 5", "300", "150" },
-        // { "6", "S006", "Sách 6", "350", "175" },
-        // { "7", "S007", "Sách 7", "400", "200" },
-        // { "8", "S008", "Sách 8", "450", "225" },
-        // { "9", "S009", "Sách 9", "500", "250" },
-        // { "10", "S010", "Sách 10", "550", "275" },
-        // { "11", "S011", "Sách 11", "600", "300" },
-        // { "12", "S012", "Sách 12", "650", "325" },
-        // { "13", "S013", "Sách 13", "700", "350" },
-        // { "14", "S014", "Sách 14", "750", "375" },
-        // { "15", "S015", "Sách 15", "800", "400" },
-        // { "16", "S016", "Sách 16", "850", "425" },
-        // { "17", "S017", "Sách 17", "900", "450" },
-        // { "18", "S018", "Sách 18", "950", "475" },
-        // { "19", "S019", "Sách 19", "1000", "500" },
-        // { "20", "S020", "Sách 20", "1050", "525" }
-        // };
-        // String[][] tableData_KhachHang = {
-        // { "1", "0909090909", "Nguyễn Văn A", "100" },
-        // { "2", "0909090909", "Nguyễn Văn B", "150" },
-        // { "3", "0909090909", "Nguyễn Văn C", "200" },
-        // { "4", "0909090909", "Nguyễn Văn D", "250" },
-        // { "5", "0909090909", "Nguyễn Văn E", "300" }
-        // };
-        // String[][] tableData_DoanhThu = {
-        // { "1", "HD001", "2024-01-01", "500000" },
-        // { "2", "HD002", "2024-01-02", "750000" },
-        // { "3", "HD003", "2024-01-03", "1000000" },
-        // { "4", "HD004", "2024-01-04", "1250000" },
-        // { "5", "HD005", "2024-01-05", "1500000" }
-        // };
+
         table_KhachHang = tool.createTable(tableData_KhachHang, columnNames_KhachHang);
         table_SanPham = tool.createTable(tableData_SanPham, columnNames_SanPham);
         table_DoanhThu = tool.createTable(tableData_DoanhThu, columnNames_DoanhThu);
@@ -317,7 +280,9 @@ public class ThongKeGUI {
         table_KhachHang.getTableHeader().setForeground(Color.WHITE);
         table_SanPham.getTableHeader().setForeground(Color.WHITE);
         table_DoanhThu.getTableHeader().setForeground(Color.WHITE);
-
+        table_KhachHang.setDefaultEditor(Object.class, null);
+        table_DoanhThu.setDefaultEditor(Object.class, null);
+        table_SanPham.setDefaultEditor(Object.class, null);
         // Add table to scroll pane
         JScrollPane scrollPane_KhachHang = new JScrollPane(table_KhachHang);
         JScrollPane scrollPane_SanPham = new JScrollPane(table_SanPham);
@@ -415,6 +380,15 @@ public class ThongKeGUI {
                     String sdt = model_KhachHang.getValueAt(i, 2).toString().toLowerCase();
                     if (!hoTen.startsWith(searchText) && !sdt.startsWith(searchText)) {
                         model_KhachHang.removeRow(i);
+                        i--;
+                    }
+                }
+                // Tìm kiếm trong bảng Sản Phẩm
+                for (int i = 0; i < model_SanPham.getRowCount(); i++) {
+                    String maSach = model_SanPham.getValueAt(i, 1).toString().toLowerCase();
+                    String tenSach = model_SanPham.getValueAt(i, 2).toString().toLowerCase();
+                    if (!maSach.startsWith(searchText) && !tenSach.startsWith(searchText)) {
+                        model_SanPham.removeRow(i);
                         i--;
                     }
                 }

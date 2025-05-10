@@ -2,12 +2,11 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.Graphics2D;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -19,6 +18,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -26,8 +26,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import BUS.ChiTietPhieuNhapBUS;
@@ -36,11 +34,8 @@ import BUS.NXBBUS;
 import BUS.NhanVienBUS;
 import BUS.PhieuNhapBUS;
 import BUS.SachBUS;
-import DTO.ChiTietPhieuNhapDTO;
-import DTO.KhachHangDTO;
 import DTO.NhanVienDTO;
 import DTO.PhieuNhapDTO;
-import DTO.SachDTO;
 import DTO.TaiKhoanNVDTO;
 
 public class HoaDonNhapGUI {
@@ -49,14 +44,16 @@ public class HoaDonNhapGUI {
     private static final int HEIGHT = (int) (WIDTH * 0.625);
     private static final int TABLE_WIDTH = 850;
     private static final int TABLE_HEIGHT = 660;
-    private static final int SEARCH_FIELD_WIDTH = 300;
-    private static final int SEARCH_FIELD_HEIGHT = 30;
 
     private Tool tool = new Tool();
     private JButton[] buttons = new JButton[3];
     private JPanel panel;
     private JTable table;
     private DefaultTableModel tableModel;
+    private JTextField[] txt_array_search = new JTextField[1];
+    private JTextField txt_search;
+    private JComboBox<String> comboBox;
+
     private List<PhieuNhapDTO> phieuNhapList;
     private PhieuNhapBUS phieuNhapBUS = new PhieuNhapBUS();
     private ChiTietPhieuNhapBUS chiTietPhieuNhapBUS = new ChiTietPhieuNhapBUS();
@@ -65,11 +62,14 @@ public class HoaDonNhapGUI {
     private NhanVienBUS nhanVienBUS = new NhanVienBUS();
 
     public HoaDonNhapGUI() {
+        txt_search = new JTextField();
+        txt_array_search = new JTextField[] { txt_search };
         panel = tool.createPanel(WIDTH - SIDE_MENU_WIDTH, HEIGHT, new BorderLayout());
         initializeData();
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         panel.add(createHoaDonNhapTable(), BorderLayout.WEST);
         panel.add(createPanelButton(null), BorderLayout.CENTER);
+        timkiem();
     }
 
     private void initializeData() {
@@ -86,25 +86,20 @@ public class HoaDonNhapGUI {
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
-                return false; // Make table non-editable
+                return false;
             }
         };
 
-        try {
-            if (phieuNhapList != null) {
-                for (PhieuNhapDTO phieuNhap : phieuNhapList) {
-                    tableModel.addRow(new Object[] {
-                            phieuNhap.getMaPN(),
-                            phieuNhap.getMaNV(),
-                            phieuNhap.getNgayNhap().toString(),
-                            phieuNhap.getTongTien(),
-                            phieuNhap.getMaNXB()
-                    });
-                }
+        if (phieuNhapList != null) {
+            for (PhieuNhapDTO phieuNhap : phieuNhapList) {
+                tableModel.addRow(new Object[] {
+                        phieuNhap.getMaPN(),
+                        phieuNhap.getMaNV(),
+                        phieuNhap.getNgayNhap().toString(),
+                        phieuNhap.getTongTien(),
+                        phieuNhap.getMaNXB()
+                });
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu phiếu nhập: " + e.getMessage());
         }
 
         table = tool.createTable(tableModel, columns);
@@ -118,13 +113,16 @@ public class HoaDonNhapGUI {
     }
 
     private JPanel createPanelButton(TaiKhoanNVDTO account) {
-        String[] btnText = { "Chi tiết", "Nhập Excel", "Xu t Excel" };
+        String[] btnText = { "Chi tiết", "Nhập Excel", "Xuất Excel" };
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(buttons, btnText, new Color(0, 36, 107), Color.WHITE, "y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
-        // Add action listeners for buttons
-        buttons[0].addActionListener(e -> showInvoiceDetails(account));
+        for (int i = 0; i < btnText.length; i++) {
+            buttons[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
+            buttons[i].setFocusable(false);
+        }
+        buttons[0].addActionListener(e -> showInvoiceDetails());
         buttons[1].addActionListener(e -> importFromExcel());
         buttons[2].addActionListener(e -> exportToExcel());
 
@@ -132,21 +130,39 @@ public class HoaDonNhapGUI {
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = { "Mã nhân viên", "SĐT khách hàng" };
+        String[] searchOptions = { "Mã phiếu nhập", "Mã nhân viên", "Mã NXB" };
+        comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
-        searchPanel.add(tool.createSearchTextField(300, 30, searchOptions));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
         return searchPanel;
     }
 
-    private void filterTable(String query) {
-        tableModel.setRowCount(0);
+    private void timkiem() {
+        comboBox.addActionListener(e -> {
+            String selectedOption = (String) comboBox.getSelectedItem();
+            filterTable(txt_array_search[0].getText(), selectedOption);
+        });
+
+    }
+
+    private void filterTable(String query, String searchType) {
+
         try {
             for (PhieuNhapDTO phieuNhap : phieuNhapList) {
-                String maPN = phieuNhap.getMaPN().toLowerCase();
-                String maNV = phieuNhap.getMaNV().toLowerCase();
-                String maNXB = phieuNhap.getMaNXB().toLowerCase();
-                if (maPN.contains(query) || maNV.contains(query) || maNXB.contains(query)) {
+                boolean match = false;
+                switch (searchType) {
+                    case "Mã phiếu nhập":
+                        match = phieuNhap.getMaPN().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Mã nhân viên":
+                        match = phieuNhap.getMaNV().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Mã NXB":
+                        match = phieuNhap.getMaNXB().toLowerCase().contains(query.toLowerCase());
+                        break;
+                }
+                if (match) {
                     tableModel.addRow(new Object[] {
                             phieuNhap.getMaPN(),
                             phieuNhap.getMaNV(),
@@ -162,7 +178,7 @@ public class HoaDonNhapGUI {
         }
     }
 
-    private void showInvoiceDetails(TaiKhoanNVDTO account) {
+    private void showInvoiceDetails() {
         // 1. Tạo ảnh trống RGB với nền trắng
         BufferedImage img = new BufferedImage(600, 800, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = img.createGraphics();
@@ -187,13 +203,13 @@ public class HoaDonNhapGUI {
                     "Thông báo", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
+        String maNV = (String) table.getValueAt(sel, 1);
         NhanVienBUS nvBUS = new NhanVienBUS();
-        NhanVienDTO nv = nvBUS.getNhanVienByMaNV(account.getMaNV());
+        NhanVienDTO nv = nvBUS.getNhanVienByMaNV(maNV);
         if (nv != null) {
             // infoTextX = 30 + 10 = 40, infoTextY = 80 + 20 = 100
-            g.drawString("Tên Nhân Viên: " + nv.getHoTen(), 40, 100);
-            g.drawString("Mã Nhân viên: " + nv.getMaNV(), 40, 125);
-            g.drawString("Ngày xuất đơn: " + LocalDate.now(), 40, 150);
+            g.drawString("Mã Nhân Viên: " + nv.getMaNV(), 40, 100);
+            g.drawString("Tên Nhân Viên: " + nv.getHoTen(), 40, 150);
         }
 
         // 4. Bảng chi tiết sản phẩm
@@ -288,14 +304,11 @@ public class HoaDonNhapGUI {
     }
 
     private void importFromExcel() {
-        // Placeholder for Excel import
         JOptionPane.showMessageDialog(null, "Chức năng Nhập Excel đang được phát triển!");
     }
 
     private void exportToExcel() {
-        // Placeholder for Excel export
         JOptionPane.showMessageDialog(null, "Chức năng Xuất Excel đang được phát triển!");
-        // Implement Excel export logic using Apache POI
     }
 
     public JPanel getPanel() {

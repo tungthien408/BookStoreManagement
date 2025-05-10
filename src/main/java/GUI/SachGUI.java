@@ -17,6 +17,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -58,6 +59,9 @@ public class SachGUI {
     private int count = 0;
     private JLabel imageLabel; // For displaying the book image
     private JPanel imagePanel; // Panel to hold the image
+    private JTextField[] txt_array_search = new JTextField[1];
+    private JTextField txt_search;
+    private JComboBox<String> comboBox;
 
     public String getID() {
         String str = String.valueOf(count);
@@ -68,6 +72,8 @@ public class SachGUI {
     }
 
     public SachGUI() {
+        txt_search = new JTextField();
+        txt_array_search = new JTextField[] { txt_search };
         panel = tool.createPanel(WIDTH - SIDE_MENU_WIDTH, HEIGHT, new BorderLayout());
         panel.setBackground(new Color(202, 220, 252));
         initializeTextFields();
@@ -75,7 +81,7 @@ public class SachGUI {
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         panel.add(createBookTable(), BorderLayout.CENTER);
         panel.add(createPanelButton(), BorderLayout.EAST);
-        String[] txt_label = {"Mã sách", "Tên sách", "Thể loại", "Số lượng", "Đơn giá", "Mã tác giả"};
+        String[] txt_label = { "Mã sách", "Tên sách", "Thể loại", "Số lượng", "Đơn giá", "Mã tác giả" };
         JPanel lowerPanel = new JPanel(new BorderLayout(10, 0));
         lowerPanel.add(createDetailPanel(txt_array, txt_label), BorderLayout.EAST);
         // panel.add(createDetailPanel(txt_array, txt_label), BorderLayout.SOUTH);
@@ -91,7 +97,8 @@ public class SachGUI {
         imagePanel.add(imageLabel, BorderLayout.CENTER);
         lowerPanel.add(imagePanel, BorderLayout.WEST); // Add the image panel to the right
 
-        panel.add(lowerPanel, BorderLayout.SOUTH);
+        // panel.add(lowerPanel, BorderLayout.CENTER);
+        timkiem();
     }
 
     private void initializeTextFields() {
@@ -115,12 +122,12 @@ public class SachGUI {
     }
 
     private JPanel createBookTable() {
-        String[] columns = {"Mã sách", "Tên sách", "Thể loại", "Số lượng", "Đơn giá", "Mã tác giả"};
+        String[] columns = { "Mã sách", "Tên sách", "Thể loại", "Số lượng", "Đơn giá", "Mã tác giả" };
         DefaultTableModel model = new DefaultTableModel(columns, 0);
 
         try {
             for (SachDTO sach : sachList) {
-                model.addRow(new Object[]{
+                model.addRow(new Object[] {
                         sach.getMaSach(),
                         sach.getTenSach(),
                         sach.getTheLoai(),
@@ -192,7 +199,8 @@ public class SachGUI {
                         try {
                             String imgName = sach.getImg();
                             if (imgName != null && !imgName.trim().isEmpty()) {
-                                String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/" + imgName;
+                                String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/"
+                                        + imgName;
                                 File imageFile = new File(absoluteImagePath);
 
                                 if (imageFile.exists() && imageFile.isFile()) {
@@ -201,10 +209,13 @@ public class SachGUI {
                                     if (originalImage != null) {
                                         int targetWidth = imagePanel.getPreferredSize().width;
                                         int targetHeight = imagePanel.getPreferredSize().height;
-                                        if (targetWidth <= 0) targetWidth = 200;
-                                        if (targetHeight <= 0) targetHeight = 250;
+                                        if (targetWidth <= 0)
+                                            targetWidth = 200;
+                                        if (targetHeight <= 0)
+                                            targetHeight = 250;
 
-                                        Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                                        Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight,
+                                                Image.SCALE_SMOOTH);
                                         finalIcon = new ImageIcon(scaledImage);
                                     } else {
                                         System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
@@ -216,7 +227,8 @@ public class SachGUI {
                                 System.err.println("Image name is null or empty for book: " + bookId);
                             }
                         } catch (IOException ioEx) {
-                            System.err.println("IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
+                            System.err.println(
+                                    "IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
                             ioEx.printStackTrace();
                         }
 
@@ -233,10 +245,13 @@ public class SachGUI {
                                 if (defaultOriginal != null) {
                                     int targetWidth = imagePanel.getPreferredSize().width;
                                     int targetHeight = imagePanel.getPreferredSize().height;
-                                    if (targetWidth <= 0) targetWidth = 200;
-                                    if (targetHeight <= 0) targetHeight = 250;
+                                    if (targetWidth <= 0)
+                                        targetWidth = 200;
+                                    if (targetHeight <= 0)
+                                        targetHeight = 250;
 
-                                    Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                                    Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight,
+                                            Image.SCALE_SMOOTH);
                                     finalIcon = new ImageIcon(scaledDefault);
                                 }
                             } catch (IOException ioEx) {
@@ -265,7 +280,7 @@ public class SachGUI {
     }
 
     private JPanel createPanelButton() {
-        String[] txt_btn = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Hủy"};
+        String[] txt_btn = { "Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Hủy" };
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(buttons, txt_btn, new Color(0, 36, 107), Color.WHITE, "y"));
 
@@ -280,7 +295,8 @@ public class SachGUI {
     }
 
     private JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label) {
-        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, DETAIL_PANEL_WIDTH, DETAIL_PANEL_HEIGHT, 0.5, 3, false);
+        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, DETAIL_PANEL_WIDTH, DETAIL_PANEL_HEIGHT, 0.5,
+                3, false);
 
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
@@ -289,11 +305,54 @@ public class SachGUI {
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = {"Mã sách", "Tên sách", "Mã tác giả"};
-        JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panelSearch.add(Box.createHorizontalStrut(25));
-        panelSearch.add(tool.createSearchTextField(0, 0, searchOptions));
-        return panelSearch;
+        String[] searchOptions = { "Mã sách", "Tên sách", "Thể loại" };
+        comboBox = new JComboBox<>(searchOptions);
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(Box.createHorizontalStrut(33));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
+        return searchPanel;
+    }
+
+    private void timkiem() {
+        comboBox.addActionListener(e -> {
+            String selectedOption = (String) comboBox.getSelectedItem();
+            filterTable(txt_array_search[0].getText(), selectedOption);
+        });
+
+    }
+
+    private void filterTable(String query, String searchType) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0); // Xóa dữ liệu cũ
+        try {
+            for (SachDTO sach : sachList) {
+                boolean match = false;
+                switch (searchType) {
+                    case "Mã sách":
+                        match = sach.getMaSach().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Tên sách":
+                        match = sach.getTenSach().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Thể loại":
+                        match = sach.getTheLoai().toLowerCase().contains(query.toLowerCase());
+                        break;
+                }
+                if (match) {
+                    model.addRow(new Object[] {
+                            sach.getMaSach(),
+                            sach.getTenSach(),
+                            sach.getTheLoai(),
+                            sach.getSoLuong(),
+                            sach.getDonGia(),
+                            sach.getMaTG()
+                    });
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage());
+        }
     }
 
     private void refreshTable() {
@@ -302,7 +361,7 @@ public class SachGUI {
         try {
             sachList = sachBUS.getAllSach();
             for (SachDTO sach : sachList) {
-                model.addRow(new Object[]{
+                model.addRow(new Object[] {
                         sach.getMaSach(),
                         sach.getTenSach(),
                         sach.getTheLoai(),
@@ -342,7 +401,7 @@ public class SachGUI {
                     buttons[i].setVisible(false);
                 }
             }
-            txt_array[3].setText("0"); 
+            txt_array[3].setText("0");
             txt_array[0].setEditable(false);
             txt_array[3].setEditable(false);
         } else {
@@ -444,7 +503,8 @@ public class SachGUI {
                     JOptionPane.showMessageDialog(null, "Vui lòng chọn sách để xóa!");
                     return;
                 }
-                if (JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa sách này?", "Xóa thông tin sách", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                if (JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa sách này?", "Xóa thông tin sách",
+                        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     if (sachBUS.deleteSach(maSach)) {
                         JOptionPane.showMessageDialog(null, "Xóa sách thành công!");
                         cancel();
@@ -479,7 +539,7 @@ public class SachGUI {
 
     private boolean checkValidate(SachDTO sach) {
         if (sach.getMaSach().isEmpty() || sach.getTenSach().isEmpty() || sach.getTheLoai().isEmpty() ||
-                sach.getMaTG().isEmpty() ) {
+                sach.getMaTG().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ các trường thông tin!");
             return false;
         }
@@ -494,14 +554,10 @@ public class SachGUI {
             return false;
         }
 
-
-
         if (!tacGiaBUS.isTacGiaExists(sach.getMaTG())) {
             JOptionPane.showMessageDialog(null, "Mã tác giả không tồn tại!");
             return false;
         }
-
-
 
         return true;
     }

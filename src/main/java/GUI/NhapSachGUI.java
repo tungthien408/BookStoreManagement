@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image; // Add this
@@ -46,7 +47,7 @@ public class NhapSachGUI {
     private static final int WIDTH = 1200;
     private static final int SIDE_MENU_WIDTH = 151;
     private static final int HEIGHT = (int) (WIDTH * 0.625);
-    
+
     private JTextField[] txt_array_top = new JTextField[5];
     private JTextField[] txt_array_down = new JTextField[2];
     private JTextField txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total;
@@ -55,16 +56,16 @@ public class NhapSachGUI {
     private JTable table_down, table_top;
     private JLabel imageLabel;
     private JPanel imagePanel;
-    String[] txt_label = {"Mã Sách", "Số lượng"};
-    
+    String[] txt_label = { "Mã Sách", "Số lượng" };
+
     private int selectedRow = -1;
     private int lastSelectedRow = -1;
     private int count = 0;
-    
+
     private List<SachDTO> sachList;
     private List<ChiTietPhieuNhapDTO> chiTietPhieuNhapList;
     private List<PhieuNhapDTO> phieuNhapList;
-    
+
     private PhieuNhapBUS phieuNhapBUS = new PhieuNhapBUS();
     private NXBBUS nhaXuatBanBUS = new NXBBUS();
     private SachBUS sachBUS = new SachBUS();
@@ -81,24 +82,24 @@ public class NhapSachGUI {
         setupPanelLayout();
         initializePhieuNhap();
     }
-    
+
     private void initializeTextFields() {
-        txt_array_top = new JTextField[]{txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total};
-        txt_array_down = new JTextField[]{txt_name, txt_quantity};
+        txt_array_top = new JTextField[] { txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total };
+        txt_array_down = new JTextField[] { txt_name, txt_quantity };
     }
-    
+
     private void initializeMainPanel() {
         panel = tool.createPanel(WIDTH - SIDE_MENU_WIDTH, HEIGHT, new BorderLayout());
-        paymentPanel = tool.createPanel(WIDTH - SIDE_MENU_WIDTH, (int)(HEIGHT * 0.55), new BorderLayout());
+        paymentPanel = tool.createPanel(WIDTH - SIDE_MENU_WIDTH, (int) (HEIGHT * 0.55), new BorderLayout());
     }
-    
+
     private void setupPanelLayout() {
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         panel.add(createTable_top(), BorderLayout.WEST);
-        
-        String[] txt_label_top = {"Mã phiếu nhập", "Nhân viên", "NXB", "Ngày nhập", "Tổng tiền"};
+
+        String[] txt_label_top = { "Mã phiếu nhập", "Nhân viên", "NXB", "Ngày nhập", "Tổng tiền" };
         panel.add(createDetailPanel_top(400, 30, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
-        
+
         // --- Setup for the lower part (details + image) ---
         JPanel lowerPanel = new JPanel(new BorderLayout(10, 0)); // Use BorderLayout for image placement
 
@@ -117,16 +118,17 @@ public class NhapSachGUI {
         imagePanel.add(imageLabel, BorderLayout.CENTER);
         lowerPanel.add(imagePanel, BorderLayout.WEST); // Add image panel to the left
 
-        // Add the lower panel containing details and image to the main paymentPanel or panel
+        // Add the lower panel containing details and image to the main paymentPanel or
+        // panel
         paymentPanel.add(lowerPanel, BorderLayout.CENTER); // Or wherever it belongs
 
         // ... rest of setupPanelLayout ...
         paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
         paymentPanel.add(createTable_down(), BorderLayout.EAST);
-        
+
         panel.add(paymentPanel, BorderLayout.SOUTH);
     }
-    
+
     private void initializePhieuNhap() {
         phieuNhapList = phieuNhapBUS.getAllPhieuNhap();
         if (!phieuNhapList.isEmpty()) {
@@ -135,48 +137,48 @@ public class NhapSachGUI {
             count = Integer.parseInt(numericPart) + 1;
         }
     }
-    
+
     private String getID() {
         String str = String.format("%03d", count);
         return "PN" + str;
     }
-    
+
     private JPanel createSearchPanel() {
-        String[] searchOptions = {"Mã nhân viên", "Mã khách hàng"};
+        String[] searchOptions = { "Mã nhân viên", "Mã khách hàng" };
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
         searchPanel.add(tool.createSearchTextField(300, 30, searchOptions));
         return searchPanel;
     }
-    
+
     private JPanel createTable_top() {
-        String[] column = {"Mã sách", "Tên sách", "Số lượng", "Đơn giá"};
+        String[] column = { "Mã sách", "Tên sách", "Số lượng", "Đơn giá" };
         DefaultTableModel model = new DefaultTableModel(column, 0);
-        
+
         try {
             sachList = sachBUS.getAllSach();
             for (SachDTO sach : sachList) {
-                model.addRow(new Object[]{
-                    sach.getMaSach(),
-                    sach.getTenSach(),
-                    sach.getSoLuong(),
-                    sach.getDonGia()
+                model.addRow(new Object[] {
+                        sach.getMaSach(),
+                        sach.getTenSach(),
+                        sach.getSoLuong(),
+                        sach.getDonGia()
                 });
             }
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu sách: " + e.getMessage());
         }
-        
+
         table_top = tool.createTable(model, column);
         table_top.setDefaultEditor(Object.class, null);
         JScrollPane scrollPane = new JScrollPane(table_top);
         scrollPane.setPreferredSize(new Dimension(650, 300));
         scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-        
+
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelTable.add(scrollPane);
-        
+
         table_top.getSelectionModel().addListSelectionListener(e -> {
             selectedRow = table_top.getSelectedRow();
             if (selectedRow >= 0) {
@@ -199,9 +201,9 @@ public class NhapSachGUI {
                         // --- Update TextFields (if needed for the top table selection) ---
                         // Example: txt_array_down[0].setText(sach.getMaSach());
 
-
                         // --- Update the existing imageLabel ---
-                        imageLabel.setIcon(tool.showImage(sach, imagePanel)); // Set the icon (will be null if both attempts failed)
+                        // imageLabel.setIcon(tool.showImage(sach, imagePanel)); // Set the icon (will
+                        // be null if both attempts failed)
 
                         // --- Refresh the panel containing the imageLabel ---
                         imagePanel.revalidate();
@@ -217,19 +219,19 @@ public class NhapSachGUI {
                 // Handle deselection or other logic if needed
             }
         });
-        
+
         return panelTable;
     }
-    
+
     private JPanel createTable_down() {
-        String[] column = {"Mã sách", "Tên sách", "Số lượng", "Đơn giá"};
+        String[] column = { "Mã sách", "Tên sách", "Số lượng", "Đơn giá" };
         DefaultTableModel model = new DefaultTableModel(column, 0);
         table_down = tool.createTable(model, column);
         table_down.setDefaultEditor(Object.class, null);
         JScrollPane scrollPane = new JScrollPane(table_down);
         scrollPane.setPreferredSize(new Dimension(500, 300));
         scrollPane.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
-        
+
         table_down.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -249,30 +251,39 @@ public class NhapSachGUI {
 
                     // // Load the image
                     // try {
-                    //     if (sach.getImg() != null) {
-                    //         img = new ImageIcon(getClass().getResource("/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/" + sach.getImg()));
-                    //     } else {
-                    //         System.err.println("Image not found for book: " + sach.getMaSach());
-                    //         img = new ImageIcon(getClass().getResource("/BookStoreManagement/images/Book/default.jpg")); // Default image
-                    //     }
+                    // if (sach.getImg() != null) {
+                    // img = new
+                    // ImageIcon(getClass().getResource("/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/"
+                    // + sach.getImg()));
+                    // } else {
+                    // System.err.println("Image not found for book: " + sach.getMaSach());
+                    // img = new
+                    // ImageIcon(getClass().getResource("/BookStoreManagement/images/Book/default.jpg"));
+                    // // Default image
+                    // }
                     // } catch (Exception ex) {
-                    //     System.err.println("Error loading image: " + ex.getMessage());
-                    //     img = new ImageIcon(getClass().getResource("/BookStoreManagement/images/Book/default.jpg")); // Default image
+                    // System.err.println("Error loading image: " + ex.getMessage());
+                    // img = new
+                    // ImageIcon(getClass().getResource("/BookStoreManagement/images/Book/default.jpg"));
+                    // // Default image
                     // }
 
                     // if (img.getIconWidth() == -1) {
-                    //     System.err.println("Failed to load image: " + sach.getImg());
+                    // System.err.println("Failed to load image: " + sach.getImg());
                     // }
 
                     // // Update the detail panel with the new image
                     // JLabel label_img = new JLabel();
                     // label_img.setIcon(img);
-                    // label_img.setPreferredSize(new Dimension(200, 300)); // Adjust dimensions as needed
+                    // label_img.setPreferredSize(new Dimension(200, 300)); // Adjust dimensions as
+                    // needed
 
                     // // Clear the existing image and add the new one
-                    // JPanel panelDetail = (JPanel) paymentPanel.getComponent(0); // Assuming the detail panel is the first component
+                    // JPanel panelDetail = (JPanel) paymentPanel.getComponent(0); // Assuming the
+                    // detail panel is the first component
                     // panelDetail.removeAll();
-                    // panelDetail.add(tool.createDetailPanel(txt_array_down, txt_label, img, 500, 300, 2, 5, false));
+                    // panelDetail.add(tool.createDetailPanel(txt_array_down, txt_label, img, 500,
+                    // 300, 2, 5, false));
                     // panelDetail.revalidate();
                     // panelDetail.repaint();
 
@@ -285,19 +296,19 @@ public class NhapSachGUI {
                 }
             }
         });
-        
+
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelTable.add(scrollPane);
         return panelTable;
     }
-    
-    private JPanel createDetailPanel_top(int width, int padding_top, JTextField[] txt_array, 
+
+    private JPanel createDetailPanel_top(int width, int padding_top, JTextField[] txt_array,
             String[] txt_label, ImageIcon img) {
         JPanel panelDetail = tool.createDetailPanel(txt_array, txt_label, null, width, 300, 2, 5, false);
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(padding_top, 0, 0, 0));
-        
+
         txt_array[0].setEditable(false);
         txt_array[1].setText(nv.getHoTen());
         txt_array[1].setEditable(false);
@@ -305,8 +316,8 @@ public class NhapSachGUI {
         txt_array[4].setEditable(false);
         return wrappedPanel;
     }
-    
-    private JPanel createDetailPanel_down(int width, int padding_top, JTextField[] txt_array, 
+
+    private JPanel createDetailPanel_down(int width, int padding_top, JTextField[] txt_array,
             String[] txt_label) {
         JPanel panelDetail = tool.createDetailPanel(txt_array, txt_label, null, width, 300, 2, 5, false);
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -314,76 +325,78 @@ public class NhapSachGUI {
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(padding_top, 0, 0, 0));
         return wrappedPanel;
     }
-    
+
     private JPanel createButtonPanel() {
-        String[] buttonTexts = {"Thêm", "Xóa", "Thanh toán"};
+        String[] buttonTexts = { "Thêm", "Xóa", "Thanh toán" };
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(tool.createButtonPanel(buttons, buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 110, 25));
-        
+        for (int i = 0; i < buttons.length; i++) {
+            buttons[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
+            buttons[i].setFocusable(false);
+        }
         buttons[0].addActionListener(e -> addChiTietPhieuNhap());
         buttons[1].addActionListener(e -> deleteChiTietPhieuNhap());
         buttons[2].addActionListener(e -> thanhToan());
         return buttonPanel;
     }
-    
+
     private void addChiTietPhieuNhap() {
         txt_array_top[0].setEditable(false);
         txt_array_top[0].setText(getID());
         txt_array_top[3].setText(LocalDate.now().toString());
-        
+
         for (JTextField txt : txt_array_top) {
             txt.setEditable(true);
         }
-        
+
         selectedRow = table_top.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn một sách từ danh sách!");
             return;
         }
-        
+
         try {
             String maSach = table_top.getValueAt(selectedRow, 0).toString();
             String tenSach = table_top.getValueAt(selectedRow, 1).toString();
             String soLuongStr = txt_array_down[1].getText().trim();
             int donGia = Integer.parseInt(table_top.getValueAt(selectedRow, 3).toString());
-            
+
             if (soLuongStr.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập số lượng!");
                 return;
             }
-            
+
             int soLuong = Integer.parseInt(soLuongStr);
             if (soLuong <= 0) {
                 JOptionPane.showMessageDialog(null, "Số lượng phải lớn hơn 0!");
                 return;
             }
-            
+
             SachDTO sach = sachBUS.getSachByMaSach(maSach);
             if (sach == null) {
                 JOptionPane.showMessageDialog(null, "Sách không tồn tại!");
                 return;
             }
-            
-            
+
             DefaultTableModel model = (DefaultTableModel) table_down.getModel();
             for (int i = 0; i < model.getRowCount(); i++) {
                 String maSachCu = model.getValueAt(i, 0).toString().trim();
 
-                if(maSach == maSachCu){
+                if (maSach == maSachCu) {
                     int soLuongCu = Integer.parseInt(model.getValueAt(i, 2).toString());
                     soLuong = soLuong + soLuongCu;
                     model.removeRow(i);
                 }
-                
+
             }
-            model.addRow(new Object[]{maSach, tenSach, soLuong, donGia});
-            
+            model.addRow(new Object[] { maSach, tenSach, soLuong, donGia });
+
             updateTotal();
             txt_array_down[0].setText("");
             txt_array_down[1].setText("");
             img = new ImageIcon();
-            
+
             JOptionPane.showMessageDialog(null, "Thêm chi tiết phiếu nhập thành công!");
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Số lượng phải là số nguyên!");
@@ -392,20 +405,20 @@ public class NhapSachGUI {
             JOptionPane.showMessageDialog(null, "Lỗi khi thêm chi tiết phiếu nhập: " + e.getMessage());
         }
     }
-    
+
     private void deleteChiTietPhieuNhap() {
         selectedRow = table_down.getSelectedRow();
         if (selectedRow < 0) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn một dòng để xóa!");
             return;
         }
-        
+
         DefaultTableModel model = (DefaultTableModel) table_down.getModel();
         model.removeRow(selectedRow);
         updateTotal();
         JOptionPane.showMessageDialog(null, "Xóa chi tiết phiếu nhập thành công!");
     }
-    
+
     private void thanhToan() {
         try {
             String maPN = txt_array_top[0].getText().trim();
@@ -413,28 +426,28 @@ public class NhapSachGUI {
             String maNXB = txt_array_top[2].getText().trim();
             String ngayNhapStr = txt_array_top[3].getText().trim();
             String tongTienStr = txt_array_top[4].getText().trim();
-            
+
             if (maNV.isEmpty() || maNXB.isEmpty() || ngayNhapStr.isEmpty() || tongTienStr.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin phiếu nhập!");
                 return;
             }
-            
+
             if (!nhanVienBUS.isNhanVienExists(maNV)) {
                 JOptionPane.showMessageDialog(null, "Mã nhân viên không tồn tại!");
                 return;
             }
-            
+
             if (!nhaXuatBanBUS.isNhaXuatBanExists(maNXB)) {
                 JOptionPane.showMessageDialog(null, "Nhà xuất bản không tồn tại!");
                 return;
             }
-            
+
             DefaultTableModel model = (DefaultTableModel) table_down.getModel();
             if (model.getRowCount() == 0) {
                 JOptionPane.showMessageDialog(null, "Vui lòng thêm ít nhất một sách vào phiếu nhập!");
                 return;
             }
-            
+
             int tongTien = Integer.parseInt(tongTienStr);
             Date ngayNhap;
             try {
@@ -443,41 +456,41 @@ public class NhapSachGUI {
                 JOptionPane.showMessageDialog(null, "Định dạng ngày nhập không hợp lệ (YYYY-MM-DD)!");
                 return;
             }
-            
+
             PhieuNhapDTO phieuNhap = new PhieuNhapDTO(maPN, maNV, ngayNhap, tongTien, maNXB);
             if (!phieuNhapBUS.addPhieuNhap(phieuNhap)) {
                 throw new SQLException("Thêm phiếu nhập thất bại!");
             }
-            
+
             for (int i = 0; i < model.getRowCount(); i++) {
                 String maSach = model.getValueAt(i, 0).toString().trim();
                 int soLuong = Integer.parseInt(model.getValueAt(i, 2).toString());
                 int giaNhap = Integer.parseInt(model.getValueAt(i, 3).toString());
-                
+
                 SachDTO sach = sachBUS.getSachByMaSach(maSach);
                 if (sach == null) {
                     throw new SQLException("Mã sách " + maSach + " không tồn tại!");
                 }
-                
+
                 ChiTietPhieuNhapDTO chiTiet = new ChiTietPhieuNhapDTO(maSach, maPN, soLuong, giaNhap);
                 if (!chiTietPhieuNhapBUS.addChiTietPhieuNhap(chiTiet)) {
                     throw new SQLException("Thêm chi tiết phiếu nhập thất bại cho sách " + maSach);
                 }
-                
+
                 int soLuongHienTai = sachBUS.getSoLuongTonSanPham(maSach);
                 sachBUS.updateSoLuongTonSanPham(maSach, soLuongHienTai + soLuong);
             }
-            
+
             refreshTable();
             model.setRowCount(0);
-            
+
             for (JTextField txt : txt_array_top) {
                 txt.setText("");
             }
             for (JTextField txt : txt_array_down) {
                 txt.setText("");
             }
-            
+
             count++;
             txt_array_top[0].setText(getID());
             txt_array_top[3].setText(LocalDate.now().toString());
@@ -488,7 +501,7 @@ public class NhapSachGUI {
             JOptionPane.showMessageDialog(null, "Lỗi khi thanh toán: " + e.getMessage());
         }
     }
-    
+
     private void updateTotal() {
         int tongTien = 0;
         DefaultTableModel model = (DefaultTableModel) table_down.getModel();
@@ -499,18 +512,18 @@ public class NhapSachGUI {
         }
         txt_array_top[4].setText(String.valueOf(tongTien));
     }
-    
+
     private void refreshTable() {
         DefaultTableModel model = (DefaultTableModel) table_top.getModel();
         model.setRowCount(0);
         try {
             sachList = sachBUS.getAllSach();
             for (SachDTO sach : sachList) {
-                model.addRow(new Object[]{
-                    sach.getMaSach(),
-                    sach.getTenSach(),
-                    sach.getSoLuong(),
-                    sach.getDonGia()
+                model.addRow(new Object[] {
+                        sach.getMaSach(),
+                        sach.getTenSach(),
+                        sach.getSoLuong(),
+                        sach.getDonGia()
                 });
             }
         } catch (Exception e) {
@@ -518,7 +531,7 @@ public class NhapSachGUI {
             JOptionPane.showMessageDialog(null, "Lỗi khi làm mới bảng: " + e.getMessage());
         }
     }
-    
+
     public JPanel getPanel() {
         return this.panel;
     }

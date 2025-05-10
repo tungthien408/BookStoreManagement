@@ -11,6 +11,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -39,6 +40,10 @@ public class TacGiaGUI {
     private boolean update = false;
     private boolean add = false;
     private boolean delete = false;
+    private JTextField[] txt_array_search = new JTextField[1];
+    private JTextField txt_search;
+    private JComboBox<String> comboBox;
+
     int count = 0;
     public String getID() {
         String str = String.valueOf(count);
@@ -48,6 +53,8 @@ public class TacGiaGUI {
     }
 
     public TacGiaGUI() {
+        txt_search = new JTextField();
+        txt_array_search = new JTextField[]{txt_search};
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel.setBackground(new Color(202, 220, 252));
         panel.add(createTacGiaTable(), BorderLayout.WEST);
@@ -58,7 +65,8 @@ public class TacGiaGUI {
         panel.add(createPanelDetail(txt_array, txt_label), BorderLayout.SOUTH);
 
         // Tạo thanh tìm kiếm
-        panel.add(createPanelSearch(), BorderLayout.NORTH);
+        panel.add(createSearchPanel(), BorderLayout.NORTH);
+        timkiem();
     }
 
     private JPanel createTacGiaTable() {
@@ -176,13 +184,54 @@ public class TacGiaGUI {
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
         return wrappedPanel;    }
 
-    private JPanel createPanelSearch() {
-        String[] searchOptions = {"Mã tác giả", "Tên tác giả", "Số điện thoại"};
-        JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panelSearch.add(Box.createHorizontalStrut(25));
-        panelSearch.add(tool.createSearchTextField(0, 0, searchOptions));
-        return panelSearch;
+    private JPanel createSearchPanel() {
+        String[] searchOptions = {"Mã tác giả", "Tên tác giả", "SDT"};
+        comboBox = new JComboBox<>(searchOptions);
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(Box.createHorizontalStrut(33));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
+        return searchPanel;
     }
+    private void timkiem() {
+        comboBox.addActionListener(e -> {
+            String selectedOption = (String) comboBox.getSelectedItem();
+            filterTable(txt_array_search[0].getText(), selectedOption);
+        });
+
+    }
+
+        private void filterTable(String query, String searchType) {
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.setRowCount(0); // Xóa dữ liệu cũ
+        try {
+            for (TacGiaDTO tacGia : tacGiaList) {
+                boolean match = false;
+                switch (searchType) {
+                    case "Mã tác giả":
+                        match = tacGia.getMaTG().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Tên tác giả":
+                        match = tacGia.getTenTG().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "SDT":
+                        match = tacGia.getSdt().toLowerCase().contains(query.toLowerCase());
+                        break;
+                }
+                if (match) {
+                    model.addRow(new Object[]{
+                        tacGia.getMaTG(),
+                        tacGia.getTenTG(),
+                        tacGia.getDiaChi(),
+                        tacGia.getSdt()
+                    });
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage());
+        }
+    }
+
 
     // Phương thức làm mới bảng
     private void refreshTable() {

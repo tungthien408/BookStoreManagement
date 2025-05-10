@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
@@ -11,6 +12,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -24,21 +26,24 @@ import DTO.NXBDTO;
 public class NhaXuatBanGUI {
     Tool tool = new Tool();
     JPanel panel, panelDetail;
-    List <NXBDTO> listNXB;
-    JTextField txt_array[] = new JTextField[4];
+    List<NXBDTO> nxbList;
+    JTextField[] txt_array = new JTextField[4];
     int width = 1200;
     int width_sideMenu = 151;
-    int height = (int)(width * 0.625);
-    JButton btn[] = new JButton[6];
+    int height = (int) (width * 0.625);
+    JButton[] buttons = new JButton[6];
     JTable table;
     NXBBUS nxbBUS = new NXBBUS();
-
     private int selectedRow = -1;
-    private int lastSelectedRow = -1; // Lưu dòng được chọn trước đó
+    private int lastSelectedRow = -1;
     private boolean update = false;
     private boolean add = false;
     private boolean delete = false;
+    private JTextField[] txt_array_search = new JTextField[1];
+    private JTextField txt_search;
+    private JComboBox<String> comboBox;
     int count = 0;
+
     public String getID() {
         String str = String.valueOf(count);
         while (str.length() != 3)
@@ -46,36 +51,34 @@ public class NhaXuatBanGUI {
         return "NXB" + str;
     }
 
-
     public NhaXuatBanGUI() {
+        txt_search = new JTextField();
+        txt_array_search = new JTextField[] { txt_search };
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel.setBackground(new Color(202, 220, 252));
         panel.add(createNXBTable(), BorderLayout.WEST);
         panel.add(createPanelButton(), BorderLayout.CENTER);
-
-        // Chi tiết sản phẩm
-        String txt_label[] = {"Mã NXB", "Tên NXB", "Địa chỉ", "Số điện thoại"};
-        panel.add(createDetailPanel(txt_array, txt_label), BorderLayout.SOUTH);
-      
-        // Tạo thanh tìm kiếm 
+        String txt_label[] = { "Mã NXB", "Tên NXB", "Địa chỉ", "Số điện thoại" };
+        panel.add(createPanelDetail(txt_array, txt_label), BorderLayout.SOUTH);
         panel.add(createSearchPanel(), BorderLayout.NORTH);
+        timkiem();
     }
 
     private JPanel createNXBTable() {
-        String column[] = {"Mã NXB", "Tên NXB", "Địa chỉ", "Số điện thoại"};
+        String column[] = { "Mã NXB", "Tên NXB", "Địa chỉ", "Số điện thoại" };
         DefaultTableModel model = new DefaultTableModel(column, 0);
 
         try {
-            listNXB = nxbBUS.getAllNhaXuatBan();
-            for (NXBDTO nxb : listNXB) {
+            nxbList = nxbBUS.getAllNhaXuatBan();
+            for (NXBDTO nxb : nxbList) {
                 model.addRow(new Object[] {
-                    nxb.getMaNXB(),
-                    nxb.getTenNXB(),
-                    nxb.getDiaChi(),
-                    nxb.getSdt()
+                        nxb.getMaNXB(),
+                        nxb.getTenNXB(),
+                        nxb.getDiaChi(),
+                        nxb.getSdt()
                 });
-                String maNXB = listNXB.get(listNXB.size() - 1).getMaNXB();
-                String numericPart = maNXB.substring(2);
+                String maNXB = nxbList.get(nxbList.size() - 1).getMaNXB();
+                String numericPart = maNXB.substring(3);
                 count = Integer.parseInt(numericPart) + 1;
             }
         } catch (Exception e) {
@@ -83,20 +86,20 @@ public class NhaXuatBanGUI {
             JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu từ cơ sở dữ liệu: " + e.getMessage());
         }
 
-        // Bảng
-        JTable table = tool.createTable(model, column);
+        table = tool.createTable(model, column);
         table.setDefaultEditor(Object.class, null);
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(850, 540));
 
-        // Add MouseListener for the table
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (add || update) return;
+                if (add || update) {
+                    return;
+                }
 
                 tool.clearFields(txt_array);
-                tool.clearButtons(btn);
+                tool.clearButtons(buttons);
                 add = false;
 
                 selectedRow = table.getSelectedRow();
@@ -110,18 +113,16 @@ public class NhaXuatBanGUI {
                         txt.setText("");
                         txt.setEditable(true);
                     }
-                    lastSelectedRow = -1;
-                }
-                else if (selectedRow >= 0) {
 
+                    lastSelectedRow = -1;
+                } else if (selectedRow >= 0) {
                     for (int i = 0; i < txt_array.length; i++) {
-                        txt_array[i].setText((String)table.getValueAt(selectedRow, i));
+                        txt_array[i].setText((String) table.getValueAt(selectedRow, i));
                         txt_array[i].setEditable(false);
                     }
-
                     if (update) {
                         tool.Editable(txt_array, true);
-                        txt_array[0].setEditable(false); //fuck tui làm xong cái nhập rồi đó 
+                        txt_array[0].setEditable(false);
                     }
                     if (delete) {
                         tool.Editable(txt_array, false);
@@ -132,94 +133,128 @@ public class NhaXuatBanGUI {
             }
         });
 
-        // Tạo khoảng cách xung quanh bảng
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 30, 10)); // Top, Left, Bottom, Right
-        
-        // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 30, 10));
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelTable.add(scrollPane);
         return panelTable;
     }
-    
-    private JPanel createPanelButton() {
-        String [] btn_txt = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Hủy"};
-        JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBtn.add(tool.createButtonPanel(btn, btn_txt, new Color(0, 36, 107), Color.WHITE,"y"));
-        // panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
-        // TODO: assign event for btn
-        btn[0].addActionListener(e -> add());
-        btn[1].addActionListener(e -> update());
-        btn[2].addActionListener(e -> delete());
-        btn[5].addActionListener(e -> cancel());
-        
+    private JPanel createPanelButton() {
+        String[] txt_btn = { "Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Hủy" };
+        JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelBtn.add(tool.createButtonPanel(buttons, txt_btn, new Color(0, 36, 107), Color.WHITE, "y"));
+        for (int i = 0; i < buttons.length; i++) {
+            buttons[i].setFocusable(false);
+            buttons[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
+        }
+
+        buttons[0].addActionListener(e -> addNhaXuatBan());
+        buttons[1].addActionListener(e -> updateNhaXuatBan());
+        buttons[2].addActionListener(e -> deleteNhaXuatBan());
+        buttons[5].addActionListener(e -> cancel());
+
         return panelBtn;
     }
 
-    private JPanel createDetailPanel(JTextField txt_array[], String txt_label[]) {
-        panelDetail = tool.createDetailPanel(txt_array, txt_label, null,850,90, 0.5, 2, false);
-
+    private JPanel createPanelDetail(JTextField[] txt_array, String[] txt_label) {
+        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, 850, 90, 0.5, 2, false);
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
         return wrappedPanel;
-
     }
 
     private JPanel createSearchPanel() {
-        String [] searchOptions = {"Mã NXB", "Tên NXB"};
-        JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panelSearch.add(Box.createHorizontalStrut(25));
-        panelSearch.add(tool.createSearchTextField(0, 0,searchOptions));
-        return panelSearch;
+        String[] searchOptions = { "Mã NXB", "Tên NXB", "SDT" };
+        comboBox = new JComboBox<>(searchOptions);
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(Box.createHorizontalStrut(33));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
+        return searchPanel;
     }
 
-    // Phương thức làm mới bảng
+    private void timkiem() {
+        comboBox.addActionListener(e -> {
+            String selectedOption = (String) comboBox.getSelectedItem();
+            filterTable(txt_array_search[0].getText(), selectedOption);
+        });
+    }
+
+    private void filterTable(String query, String searchType) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0);
+        try {
+            for (NXBDTO nxb : nxbList) {
+                boolean match = false;
+                switch (searchType) {
+                    case "Mã NXB":
+                        match = nxb.getMaNXB().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Tên NXB":
+                        match = nxb.getTenNXB().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "SDT":
+                        match = nxb.getSdt().toLowerCase().contains(query.toLowerCase());
+                        break;
+                }
+                if (match) {
+                    model.addRow(new Object[] {
+                            nxb.getMaNXB(),
+                            nxb.getTenNXB(),
+                            nxb.getDiaChi(),
+                            nxb.getSdt()
+                    });
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage());
+        }
+    }
+
     private void refreshTable() {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.setRowCount(0); // Xóa dữ liệu cũ
+        model.setRowCount(0);
         try {
-            listNXB = nxbBUS.getAllNhaXuatBan();
-            for (NXBDTO nxb : listNXB) {
+            nxbList = nxbBUS.getAllNhaXuatBan();
+            for (NXBDTO nxb : nxbList) {
                 model.addRow(new Object[] {
-                    nxb.getMaNXB(),
-                    nxb.getTenNXB(),
-                    nxb.getDiaChi(),
-                    nxb.getSdt()
+                        nxb.getMaNXB(),
+                        nxb.getTenNXB(),
+                        nxb.getDiaChi(),
+                        nxb.getSdt()
                 });
-                String maNXB = listNXB.get(listNXB.size() - 1).getMaNXB();
-                String numericPart = maNXB.substring(2);
+                String maNXB = nxbList.get(nxbList.size() - 1).getMaNXB();
+                String numericPart = maNXB.substring(3);
                 count = Integer.parseInt(numericPart) + 1;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu từ cơ sở dữ liệu: " + e.getMessage());
+            JOptionPane.showMessageDialog(null, "Lỗi khi làm mới bảng: " + e.getMessage());
         }
     }
 
-    // Phương thức thêm nhà xuất bản
-    private void add() {
+    private void addNhaXuatBan() {
         table.clearSelection();
-        update=false;
-        delete=false;
-        if(add==false){
-            add=true;
+        update = false;
+        delete = false;
+        if (!add) {
+            add = true;
             tool.clearFields(txt_array);
-            tool.clearButtons(btn);
-            tool.Editable(txt_array,true);
+            tool.clearButtons(buttons);
+            tool.Editable(txt_array, true);
             txt_array[0].setText(getID());
-            btn[0].setBackground(new Color(202, 220, 252));
-            btn[0].setForeground(Color.BLACK);
-            btn[5].setBackground(Color.RED);
+            buttons[0].setBackground(new Color(202, 220, 252));
+            buttons[0].setForeground(Color.BLACK);
+            buttons[5].setBackground(Color.RED);
 
-            for (int i = 0, length = btn.length - 1; i < length; i++) {
+            for (int i = 0, length = buttons.length - 1; i < length; i++) {
                 if (i != 0) {
-                    btn[i].setVisible(false);
+                    buttons[i].setVisible(false);
                 }
             }
             txt_array[0].setEditable(false);
-        }
-        else {
+        } else {
             try {
                 NXBDTO nxb = new NXBDTO();
                 nxb.setMaNXB(txt_array[0].getText().trim());
@@ -245,29 +280,27 @@ public class NhaXuatBanGUI {
         }
     }
 
-    // Phương thức sửa nhà xuất bản
-    private void update() {
-        if(add==true){
+    private void updateNhaXuatBan() {
+        if (add) {
             tool.clearFields(txt_array);
         }
-        add=false;
-        delete=false;
+        add = false;
+        delete = false;
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn nhà xuất bản để sửa!");
-        }
-        else if (update==false){
-            update=true;
-            tool.clearButtons(btn);
-            tool.Editable(txt_array,true);
-            tool.clearButtons(btn);
+        } else if (!update) {
+            update = true;
+            tool.clearButtons(buttons);
+            tool.Editable(txt_array, true);
+            tool.clearButtons(buttons);
 
-            btn[1].setBackground(new Color(202, 220, 252));
-            btn[1].setForeground(Color.BLACK);
-            btn[5].setBackground(Color.RED);
+            buttons[1].setBackground(new Color(202, 220, 252));
+            buttons[1].setForeground(Color.BLACK);
+            buttons[5].setBackground(Color.RED);
 
-            for (int i = 0, length = btn.length - 1; i < length; i++) {
+            for (int i = 0, length = buttons.length - 1; i < length; i++) {
                 if (i != 1) {
-                    btn[i].setVisible(false);
+                    buttons[i].setVisible(false);
                 }
             }
 
@@ -302,40 +335,24 @@ public class NhaXuatBanGUI {
         }
     }
 
-    // Phương thức xóa nhà xuất bản
-    private void delete() {
-        if(add==true){
+    private void deleteNhaXuatBan() {
+        if (add) {
             tool.clearFields(txt_array);
         }
-        add=false;
-        update=false;
+        add = false;
+        update = false;
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhà xuất bản để sửa!");
-        }
-        // else if (delete==false){
-        //     tool.clearButtons(btn);
-        //     tool.Editable(txt_array,false);
-        //     btn[2].setBackground(new Color(202, 220, 252));
-        //     btn[2].setForeground(Color.BLACK);
-        //     btn[5].setBackground(Color.RED);
-
-        //     // for (int i = 0, length = btn.length - 1; i < length; i++) {
-        //     //     if (i != 0) {
-        //     //         btn[i].setVisible(false);
-        //     //     }
-        //     // }
-
-            // delete=true;
-        // } 
-        else {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhà xuất bản để xóa!");
+        } else {
             try {
-                String maTG = txt_array[0].getText().trim();
-                if (maTG.isEmpty()) {
+                String maNXB = txt_array[0].getText().trim();
+                if (maNXB.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Vui lòng chọn nhà xuất bản để xóa!");
                     return;
                 }
-                if (JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa nhà xuất bản này?", "Xóa thông tin nhà xuất bản", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                    if (nxbBUS.deleteNhaXuatBan(maTG)) {
+                if (JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa nhà xuất bản này?",
+                        "Xóa thông tin nhà xuất bản", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                    if (nxbBUS.deleteNhaXuatBan(maNXB)) {
                         JOptionPane.showMessageDialog(null, "Xóa nhà xuất bản thành công!");
                         cancel();
                     }
@@ -352,16 +369,16 @@ public class NhaXuatBanGUI {
         update = false;
         delete = false;
         refreshTable();
-        tool.clearButtons(btn);
+        tool.clearButtons(buttons);
         tool.clearFields(txt_array);
-        tool.Editable(txt_array,false);
+        tool.Editable(txt_array, false);
         selectedRow = -1;
         lastSelectedRow = -1;
     }
 
     private boolean checkValidate(NXBDTO nxb) {
-        // Kiểm tra dữ liệu đầu vào
-        if (nxb.getMaNXB().isEmpty() || nxb.getTenNXB().isEmpty() || nxb.getDiaChi().isEmpty() || nxb.getSdt().isEmpty()) {
+        if (nxb.getMaNXB().isEmpty() || nxb.getTenNXB().isEmpty() || nxb.getDiaChi().isEmpty()
+                || nxb.getSdt().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ các trường thông tin");
             return false;
         }
@@ -376,20 +393,21 @@ public class NhaXuatBanGUI {
             return false;
         }
 
-        if (!tool.checkPhoneNumber(nxb.getSdt())) {
+        if (nxb.getSdt().length() > 15) {
+            JOptionPane.showMessageDialog(null, "Số điện thoại không hợp lệ");
             return false;
         }
 
-        for (NXBDTO nxban : listNXB) {
+        for (NXBDTO nxban : nxbList) {
             if (!nxb.getMaNXB().equals(nxban.getMaNXB()) && nxban.getSdt().equals(nxb.getSdt())) {
                 JOptionPane.showMessageDialog(null, "Số điện thoại đã được sử dụng");
-                return false;                            
+                return false;
             }
         }
         return true;
     }
-    
+
     public JPanel getPanel() {
         return this.panel;
-    } 
+    }
 }

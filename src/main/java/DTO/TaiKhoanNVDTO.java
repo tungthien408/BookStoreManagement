@@ -3,6 +3,7 @@ package DTO;
 public class TaiKhoanNVDTO {
     private String maNV;
     private String pass;
+    private int maQuyen;
     private int trangThaiXoa;
 
     // Constructor mặc định
@@ -10,10 +11,11 @@ public class TaiKhoanNVDTO {
     }
 
     // Constructor đầy đủ
-    public TaiKhoanNVDTO(String maNV, String pass, int trangThaiXoa) {
+    public TaiKhoanNVDTO(String maNV, String pass,int maQuyen, int trangThaiXoa) {
         this.maNV = maNV;
         this.pass = pass;
         this.trangThaiXoa = trangThaiXoa;
+        this.maQuyen = maQuyen;
     }
 
     // Getters và Setters
@@ -39,5 +41,11 @@ public class TaiKhoanNVDTO {
 
     public void setTrangThaiXoa(int trangThaiXoa) {
         this.trangThaiXoa = trangThaiXoa;
+    }
+    public void setMaQuyen(int maQuyen) {
+        this.maQuyen = maQuyen;
+    }
+    public int getMaQuyen() {
+        return maQuyen;
     }
 }
