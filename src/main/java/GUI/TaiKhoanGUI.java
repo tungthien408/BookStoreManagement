@@ -4,7 +4,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -15,10 +14,10 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import java.awt.event.MouseEvent;
@@ -33,8 +32,8 @@ public class TaiKhoanGUI {
     int width = 1200;
     int width_sideMenu = 151;
     int height = (int) (width * 0.625);
-    private JComboBox<String> comboBox;
-    private JTextField[] txt_array_search = new JTextField[1];
+    // private JComboBox<String> comboBox;
+    // private JTextField[] txt_array_search = new JTextField[1];
 
     public TaiKhoanGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
@@ -180,6 +179,62 @@ public class TaiKhoanGUI {
             }
         });
 
+        btn_add.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int rowCount = modelNhanVien.getRowCount();
+                String newId;
+
+                if (rowCount > 0) {
+                    String lastId = modelNhanVien
+                            .getValueAt(rowCount - 1, 0)
+                            .toString(); // e.g. "NV05"
+                    // separate prefix and number
+                    String prefix = lastId.replaceAll("\\d+", ""); // "NV"
+                    String digits = lastId.replaceAll("\\D+", ""); // "05"
+                    int num = 1;
+                    try {
+                        num = Integer.parseInt(digits) + 1;
+                    } catch (NumberFormatException ex) {
+                        // fallback if something’s off
+                        num = 1;
+                    }
+                    // rebuild with zero-padding to 2 digits
+                    newId = String.format("%s%02d", prefix, num);
+                } else {
+                    // empty table → start at NV01
+                    newId = "NV01";
+                }
+
+                textFieldMaNV.setText(newId);
+                textFieldTenNV.setEditable(true);
+                textFieldChucVu.setEditable(true);
+                textFieldSoDienThoai.setEditable(true);
+            }
+        });
+
+        // btn_edit.addMouseListener(new MouseAdapter() {
+        // @Override
+        // public void mouseClicked(MouseEvent e) {
+        // textFieldMaNV.setEditable(true);
+        // textFieldTenNV.setEditable(true);
+        // textFieldChucVu.setEditable(true);
+        // textFieldSoDienThoai.setEditable(true);
+        // }
+        // });
+        btn_delete.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int row = table.getSelectedRow();
+                if (row >= 0) {
+                    modelNhanVien.removeRow(row);
+                    textFieldMaNV.setText("");
+                    textFieldTenNV.setText("");
+                    textFieldChucVu.setText("");
+                    textFieldSoDienThoai.setText("");
+                }
+            }
+        });
         panel_buttons.add(btn_add);
         panel_buttons.add(btn_edit);
         panel_buttons.add(btn_delete);
@@ -192,18 +247,6 @@ public class TaiKhoanGUI {
         panel.add(panel_searchCombo, BorderLayout.NORTH);
         panel.add(panel_textField, BorderLayout.SOUTH);
 
-    }
-
-    private void timkiem() {
-        comboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                String selectedOption = (String) comboBox.getSelectedItem();
-                System.out.println("Tìm kiếm theo: " + selectedOption);
-                // Lọc lại bảng với nội dung hiện tại của searchField
-                filterTable(txt_array_search[0].getText(), selectedOption);
-            }
-        });
     }
 
     public JPanel getPanel() {
