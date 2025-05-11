@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
@@ -55,7 +56,7 @@ public class NhanVienGUI {
 
     public NhanVienGUI() {
         txt_search = new JTextField();
-        txt_array_search = new JTextField[]{txt_search};
+        txt_array_search = new JTextField[] { txt_search };
         // birth_choose = new JCalendar();
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel.setBackground(new Color(202, 220, 252));
@@ -65,8 +66,12 @@ public class NhanVienGUI {
         panel.add(createPanelButton(), BorderLayout.CENTER);
 
         // Chi tiết sản phẩm
-        String txt_label[] = { "Mã NV", "Tên", "Địa chỉ", "Số điện thoại", "Chức vụ", "Ngày sinh"};
+        String txt_label[] = { "Mã NV", "Tên", "Địa chỉ", "Số điện thoại", "Chức vụ", "Ngày sinh" };
         panel.add(createPanelDetail(txt_array, txt_label), BorderLayout.SOUTH);
+        for (int i = 0; i < txt_array.length; i++) {
+            txt_array[i].setCursor(new Cursor(Cursor.TEXT_CURSOR));
+
+        }
 
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         timkiem();
@@ -98,7 +103,7 @@ public class NhanVienGUI {
             JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu từ cơ sở dữ liệu: " + e.getMessage());
         }
 
-        // Bảng 
+        // Bảng
         table = tool.createTable(model, column);
         table.setDefaultEditor(Object.class, null); // Không cho chỉnh sửa trực tiếp trên bảng
         JScrollPane scrollPane = new JScrollPane(table);
@@ -194,13 +199,14 @@ public class NhanVienGUI {
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = {"Mã nhân viên", "Tên nhân viên", "SDT"};
+        String[] searchOptions = { "Mã nhân viên", "Tên nhân viên", "SDT" };
         comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
         searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
         return searchPanel;
     }
+
     private void timkiem() {
         comboBox.addActionListener(e -> {
             String selectedOption = (String) comboBox.getSelectedItem();
@@ -209,9 +215,9 @@ public class NhanVienGUI {
 
     }
 
-        private void filterTable(String query, String searchType) {
-            DefaultTableModel model = (DefaultTableModel) table.getModel();
-            model.setRowCount(0); // Xóa dữ liệu cũ
+    private void filterTable(String query, String searchType) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.setRowCount(0); // Xóa dữ liệu cũ
         try {
             for (NhanVienDTO nv : nhanVienList) {
                 boolean match = false;
@@ -227,13 +233,13 @@ public class NhanVienGUI {
                         break;
                 }
                 if (match) {
-                    model.addRow(new Object[]{
-                        nv.getMaNV(),
-                        nv.getHoTen(),
-                        nv.getChucVu(),
-                        nv.getDiaChi(),
-                        nv.getSdt(),
-                        nv.getNgaySinh()
+                    model.addRow(new Object[] {
+                            nv.getMaNV(),
+                            nv.getHoTen(),
+                            nv.getChucVu(),
+                            nv.getDiaChi(),
+                            nv.getSdt(),
+                            nv.getNgaySinh()
                     });
                 }
             }
@@ -301,7 +307,7 @@ public class NhanVienGUI {
                 String startDate = txt_array[5].getText();
                 SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
                 java.util.Date date = sdf1.parse(startDate);
-                java.sql.Date sqlStartDate = new java.sql.Date(date.getTime()); 
+                java.sql.Date sqlStartDate = new java.sql.Date(date.getTime());
                 nv.setNgaySinh(sqlStartDate);
 
                 // bất hợp lí ở code 247
@@ -360,7 +366,7 @@ public class NhanVienGUI {
                 String startDate = txt_array[5].getText();
                 SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
                 java.util.Date date = sdf1.parse(startDate);
-                java.sql.Date sqlStartDate = new java.sql.Date(date.getTime()); 
+                java.sql.Date sqlStartDate = new java.sql.Date(date.getTime());
                 nv.setNgaySinh(sqlStartDate);
 
                 if (nv.getMaNV().isEmpty()) {
@@ -472,7 +478,8 @@ public class NhanVienGUI {
             }
         }
 
-        if (!nv.getNgaySinh().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate().isAfter(LocalDate.now().minusYears(18))) {
+        if (!nv.getNgaySinh().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()
+                .isAfter(LocalDate.now().minusYears(18))) {
             JOptionPane.showMessageDialog(null, "Nhân viên phải trên 18 tuổi");
             return false;
         }

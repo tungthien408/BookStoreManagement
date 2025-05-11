@@ -1,26 +1,8 @@
 package GUI;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-
 import BUS.TaiKhoanNVBUS;
+import javax.swing.*;
+import java.awt.*;
 
 public class LoginGUI {
         LoginGUI() {
@@ -153,12 +135,13 @@ public class LoginGUI {
 
                         TaiKhoanNVBUS taiKhoanNVBUS = new TaiKhoanNVBUS();
                         if (taiKhoanNVBUS.checkLogin(maNV, matKhau, 0)) {
-                                JOptionPane.showMessageDialog(null, "Đăng nhập thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Đăng nhập thành công", "Thông báo",
+                                                JOptionPane.INFORMATION_MESSAGE);
                                 frame.dispose();
                                 new MenuGUI(taiKhoanNVBUS.getTaiKhoanByMaNV(maNV));
-                        }
-                        else {
-                                JOptionPane.showMessageDialog(null, "Tên đăng nhập hoặc mật khẩu không tồn tại", "Thông báo", JOptionPane.ERROR_MESSAGE);
+                        } else {
+                                JOptionPane.showMessageDialog(null, "Tên đăng nhập hoặc mật khẩu không tồn tại",
+                                                "Thông báo", JOptionPane.ERROR_MESSAGE);
                         }
 
                 });

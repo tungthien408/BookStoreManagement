@@ -34,6 +34,7 @@ import javax.swing.table.DefaultTableModel;
 import BUS.ChiTietHoaDonBUS;
 import BUS.HoaDonBUS;
 import BUS.KhachHangBUS;
+import BUS.NhanVienBUS;
 import BUS.SachBUS;
 import DTO.ChiTietHoaDonDTO;
 import DTO.HoaDonDTO;
@@ -60,13 +61,13 @@ public class HoaDonBanGUI {
     private JComboBox<String> comboBox;
     private JTable tableModel;
     private HoaDonBUS hoaDonBUS = new HoaDonBUS();
-    private  SachBUS sachBUS = new SachBUS();
-    private  KhachHangBUS khachHangBUS = new KhachHangBUS();
+    private SachBUS sachBUS = new SachBUS();
+    private KhachHangBUS khachHangBUS = new KhachHangBUS();
     private ChiTietHoaDonBUS chiTietHoaDonBUS = new ChiTietHoaDonBUS();
 
     public HoaDonBanGUI() {
         txt_search = new JTextField();
-        txt_array_search = new JTextField[]{txt_search};
+        txt_array_search = new JTextField[] { txt_search };
         panel = tool.createPanel(WIDTH - SIDE_MENU_WIDTH, HEIGHT, new BorderLayout());
         initializeData();
         panel.add(createSearchPanel(), BorderLayout.NORTH);
@@ -85,12 +86,12 @@ public class HoaDonBanGUI {
     }
 
     private JPanel createHoaDonBanTable() {
-        String[] columns = {"Mã hóa đơn", "Mã nhân viên", "Mã khách hàng", "Ngày bán", "Tổng tiền"};
+        String[] columns = { "Mã hóa đơn", "Mã nhân viên", "Mã khách hàng", "Ngày bán", "Tổng tiền" };
         DefaultTableModel model = new DefaultTableModel(columns, 0);
         try {
             if (hoaDonList != null) {
                 for (HoaDonDTO hoaDon : hoaDonList) {
-                    model.addRow(new Object[]{
+                    model.addRow(new Object[] {
                             hoaDon.getMaHD(),
                             hoaDon.getMaNV(),
                             hoaDon.getMaKH(),
@@ -115,7 +116,7 @@ public class HoaDonBanGUI {
     }
 
     private JPanel createPanelButton() {
-        String[] btnText = {"Chi tiết", "Nhập Excel", "Xuất Excel"};
+        String[] btnText = { "Chi tiết", "Nhập Excel", "Xuất Excel" };
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(buttons, btnText, new Color(0, 36, 107), Color.WHITE, "y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -144,7 +145,7 @@ public class HoaDonBanGUI {
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = {"Mã hóa đơn", "Mã nhân viên","Mã khách hàng"};
+        String[] searchOptions = { "Mã hóa đơn", "Mã nhân viên", "Mã khách hàng" };
         comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
@@ -152,8 +153,7 @@ public class HoaDonBanGUI {
         return searchPanel;
     }
 
-
- private void showInvoiceDetails() {
+    private void showInvoiceDetails() {
         // 1. Tạo ảnh trống RGB với nền trắng
         BufferedImage img = new BufferedImage(600, 800, BufferedImage.TYPE_INT_RGB);
         Graphics2D g = img.createGraphics();
@@ -289,7 +289,8 @@ public class HoaDonBanGUI {
         JOptionPane.showMessageDialog(null, "Chức năng Xuất Excel đang được phát triển!");
         // Implement Excel export logic using a library like Apache POI
     }
-    private void timkiem(){
+
+    private void timkiem() {
         comboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -300,6 +301,7 @@ public class HoaDonBanGUI {
             }
         });
     }
+
     // Phương thức lọc bảng dựa trên nội dung tìm kiếm và tiêu chí
     private void filterTable(String query, String searchType) {
         DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
@@ -319,12 +321,12 @@ public class HoaDonBanGUI {
                         break;
                 }
                 if (match) {
-                    model.addRow(new Object[]{
-                        hoaDon.getMaHD(),
-                        hoaDon.getMaNV(),
-                        hoaDon.getMaKH(),
-                        hoaDon.getNgayBan().toString(),
-                        hoaDon.getTongTien()
+                    model.addRow(new Object[] {
+                            hoaDon.getMaHD(),
+                            hoaDon.getMaNV(),
+                            hoaDon.getMaKH(),
+                            hoaDon.getNgayBan().toString(),
+                            hoaDon.getTongTien()
                     });
                 }
             }

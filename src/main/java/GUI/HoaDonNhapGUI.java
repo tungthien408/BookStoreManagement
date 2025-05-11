@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -28,12 +29,14 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import BUS.ChiTietPhieuNhapBUS;
+import BUS.KhachHangBUS;
 import BUS.NXBBUS;
 import BUS.NhanVienBUS;
 import BUS.PhieuNhapBUS;
 import BUS.SachBUS;
 import DTO.NhanVienDTO;
 import DTO.PhieuNhapDTO;
+import DTO.TaiKhoanNVDTO;
 
 public class HoaDonNhapGUI {
     private static final int WIDTH = 1200;
@@ -56,15 +59,16 @@ public class HoaDonNhapGUI {
     private ChiTietPhieuNhapBUS chiTietPhieuNhapBUS = new ChiTietPhieuNhapBUS();
     private NXBBUS nxbBUS = new NXBBUS();
     private SachBUS sachBUS = new SachBUS();
+    private NhanVienBUS nhanVienBUS = new NhanVienBUS();
 
     public HoaDonNhapGUI() {
         txt_search = new JTextField();
-        txt_array_search = new JTextField[]{txt_search};
+        txt_array_search = new JTextField[] { txt_search };
         panel = tool.createPanel(WIDTH - SIDE_MENU_WIDTH, HEIGHT, new BorderLayout());
         initializeData();
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         panel.add(createHoaDonNhapTable(), BorderLayout.WEST);
-        panel.add(createPanelButton(), BorderLayout.CENTER);
+        panel.add(createPanelButton(null), BorderLayout.CENTER);
         timkiem();
     }
 
@@ -78,7 +82,7 @@ public class HoaDonNhapGUI {
     }
 
     private JPanel createHoaDonNhapTable() {
-        String[] columns = {"Mã phiếu nhập", "Mã nhân viên", "Ngày nhập", "Tổng tiền", "Mã NXB"};
+        String[] columns = { "Mã phiếu nhập", "Mã nhân viên", "Ngày nhập", "Tổng tiền", "Mã NXB" };
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -88,7 +92,7 @@ public class HoaDonNhapGUI {
 
         if (phieuNhapList != null) {
             for (PhieuNhapDTO phieuNhap : phieuNhapList) {
-                tableModel.addRow(new Object[]{
+                tableModel.addRow(new Object[] {
                         phieuNhap.getMaPN(),
                         phieuNhap.getMaNV(),
                         phieuNhap.getNgayNhap().toString(),
@@ -108,12 +112,16 @@ public class HoaDonNhapGUI {
         return panelTable;
     }
 
-    private JPanel createPanelButton() {
-        String[] btnText = {"Chi tiết", "Nhập Excel", "Xuất Excel"};
+    private JPanel createPanelButton(TaiKhoanNVDTO account) {
+        String[] btnText = { "Chi tiết", "Nhập Excel", "Xuất Excel" };
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(buttons, btnText, new Color(0, 36, 107), Color.WHITE, "y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
+        for (int i = 0; i < btnText.length; i++) {
+            buttons[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
+            buttons[i].setFocusable(false);
+        }
         buttons[0].addActionListener(e -> showInvoiceDetails());
         buttons[1].addActionListener(e -> importFromExcel());
         buttons[2].addActionListener(e -> exportToExcel());
@@ -122,7 +130,7 @@ public class HoaDonNhapGUI {
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = {"Mã phiếu nhập", "Mã nhân viên", "Mã NXB"};
+        String[] searchOptions = { "Mã phiếu nhập", "Mã nhân viên", "Mã NXB" };
         comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
@@ -155,7 +163,7 @@ public class HoaDonNhapGUI {
                         break;
                 }
                 if (match) {
-                    tableModel.addRow(new Object[]{
+                    tableModel.addRow(new Object[] {
                             phieuNhap.getMaPN(),
                             phieuNhap.getMaNV(),
                             phieuNhap.getNgayNhap().toString(),
