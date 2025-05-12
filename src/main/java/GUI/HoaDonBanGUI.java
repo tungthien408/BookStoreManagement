@@ -263,7 +263,7 @@ public class HoaDonBanGUI {
 
         // 6. Xuất file
         try {
-            ImageIO.write(img, "png", new File("HoaDonBan\\Hóa đơn bán hàng.png"));
+            ImageIO.write(img, "png", new File("HoaDonBan\\Hoa_Don_Ban.png"));
             JFrame frame = new JFrame("Hóa đơn bán hàng");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setSize(600, 800);
