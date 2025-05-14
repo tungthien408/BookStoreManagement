@@ -288,7 +288,7 @@ public class HoaDonNhapGUI {
         // 6. Xuất file
 
         try {
-            ImageIO.write(img, "png", new File("HoaDonNhap\\Hóa đơn nhập hàng.png"));
+            ImageIO.write(img, "png", new File("HoaDonNhap\\Hoa_Don_Nhap.png"));
             JFrame frame = new JFrame("Hóa đơn nhập hàng");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setSize(600, 800);
