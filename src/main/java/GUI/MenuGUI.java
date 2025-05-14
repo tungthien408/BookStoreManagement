@@ -111,7 +111,7 @@ public class MenuGUI {
                     panel_content[i] = new TaiKhoanGUI().getPanel();
                     break;
                 case 11:
-                    panel_content[i] = new PhanQuyenGUI().getPanel();
+                    panel_content[i] = new PhanQuyenGUI(account).getPanel();
                     break;
                 case 12:
                     panel_content[i] = new ThongKeGUI().getPanel();
