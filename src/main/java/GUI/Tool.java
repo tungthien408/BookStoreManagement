@@ -435,4 +435,21 @@ public class Tool {
 		}
 		return true;
 	}
+
+	public JPanel createSearchTextFieldTest(JComboBox<String> comboBox,JTextField[] textField) {
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        
+        // JTextField textField = new JTextField(20);
+        textField[0].setPreferredSize(new Dimension(200, 30));
+        textField[0].setBackground(new Color(202, 220, 252));
+		comboBox.setBackground(new Color(202, 220, 252));
+        comboBox.setPreferredSize(new Dimension(120, 30));  
+        searchPanel.add(textField[0]);
+        searchPanel.add(comboBox);
+	
+
+        return searchPanel;
+    }
+
+	
 }

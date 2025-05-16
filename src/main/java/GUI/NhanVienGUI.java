@@ -13,6 +13,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -34,6 +35,9 @@ public class NhanVienGUI {
     JButton btn[] = new JButton[6];
     JTable table;
     NhanVienBUS nhanVienBUS = new NhanVienBUS();
+    private JTextField[] txt_array_search = new JTextField[1];
+    private JTextField txt_search;
+    private JComboBox<String> comboBox;
 
     private int selectedRow = -1;
     private int lastSelectedRow = -1; // Lưu dòng được chọn trước đó
@@ -50,6 +54,8 @@ public class NhanVienGUI {
     }
 
     public NhanVienGUI() {
+        txt_search = new JTextField();
+        txt_array_search = new JTextField[]{txt_search};
         // birth_choose = new JCalendar();
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel.setBackground(new Color(202, 220, 252));
@@ -62,7 +68,8 @@ public class NhanVienGUI {
         String txt_label[] = { "Mã NV", "Tên", "Địa chỉ", "Số điện thoại", "Chức vụ", "Ngày sinh"};
         panel.add(createPanelDetail(txt_array, txt_label), BorderLayout.SOUTH);
 
-        panel.add(createPanelSearch(), BorderLayout.NORTH);
+        panel.add(createSearchPanel(), BorderLayout.NORTH);
+        timkiem();
     }
 
     private JPanel createNhanVienTable() {
@@ -186,13 +193,54 @@ public class NhanVienGUI {
         return panelDetail;
     }
 
-    private JPanel createPanelSearch() {
-        // Tạo thanh tìm kiếm
-        String[] searchOptions = { "Mã nhân viên", "Tên nhân viên", "Chức vụ" };
-        JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panelSearch.add(Box.createHorizontalStrut(25));
-        panelSearch.add(tool.createSearchTextField(0, 0, searchOptions));
-        return panelSearch;
+    private JPanel createSearchPanel() {
+        String[] searchOptions = {"Mã nhân viên", "Tên nhân viên", "SDT"};
+        comboBox = new JComboBox<>(searchOptions);
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(Box.createHorizontalStrut(33));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
+        return searchPanel;
+    }
+    private void timkiem() {
+        comboBox.addActionListener(e -> {
+            String selectedOption = (String) comboBox.getSelectedItem();
+            filterTable(txt_array_search[0].getText(), selectedOption);
+        });
+
+    }
+
+        private void filterTable(String query, String searchType) {
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.setRowCount(0); // Xóa dữ liệu cũ
+        try {
+            for (NhanVienDTO nv : nhanVienList) {
+                boolean match = false;
+                switch (searchType) {
+                    case "Mã nhân viên":
+                        match = nv.getMaNV().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Tên nhân viên":
+                        match = nv.getHoTen().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "SDT":
+                        match = nv.getSdt().toLowerCase().contains(query.toLowerCase());
+                        break;
+                }
+                if (match) {
+                    model.addRow(new Object[]{
+                        nv.getMaNV(),
+                        nv.getHoTen(),
+                        nv.getChucVu(),
+                        nv.getDiaChi(),
+                        nv.getSdt(),
+                        nv.getNgaySinh()
+                    });
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage());
+        }
     }
 
     // Phương thức làm mới bảng

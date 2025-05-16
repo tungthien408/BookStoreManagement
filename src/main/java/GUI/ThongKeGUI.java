@@ -1,3 +1,4 @@
+
 package GUI;
 
 import javax.swing.*;
@@ -15,6 +16,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.util.List;
+import javax.swing.table.DefaultTableModel;
 
 public class ThongKeGUI {
     Tool tool = new Tool();
@@ -26,10 +28,11 @@ public class ThongKeGUI {
     int height = (int) (width * 0.625);
     private static final Color MENU_BACKGROUND = new Color(0, 36, 107);
     private static final Color MENU_HOVER = new Color(15, 76, 104);
+    JTable table_KhachHang, table_SanPham, table_DoanhThu;
+    DefaultTableModel model_KhachHang, model_SanPham, model_DoanhThu;
 
     public ThongKeGUI() {
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
-        panel.setBackground(Color.RED);
 
         // Button panel at top - small height
         panel_button = tool.createPanel(width - width_sideMenu, 50, new FlowLayout(FlowLayout.LEFT, 10, 0));
@@ -116,13 +119,17 @@ public class ThongKeGUI {
         panel_Finding.setBorder(BorderFactory.createEmptyBorder(25, 0, 10, 10));
         // Create các thành phần con bên trong panel_Finding
         panel_Finding_timKiem = tool.createPanel(300, 50, new FlowLayout(FlowLayout.LEFT, 10, 0));
-        panel_Finding_locTheoNgay = tool.createPanel(300, 50, new FlowLayout(FlowLayout.LEFT, 10, 0));
+        panel_Finding_locTheoNgay = tool.createPanel(325, 50, new FlowLayout(FlowLayout.LEFT, 10, 0));
         panel_Finding_buttons = tool.createPanel(300, 42, new FlowLayout(FlowLayout.CENTER, 29, 5));
         panel_Finding_buttons.setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         panel_Finding_timKiem.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.LIGHT_GRAY),
                 "Tìm kiếm"));
         JTextField textFieldTimKiem = new JTextField(20);
+        JButton buttonTimKiem = new JButton("Tìm");
+        buttonTimKiem.setPreferredSize(new Dimension(65, 25));
+        buttonTimKiem.setFont(new Font("Arial", Font.BOLD, 14));
+        buttonTimKiem.setForeground(Color.WHITE);
         textFieldTimKiem.setPreferredSize(new Dimension(200, 25));
         panel_Finding_locTheoNgay.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.LIGHT_GRAY),
@@ -130,8 +137,8 @@ public class ThongKeGUI {
         // panel_Finding_timKiem.setBackground(Color.BLACK);
         JLabel labelTu = new JLabel("Từ ngày: ");
         JLabel labelDen = new JLabel("Đến ngày: ");
-        JTextField textFieldTu = new JTextField(4);
-        JTextField textFieldDen = new JTextField(4);
+        JTextField textFieldTu = new JTextField(7);
+        JTextField textFieldDen = new JTextField(7);
         // panel_Finding_locTheoNgay.setBackground(Color.GRAY);
         panel_Finding_locTheoNgay.add(labelTu);
         panel_Finding_locTheoNgay.add(textFieldTu);
@@ -152,10 +159,14 @@ public class ThongKeGUI {
 
         buttonLamMoi.setCursor(new Cursor(Cursor.HAND_CURSOR));
         buttonLoc.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonTimKiem.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        buttonTimKiem.setFocusable(false);
         buttonLamMoi.setFocusable(false);
         buttonLoc.setFocusable(false);
         buttonLamMoi.setBorderPainted(false);
         buttonLoc.setBorderPainted(false);
+        buttonTimKiem.setBorderPainted(false);
+        buttonTimKiem.setBackground(new Color(0, 36, 107));
         buttonLamMoi.setBackground(new Color(0, 36, 107));
         buttonLoc.setBackground(new Color(0, 36, 107));
         buttonLamMoi.setForeground(Color.WHITE);
@@ -172,6 +183,20 @@ public class ThongKeGUI {
 
             public void mouseReleased(MouseEvent e) {
                 buttonLamMoi.setBackground(MENU_BACKGROUND);
+            }
+        });
+        buttonTimKiem.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                buttonTimKiem.setBackground(MENU_HOVER);
+            }
+
+            public void mouseExited(MouseEvent e) {
+                buttonTimKiem.setBackground(MENU_BACKGROUND);
+            }
+
+            public void mouseReleased(MouseEvent e) {
+                buttonTimKiem.setBackground(MENU_BACKGROUND);
             }
         });
         buttonLoc.addMouseListener(new MouseAdapter() {
@@ -194,6 +219,7 @@ public class ThongKeGUI {
         // panel_Finding_buttons.setBackground(Color.LIGHT_GRAY);
 
         panel_Finding_timKiem.add(textFieldTimKiem);
+        panel_Finding_timKiem.add(buttonTimKiem);
         panel_Finding.add(panel_Finding_timKiem);
         panel_Finding.add(panel_Finding_locTheoNgay);
         panel_Finding.add(panel_Finding_buttons);
@@ -204,6 +230,7 @@ public class ThongKeGUI {
         String[] columnNames_SanPham = { "STT", "Mã Sách", "Tên Sách", "Số lượng Nhập", "Số lượng Bán" };
         String[] columnNames_KhachHang = { "STT", "SĐT", "Tên Khách Hàng", "Điểm tích lũy" };
         String[] columnNames_DoanhThu = { "STT", "Mã Hóa Đơn", "Ngày", "Tổng Tiền" };
+
         // =====================================Lấy và thêm dữ liệu từ database vào
         // bảng=====================================
         // Sách
@@ -238,53 +265,24 @@ public class ThongKeGUI {
             tableData_DoanhThu[i][2] = hoaDonList.get(i).getNgayBan().toString();
             tableData_DoanhThu[i][3] = String.valueOf(hoaDonList.get(i).getTongTien());
         }
-        // ================================End thêm và lấy dữ liệu từ database vào
-        // bảng============================
-        // String[][] tableData_SanPham = {
-        // { "1", "S001", "Sách 1", "100", "50" },
-        // { "2", "S002", "Sách 2", "150", "75" },
-        // { "3", "S003", "Sách 3", "200", "100" },
-        // { "4", "S004", "Sách 4", "250", "125" },
-        // { "5", "S005", "Sách 5", "300", "150" },
-        // { "6", "S006", "Sách 6", "350", "175" },
-        // { "7", "S007", "Sách 7", "400", "200" },
-        // { "8", "S008", "Sách 8", "450", "225" },
-        // { "9", "S009", "Sách 9", "500", "250" },
-        // { "10", "S010", "Sách 10", "550", "275" },
-        // { "11", "S011", "Sách 11", "600", "300" },
-        // { "12", "S012", "Sách 12", "650", "325" },
-        // { "13", "S013", "Sách 13", "700", "350" },
-        // { "14", "S014", "Sách 14", "750", "375" },
-        // { "15", "S015", "Sách 15", "800", "400" },
-        // { "16", "S016", "Sách 16", "850", "425" },
-        // { "17", "S017", "Sách 17", "900", "450" },
-        // { "18", "S018", "Sách 18", "950", "475" },
-        // { "19", "S019", "Sách 19", "1000", "500" },
-        // { "20", "S020", "Sách 20", "1050", "525" }
-        // };
-        // String[][] tableData_KhachHang = {
-        // { "1", "0909090909", "Nguyễn Văn A", "100" },
-        // { "2", "0909090909", "Nguyễn Văn B", "150" },
-        // { "3", "0909090909", "Nguyễn Văn C", "200" },
-        // { "4", "0909090909", "Nguyễn Văn D", "250" },
-        // { "5", "0909090909", "Nguyễn Văn E", "300" }
-        // };
-        // String[][] tableData_DoanhThu = {
-        // { "1", "HD001", "2024-01-01", "500000" },
-        // { "2", "HD002", "2024-01-02", "750000" },
-        // { "3", "HD003", "2024-01-03", "1000000" },
-        // { "4", "HD004", "2024-01-04", "1250000" },
-        // { "5", "HD005", "2024-01-05", "1500000" }
-        // };
-        JTable table_KhachHang = tool.createTable(tableData_KhachHang, columnNames_KhachHang);
-        JTable table_SanPham = tool.createTable(tableData_SanPham, columnNames_SanPham);
-        JTable table_DoanhThu = tool.createTable(tableData_DoanhThu, columnNames_DoanhThu);
+
+        table_KhachHang = tool.createTable(tableData_KhachHang, columnNames_KhachHang);
+        table_SanPham = tool.createTable(tableData_SanPham, columnNames_SanPham);
+        table_DoanhThu = tool.createTable(tableData_DoanhThu, columnNames_DoanhThu);
+        // Set model for table
+        model_KhachHang = (DefaultTableModel) table_KhachHang.getModel();
+        model_SanPham = (DefaultTableModel) table_SanPham.getModel();
+        model_DoanhThu = (DefaultTableModel) table_DoanhThu.getModel();
+        // Tạo màu cho tiêu đề bảng
         table_KhachHang.getTableHeader().setBackground(MENU_BACKGROUND);
         table_SanPham.getTableHeader().setBackground(MENU_BACKGROUND);
         table_DoanhThu.getTableHeader().setBackground(MENU_BACKGROUND);
         table_KhachHang.getTableHeader().setForeground(Color.WHITE);
         table_SanPham.getTableHeader().setForeground(Color.WHITE);
         table_DoanhThu.getTableHeader().setForeground(Color.WHITE);
+        table_KhachHang.setDefaultEditor(Object.class, null);
+        table_DoanhThu.setDefaultEditor(Object.class, null);
+        table_SanPham.setDefaultEditor(Object.class, null);
         // Add table to scroll pane
         JScrollPane scrollPane_KhachHang = new JScrollPane(table_KhachHang);
         JScrollPane scrollPane_SanPham = new JScrollPane(table_SanPham);
@@ -343,21 +341,105 @@ public class ThongKeGUI {
         buttonLamMoi.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Refresh lại bảng
-
+                refreshTable();
             }
         });
         buttonLoc.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Lọc từ các dữ kiện đã nhập trong panel_Finding_locTheoNgay,
-                // panel_Finding_timKiem
-                // và hiển thị các dữ kiện đã lọc trong panel_Table
-                // Sử dụng câu lệnh SQL để lọc và hiển thị
-                // Sử dụng phương thức setModel của JTable để hiển thị dữ liệu
+                refreshTable();
+                String startDate = textFieldTu.getText().toLowerCase();
+                String endDate = textFieldDen.getText().toLowerCase();
+                // Lọc trong bảng Doanh Thu
+                for (int i = 0; i < model_DoanhThu.getRowCount(); i++) {
+                    String date = model_DoanhThu.getValueAt(i, 2).toString().toLowerCase();
+                    if (date.compareTo(startDate) < 0 || date.compareTo(endDate) > 0) {
+                        model_DoanhThu.removeRow(i);
+                        i--;
+                    }
+                }
 
             }
         });
+        buttonTimKiem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                refreshTable();
+                String searchText = textFieldTimKiem.getText().toLowerCase();
+                // Tìm kiếm trong bảng Doanh Thu
+                for (int i = 0; i < model_DoanhThu.getRowCount(); i++) {
+                    String maHD = model_DoanhThu.getValueAt(i, 1).toString().toLowerCase();
+                    if (!maHD.startsWith(searchText)) {
+                        model_DoanhThu.removeRow(i);
+                        i--;
+                    }
+                }
+                // Tìm kiếm trong bảng Khách Hàng
+                for (int i = 0; i < model_KhachHang.getRowCount(); i++) {
+                    String hoTen = model_KhachHang.getValueAt(i, 1).toString().toLowerCase();
+                    String sdt = model_KhachHang.getValueAt(i, 2).toString().toLowerCase();
+                    if (!hoTen.startsWith(searchText) && !sdt.startsWith(searchText)) {
+                        model_KhachHang.removeRow(i);
+                        i--;
+                    }
+                }
+                // Tìm kiếm trong bảng Sản Phẩm
+                for (int i = 0; i < model_SanPham.getRowCount(); i++) {
+                    String maSach = model_SanPham.getValueAt(i, 1).toString().toLowerCase();
+                    String tenSach = model_SanPham.getValueAt(i, 2).toString().toLowerCase();
+                    if (!maSach.startsWith(searchText) && !tenSach.startsWith(searchText)) {
+                        model_SanPham.removeRow(i);
+                        i--;
+                    }
+                }
+            }
+        });
+    }
+
+    // Refresh lại 1 phát 3 bảng
+    public void refreshTable() {
+        model_DoanhThu.setRowCount(0);
+        model_KhachHang.setRowCount(0);
+        model_SanPham.setRowCount(0);
+        try {
+            KhachHangBUS khachHangBUS = new KhachHangBUS();
+            List<KhachHangDTO> khachHangList = khachHangBUS.getAllKhachHang();
+            SachBUS sachBUS = new SachBUS();
+            List<SachDTO> sachList = sachBUS.getAllSach();
+            HoaDonBUS hoaDonBUS = new HoaDonBUS();
+            List<HoaDonDTO> hoaDonList = hoaDonBUS.getAllHoaDon();
+
+            for (int i = 0; i < khachHangList.size(); i++) {
+                KhachHangDTO khachHang = khachHangList.get(i);
+                model_KhachHang.addRow(new Object[] {
+                        i + 1,
+                        khachHang.getSdt(),
+                        khachHang.getHoTen(),
+                        khachHang.getDiem()
+                });
+            }
+            for (int i = 0; i < sachList.size(); i++) {
+                SachDTO sach = sachList.get(i);
+                model_SanPham.addRow(new Object[] {
+                        i + 1,
+                        sach.getMaSach(),
+                        sach.getTenSach(),
+                        sach.getSoLuong(),
+                        sach.getDonGia()
+                });
+            }
+            for (int i = 0; i < hoaDonList.size(); i++) {
+                HoaDonDTO hoaDon = hoaDonList.get(i);
+                model_DoanhThu.addRow(new Object[] {
+                        i + 1,
+                        hoaDon.getMaHD(),
+                        hoaDon.getNgayBan().toString(),
+                        hoaDon.getTongTien()
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public JPanel getPanel() {

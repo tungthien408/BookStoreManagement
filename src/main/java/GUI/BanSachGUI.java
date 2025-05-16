@@ -52,10 +52,10 @@ public class BanSachGUI {
     private JPanel panel, paymentPanel;
     private JTextField[] txt_array_top = new JTextField[6];
     private JTextField[] txt_array_down = new JTextField[2];
-    private JTextField[] txt_array_search = new JTextField[1];
+    // private JTextField[] txt_array_search = new JTextField[1];
     private JTextField txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_date, txt_total;
     private JTextField txt_bookId, txt_quantity;
-    private JTextField txt_search;
+    // private JTextField txt_search;
     private JButton[] buttons = new JButton[3];
     private JButton[] searchbutton = new JButton[1];
     private JTable table_down, table_top;
@@ -63,7 +63,10 @@ public class BanSachGUI {
     private JPanel imagePanel; // <<< ADD THIS
     private int selectedRow = -1;
     private int lastSelectedRow = -1;
-    private int count = 0;
+    private int count = 0;  
+    private JTextField[] txt_array_search = new JTextField[1];
+    private JTextField txt_search;
+    private JComboBox<String> comboBox;
 
     private List<SachDTO> sachList;
     private List<HoaDonDTO> hoaDonList;
@@ -80,10 +83,12 @@ public class BanSachGUI {
         initializeMainPanel();
         setupPanelLayout();
         initializeHoaDon();
+        timkiem();
     }
 
     private void initializeTextFields() {
         txt_search = new JTextField();
+        txt_array_search = new JTextField[]{txt_search};
         txt_array_top = new JTextField[]{txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_date, txt_total};
         txt_array_down = new JTextField[]{txt_bookId, txt_quantity};
         txt_array_search = new JTextField[]{txt_search};
@@ -145,11 +150,48 @@ public class BanSachGUI {
 
     private JPanel createSearchPanel() {
         String[] searchOptions = {"Mã sách", "Tên sách"};
-        JComboBox<String> comboBox = new JComboBox<>(searchOptions);
+        comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
-        searchPanel.add(tool.createSearchTextFieldTest(comboBox,searchbutton , txt_array_search));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
         return searchPanel;
+    }
+
+    private void timkiem() {
+        comboBox.addActionListener(e -> {
+            String selectedOption = (String) comboBox.getSelectedItem();
+            filterTable(txt_array_search[0].getText(), selectedOption);
+        });
+
+    }
+
+        private void filterTable(String query, String searchType) {
+            DefaultTableModel model = (DefaultTableModel) table_top.getModel();
+            model.setRowCount(0); // Xóa dữ liệu cũ
+        try {
+            for (SachDTO sach : sachList) {
+                boolean match = false;
+                switch (searchType) {
+                    case "Mã sách":
+                        match = sach.getMaSach().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Tên sách":
+                        match = sach.getTenSach().toLowerCase().contains(query.toLowerCase());
+                        break;
+                }
+                if (match) {
+                    model.addRow(new Object[]{
+                        sach.getMaSach(),
+                        sach.getTenSach(),
+                        sach.getSoLuong(),
+                        sach.getDonGia()+10000
+                    });
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage());
+        }
     }
 
     private JPanel createTable_top() {
@@ -197,41 +239,42 @@ public class BanSachGUI {
                     SachDTO sach = sachBUS.getSachByMaSach(bookId);
 
                     if (sach != null) {
-                        // --- Load, Resize, and Update Image using BufferedImage ---
-                        ImageIcon finalIcon = null;
-                        BufferedImage originalImage = null;
-                        try {
-                            String imgName = sach.getImg();
-                            if (imgName != null && !imgName.trim().isEmpty()) {
-                                String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/" + imgName;
-                                File imageFile = new File(absoluteImagePath);
-                                if (imageFile.exists() && imageFile.isFile()) {
-                                    originalImage = ImageIO.read(imageFile);
-                                    if (originalImage != null) {
-                                        System.out.println("Successfully read image file: " + absoluteImagePath);
-                                        int targetWidth = imagePanel.getPreferredSize().width;
-                                        int targetHeight = imagePanel.getPreferredSize().height;
-                                        if (targetWidth <= 0) targetWidth = 200;
-                                        if (targetHeight <= 0) targetHeight = 250;
-                                        Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
-                                        finalIcon = new ImageIcon(scaledImage);
-                                        System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
-                                    } else {
-                                        System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
-                                    }
-                                } else {
-                                    System.err.println("Image file not found or is not a file: " + absoluteImagePath);
-                                }
-                            } else {
-                                System.err.println("Image name is null or empty for book: " + bookId);
-                            }
-                        } catch (IOException ioEx) {
-                            System.err.println("IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
-                            ioEx.printStackTrace();
-                        } catch (Exception ex) {
-                            System.err.println("General error processing image " + sach.getImg() + ": " + ex.getMessage());
-                            ex.printStackTrace();
-                        }
+// --- Load, Resize, and Update Image using BufferedImage ---
+ImageIcon finalIcon = null;
+BufferedImage originalImage = null;
+try {
+    String imgName = sach.getImg();
+    if (imgName != null && !imgName.trim().isEmpty()) {
+        // Sử dụng đường dẫn tuyệt đối chính xác
+        String absoluteImagePath = "D:\\BookStoreManagement\\images\\Book\\" + imgName;
+        File imageFile = new File(absoluteImagePath);
+        if (imageFile.exists() && imageFile.isFile()) {
+            originalImage = ImageIO.read(imageFile);
+            if (originalImage != null) {
+                System.out.println("Successfully read image file: " + absoluteImagePath);
+                int targetWidth = imagePanel.getPreferredSize().width;
+                int targetHeight = imagePanel.getPreferredSize().height;
+                if (targetWidth <= 0) targetWidth = 200;
+                if (targetHeight <= 0) targetHeight = 250;
+                Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                finalIcon = new ImageIcon(scaledImage);
+                System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
+            } else {
+                System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
+            }
+        } else {
+            System.err.println("Image file not found or is not a file: " + absoluteImagePath);
+        }
+    } else {
+        System.err.println("Image name is null or empty for book: " + bookId);
+    }
+} catch (IOException ioEx) {
+    System.err.println("IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
+    ioEx.printStackTrace();
+} catch (Exception ex) {
+    System.err.println("General error processing image " + sach.getImg() + ": " + ex.getMessage());
+    ex.printStackTrace();
+}
 
                         // --- Load and Scale Default Image if necessary ---
                         if (finalIcon == null) {
@@ -239,7 +282,7 @@ public class BanSachGUI {
                             try {
                                 BufferedImage defaultOriginal = null;
                                 // Assuming default.jpg is a RESOURCE
-                                URL defaultUrl = getClass().getResource("/images/Book/default.jpg");
+                                URL defaultUrl = getClass().getResource("D:BookStoreManagement/images/Book/default.jpg");
                                 if (defaultUrl != null) {
                                     defaultOriginal = ImageIO.read(defaultUrl);
                                 } else {

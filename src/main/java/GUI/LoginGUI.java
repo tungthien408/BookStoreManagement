@@ -153,12 +153,13 @@ public class LoginGUI {
 
                         TaiKhoanNVBUS taiKhoanNVBUS = new TaiKhoanNVBUS();
                         if (taiKhoanNVBUS.checkLogin(maNV, matKhau, 0)) {
-                                JOptionPane.showMessageDialog(null, "Đăng nhập thành công", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(null, "Đăng nhập thành công", "Thông báo",
+                                                JOptionPane.INFORMATION_MESSAGE);
                                 frame.dispose();
-                                new MenuGUI(taiKhoanNVBUS.getTaiKhoanByMaNV(maNV));
-                        }
-                        else {
-                                JOptionPane.showMessageDialog(null, "Tên đăng nhập hoặc mật khẩu không tồn tại", "Thông báo", JOptionPane.ERROR_MESSAGE);
+                                new MenuGUI(taiKhoanNVBUS.getTaiKhoanById(maNV));
+                        } else {
+                                JOptionPane.showMessageDialog(null, "Tên đăng nhập hoặc mật khẩu không tồn tại",
+                                                "Thông báo", JOptionPane.ERROR_MESSAGE);
                         }
 
                 });

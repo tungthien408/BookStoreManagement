@@ -17,6 +17,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -58,6 +59,9 @@ public class SachGUI {
     private int count = 0;
     private JLabel imageLabel; // For displaying the book image
     private JPanel imagePanel; // Panel to hold the image
+    private JTextField[] txt_array_search = new JTextField[1];
+    private JTextField txt_search;
+    private JComboBox<String> comboBox;
 
     public String getID() {
         String str = String.valueOf(count);
@@ -68,6 +72,8 @@ public class SachGUI {
     }
 
     public SachGUI() {
+        txt_search = new JTextField();
+        txt_array_search = new JTextField[]{txt_search};
         panel = tool.createPanel(WIDTH - SIDE_MENU_WIDTH, HEIGHT, new BorderLayout());
         panel.setBackground(new Color(202, 220, 252));
         initializeTextFields();
@@ -91,6 +97,7 @@ public class SachGUI {
         lowerPanel.add(imagePanel, BorderLayout.WEST); // Add the image panel to the right
 
         // panel.add(lowerPanel, BorderLayout.CENTER);
+        timkiem();
     }
 
     private void initializeTextFields() {
@@ -283,11 +290,53 @@ public class SachGUI {
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = {"Mã sách", "Tên sách", "Mã tác giả"};
-        JPanel panelSearch = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panelSearch.add(Box.createHorizontalStrut(25));
-        panelSearch.add(tool.createSearchTextField(0, 0, searchOptions));
-        return panelSearch;
+        String[] searchOptions = {"Mã sách", "Tên sách", "Thể loại"};
+        comboBox = new JComboBox<>(searchOptions);
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(Box.createHorizontalStrut(33));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
+        return searchPanel;
+    }
+    private void timkiem() {
+        comboBox.addActionListener(e -> {
+            String selectedOption = (String) comboBox.getSelectedItem();
+            filterTable(txt_array_search[0].getText(), selectedOption);
+        });
+
+    }
+
+        private void filterTable(String query, String searchType) {
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+            model.setRowCount(0); // Xóa dữ liệu cũ
+        try {
+            for (SachDTO sach : sachList) {
+                boolean match = false;
+                switch (searchType) {
+                    case "Mã sách":
+                        match = sach.getMaSach().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Tên sách":
+                        match = sach.getTenSach().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Thể loại":
+                        match = sach.getTheLoai().toLowerCase().contains(query.toLowerCase());
+                        break;
+                }
+                if (match) {
+                    model.addRow(new Object[]{
+                        sach.getMaSach(),
+                        sach.getTenSach(),
+                        sach.getTheLoai(),
+                        sach.getSoLuong(),
+                        sach.getDonGia(),
+                        sach.getMaTG()
+                    });
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage());
+        }
     }
 
     private void refreshTable() {
