@@ -5,23 +5,23 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Image; // Add this
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage; // Add this
-import java.io.File; // Add this
-import java.io.IOException; // Add this
-import java.net.URL; // Add this if loading default from resources
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.imageio.ImageIO; // Add this
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -52,10 +52,13 @@ public class NhapSachGUI {
     private JTextField[] txt_array_down = new JTextField[2];
     private JTextField txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total;
     private JTextField txt_name, txt_quantity;
+    private JTextField txt_search; // Added for search
+    private JTextField[] txt_array_search; // Added for search
     private JButton[] buttons = new JButton[3];
     private JTable table_down, table_top;
     private JLabel imageLabel;
     private JPanel imagePanel;
+    private JComboBox<String> comboBox; // Added for search
     String[] txt_label = { "Mã Sách", "Số lượng" };
 
     private int selectedRow = -1;
@@ -81,11 +84,21 @@ public class NhapSachGUI {
         initializeMainPanel();
         setupPanelLayout();
         initializePhieuNhap();
+        timkiem(); // Initialize search functionality
     }
 
     private void initializeTextFields() {
+        txt_importId = new JTextField();
+        txt_employeeId = new JTextField();
+        txt_nxb = new JTextField();
+        txt_date = new JTextField();
+        txt_total = new JTextField();
+        txt_name = new JTextField();
+        txt_quantity = new JTextField();
+        txt_search = new JTextField(); // Initialize search text field
         txt_array_top = new JTextField[] { txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total };
         txt_array_down = new JTextField[] { txt_name, txt_quantity };
+        txt_array_search = new JTextField[] { txt_search }; // Initialize search array
     }
 
     private void initializeMainPanel() {
@@ -100,29 +113,20 @@ public class NhapSachGUI {
         String[] txt_label_top = { "Mã phiếu nhập", "Nhân viên", "NXB", "Ngày nhập", "Tổng tiền" };
         panel.add(createDetailPanel_top(400, 30, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
 
-        // --- Setup for the lower part (details + image) ---
-        JPanel lowerPanel = new JPanel(new BorderLayout(10, 0)); // Use BorderLayout for image placement
-
-        // Create the detail panel for book ID and quantity
+        JPanel lowerPanel = new JPanel(new BorderLayout(10, 0));
         JPanel detailPanelDown = createDetailPanel_down(500, 10, txt_array_down, txt_label);
         lowerPanel.add(detailPanelDown, BorderLayout.CENTER);
 
-        // Create and add the image panel
-        imagePanel = new JPanel(new BorderLayout()); // Panel to hold the image label
-        imageLabel = new JLabel(); // Initialize the image label
-        imageLabel.setHorizontalAlignment(JLabel.CENTER); // Center the image if needed
+        imagePanel = new JPanel(new BorderLayout());
+        imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(JLabel.CENTER);
         imageLabel.setVerticalAlignment(JLabel.CENTER);
-        // Set a preferred size for the image area if desired
-        imagePanel.setPreferredSize(new Dimension(200, 260)); // Adjust size as needed
-        imagePanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 0, 0)); // Optional border
+        imagePanel.setPreferredSize(new Dimension(200, 260));
+        imagePanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 0, 0));
         imagePanel.add(imageLabel, BorderLayout.CENTER);
-        lowerPanel.add(imagePanel, BorderLayout.WEST); // Add image panel to the left
+        lowerPanel.add(imagePanel, BorderLayout.WEST);
 
-        // Add the lower panel containing details and image to the main paymentPanel or
-        // panel
-        paymentPanel.add(lowerPanel, BorderLayout.CENTER); // Or wherever it belongs
-
-        // ... rest of setupPanelLayout ...
+        paymentPanel.add(lowerPanel, BorderLayout.CENTER);
         paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
         paymentPanel.add(createTable_down(), BorderLayout.EAST);
 
@@ -132,8 +136,8 @@ public class NhapSachGUI {
     private void initializePhieuNhap() {
         phieuNhapList = phieuNhapBUS.getAllPhieuNhap();
         if (!phieuNhapList.isEmpty()) {
-            String maTG = phieuNhapList.get(phieuNhapList.size() - 1).getMaPN();
-            String numericPart = maTG.substring(2);
+            String maPN = phieuNhapList.get(phieuNhapList.size() - 1).getMaPN();
+            String numericPart = maPN.substring(2);
             count = Integer.parseInt(numericPart) + 1;
         }
     }
@@ -144,11 +148,48 @@ public class NhapSachGUI {
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = { "Mã nhân viên", "Mã khách hàng" };
+        String[] searchOptions = { "Mã sách", "Tên sách" }; // Search options for books
+        comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
-        searchPanel.add(tool.createSearchTextField(300, 30, searchOptions));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
         return searchPanel;
+    }
+
+    private void timkiem() {
+        comboBox.addActionListener(e -> {
+            String selectedOption = (String) comboBox.getSelectedItem();
+            filterTable(txt_array_search[0].getText(), selectedOption);
+        });
+    }
+
+    private void filterTable(String query, String searchType) {
+        DefaultTableModel model = (DefaultTableModel) table_top.getModel();
+        model.setRowCount(0); // Clear existing data
+        try {
+            for (SachDTO sach : sachList) {
+                boolean match = false;
+                switch (searchType) {
+                    case "Mã sách":
+                        match = sach.getMaSach().toLowerCase().contains(query.toLowerCase());
+                        break;
+                    case "Tên sách":
+                        match = sach.getTenSach().toLowerCase().contains(query.toLowerCase());
+                        break;
+                }
+                if (match) {
+                    model.addRow(new Object[]{
+                        sach.getMaSach(),
+                        sach.getTenSach(),
+                        sach.getSoLuong(),
+                        sach.getDonGia()
+                    });
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage());
+        }
     }
 
     private JPanel createTable_top() {
@@ -185,38 +226,94 @@ public class NhapSachGUI {
                 txt_array_down[0].setText((String) table_top.getValueAt(selectedRow, 0));
                 txt_array_down[0].setEditable(false);
                 txt_array_down[1].setEditable(true);
-            }
-        });
+                txt_array_down[1].setText(""); // Clear quantity field
 
-        table_top.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                int selectedRowTop = table_top.getSelectedRow();
-                if (selectedRowTop >= 0) {
-                    // Get book details from the selected row
-                    String bookId = table_top.getValueAt(selectedRowTop, 0).toString(); // Adjust column index if needed
-                    SachDTO sach = sachBUS.getSachByMaSach(bookId);
-
-                    if (sach != null) {
-                        // --- Update TextFields (if needed for the top table selection) ---
-                        // Example: txt_array_down[0].setText(sach.getMaSach());
-
-                        // --- Update the existing imageLabel ---
-                        // imageLabel.setIcon(tool.showImage(sach, imagePanel)); // Set the icon (will
-                        // be null if both attempts failed)
-
-                        // --- Refresh the panel containing the imageLabel ---
-                        imagePanel.revalidate();
-                        imagePanel.repaint();
-
-                    } else {
-                        System.err.println("SachDTO not found for ID: " + bookId);
-                        imageLabel.setIcon(null); // Clear image if book not found
-                        imagePanel.revalidate();
-                        imagePanel.repaint();
+                // Load and display image
+                String bookId = table_top.getValueAt(selectedRow, 0).toString();
+                SachDTO sach = sachBUS.getSachByMaSach(bookId);
+                if (sach != null) {
+                    ImageIcon finalIcon = null;
+                    BufferedImage originalImage = null;
+                    try {
+                        String imgName = sach.getImg();
+                        System.out.println("Image name from database: " + imgName);
+                        if (imgName != null && !imgName.trim().isEmpty()) {
+                            String absoluteImagePath = "D:\\BookStoreManagement\\images\\Book\\" + imgName;
+                            System.out.println("Constructed image path: " + absoluteImagePath);
+                            java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
+                            File imageFile = imagePath.toFile();
+                            if (imageFile.exists() && imageFile.isFile()) {
+                                originalImage = ImageIO.read(imageFile);
+                                if (originalImage != null) {
+                                    System.out.println("Successfully read image file: " + absoluteImagePath);
+                                    int targetWidth = imagePanel.getPreferredSize().width;
+                                    int targetHeight = imagePanel.getPreferredSize().height;
+                                    if (targetWidth <= 0) targetWidth = 200;
+                                    if (targetHeight <= 0) targetHeight = 250;
+                                    Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                                    finalIcon = new ImageIcon(scaledImage);
+                                    System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
+                                } else {
+                                    System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
+                                }
+                            } else {
+                                System.err.println("Image file not found or is not a file: " + absoluteImagePath);
+                            }
+                        } else {
+                            System.err.println("Image name is null or empty for book: " + bookId);
+                        }
+                    } catch (IOException ioEx) {
+                        System.err.println("IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
+                        ioEx.printStackTrace();
+                    } catch (Exception ex) {
+                        System.err.println("General error processing image " + sach.getImg() + ": " + ex.getMessage());
+                        ex.printStackTrace();
                     }
+
+                    if (finalIcon == null) {
+                        System.err.println("Attempting to load and scale default image...");
+                        try {
+                            BufferedImage defaultOriginal = null;
+                            String defaultImagePath = "D:\\BookStoreManagement\\images\\Book\\default.jpg";
+                            File defaultImageFile = new File(defaultImagePath);
+                            if (defaultImageFile.exists()) {
+                                defaultOriginal = ImageIO.read(defaultImageFile);
+                            } else {
+                                System.err.println("Default image file not found at: " + defaultImagePath);
+                            }
+                            if (defaultOriginal != null) {
+                                int targetWidth = imagePanel.getPreferredSize().width;
+                                int targetHeight = imagePanel.getPreferredSize().height;
+                                if (targetWidth <= 0) targetWidth = 200;
+                                if (targetHeight <= 0) targetHeight = 250;
+                                Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                                finalIcon = new ImageIcon(scaledDefault);
+                                System.out.println("Loaded and scaled default image.");
+                            }
+                        } catch (IOException ioEx) {
+                            System.err.println("IOException reading default image: " + ioEx.getMessage());
+                        } catch (Exception ex) {
+                            System.err.println("General error processing default image: " + ex.getMessage());
+                        }
+                    }
+
+                    imageLabel.setIcon(finalIcon);
+                    imagePanel.revalidate();
+                    imagePanel.repaint();
+                } else {
+                    System.err.println("SachDTO not found for ID: " + bookId);
+                    imageLabel.setIcon(null);
+                    imagePanel.revalidate();
+                    imagePanel.repaint();
                 }
-                // Handle deselection or other logic if needed
+            } else {
+                txt_array_down[0].setText("");
+                txt_array_down[1].setText("");
+                txt_array_down[0].setEditable(true);
+                txt_array_down[1].setEditable(true);
+                imageLabel.setIcon(null);
+                imagePanel.revalidate();
+                imagePanel.repaint();
             }
         });
 
@@ -242,6 +339,9 @@ public class NhapSachGUI {
                         txt.setText("");
                         txt.setEditable(true);
                     }
+                    imageLabel.setIcon(null);
+                    imagePanel.revalidate();
+                    imagePanel.repaint();
                     lastSelectedRow = -1;
                 } else if (selectedRow >= 0) {
                     String bookId = (String) table_down.getValueAt(selectedRow, 0);
@@ -249,45 +349,75 @@ public class NhapSachGUI {
                     txt_array_down[0].setText(bookId);
                     txt_array_down[1].setText(String.valueOf(table_down.getValueAt(selectedRow, 2)));
 
-                    // // Load the image
-                    // try {
-                    // if (sach.getImg() != null) {
-                    // img = new
-                    // ImageIcon(getClass().getResource("/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/"
-                    // + sach.getImg()));
-                    // } else {
-                    // System.err.println("Image not found for book: " + sach.getMaSach());
-                    // img = new
-                    // ImageIcon(getClass().getResource("/BookStoreManagement/images/Book/default.jpg"));
-                    // // Default image
-                    // }
-                    // } catch (Exception ex) {
-                    // System.err.println("Error loading image: " + ex.getMessage());
-                    // img = new
-                    // ImageIcon(getClass().getResource("/BookStoreManagement/images/Book/default.jpg"));
-                    // // Default image
-                    // }
+                    // Load and display image
+                    ImageIcon finalIcon = null;
+                    BufferedImage originalImage = null;
+                    try {
+                        String imgName = sach.getImg();
+                        System.out.println("Image name from database: " + imgName);
+                        if (imgName != null && !imgName.trim().isEmpty()) {
+                            String absoluteImagePath = "D:\\BookStoreManagement\\images\\Book\\" + imgName;
+                            System.out.println("Constructed image path: " + absoluteImagePath);
+                            java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
+                            File imageFile = imagePath.toFile();
+                            if (imageFile.exists() && imageFile.isFile()) {
+                                originalImage = ImageIO.read(imageFile);
+                                if (originalImage != null) {
+                                    System.out.println("Successfully read image file: " + absoluteImagePath);
+                                    int targetWidth = imagePanel.getPreferredSize().width;
+                                    int targetHeight = imagePanel.getPreferredSize().height;
+                                    if (targetWidth <= 0) targetWidth = 200;
+                                    if (targetHeight <= 0) targetHeight = 250;
+                                    Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                                    finalIcon = new ImageIcon(scaledImage);
+                                    System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
+                                } else {
+                                    System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
+                                }
+                            } else {
+                                System.err.println("Image file not found or is not a file: " + absoluteImagePath);
+                            }
+                        } else {
+                            System.err.println("Image name is null or empty for book: " + bookId);
+                        }
+                    } catch (IOException ioEx) {
+                        System.err.println("IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
+                        ioEx.printStackTrace();
+                    } catch (Exception ex) {
+                        System.err.println("General error processing image " + sach.getImg() + ": " + ex.getMessage());
+                        ex.printStackTrace();
+                    }
 
-                    // if (img.getIconWidth() == -1) {
-                    // System.err.println("Failed to load image: " + sach.getImg());
-                    // }
+                    if (finalIcon == null) {
+                        System.err.println("Attempting to load and scale default image...");
+                        try {
+                            BufferedImage defaultOriginal = null;
+                            String defaultImagePath = "D:\\BookStoreManagement\\images\\Book\\default.jpg";
+                            File defaultImageFile = new File(defaultImagePath);
+                            if (defaultImageFile.exists()) {
+                                defaultOriginal = ImageIO.read(defaultImageFile);
+                            } else {
+                                System.err.println("Default image file not found at: " + defaultImagePath);
+                            }
+                            if (defaultOriginal != null) {
+                                int targetWidth = imagePanel.getPreferredSize().width;
+                                int targetHeight = imagePanel.getPreferredSize().height;
+                                if (targetWidth <= 0) targetWidth = 200;
+                                if (targetHeight <= 0) targetHeight = 250;
+                                Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                                finalIcon = new ImageIcon(scaledDefault);
+                                System.out.println("Loaded and scaled default image.");
+                            }
+                        } catch (IOException ioEx) {
+                            System.err.println("IOException reading default image: " + ioEx.getMessage());
+                        } catch (Exception ex) {
+                            System.err.println("General error processing default image: " + ex.getMessage());
+                        }
+                    }
 
-                    // // Update the detail panel with the new image
-                    // JLabel label_img = new JLabel();
-                    // label_img.setIcon(img);
-                    // label_img.setPreferredSize(new Dimension(200, 300)); // Adjust dimensions as
-                    // needed
-
-                    // // Clear the existing image and add the new one
-                    // JPanel panelDetail = (JPanel) paymentPanel.getComponent(0); // Assuming the
-                    // detail panel is the first component
-                    // panelDetail.removeAll();
-                    // panelDetail.add(tool.createDetailPanel(txt_array_down, txt_label, img, 500,
-                    // 300, 2, 5, false));
-                    // panelDetail.revalidate();
-                    // panelDetail.repaint();
-
-                    // paymentPanel.add(panelDetail, BorderLayout.WEST);
+                    imageLabel.setIcon(finalIcon);
+                    imagePanel.revalidate();
+                    imagePanel.repaint();
 
                     for (JTextField txt : txt_array_down) {
                         txt.setEditable(false);
@@ -382,13 +512,12 @@ public class NhapSachGUI {
             DefaultTableModel model = (DefaultTableModel) table_down.getModel();
             for (int i = 0; i < model.getRowCount(); i++) {
                 String maSachCu = model.getValueAt(i, 0).toString().trim();
-
-                if (maSach == maSachCu) {
+                if (maSach.equals(maSachCu)) {
                     int soLuongCu = Integer.parseInt(model.getValueAt(i, 2).toString());
                     soLuong = soLuong + soLuongCu;
                     model.removeRow(i);
+                    break;
                 }
-
             }
             model.addRow(new Object[] { maSach, tenSach, soLuong, donGia });
 
@@ -422,7 +551,7 @@ public class NhapSachGUI {
     private void thanhToan() {
         try {
             String maPN = txt_array_top[0].getText().trim();
-            String maNV = txt_array_top[1].getText().trim();
+            String maNV = nv.getMaNV(); // Use actual employee ID
             String maNXB = txt_array_top[2].getText().trim();
             String ngayNhapStr = txt_array_top[3].getText().trim();
             String tongTienStr = txt_array_top[4].getText().trim();
@@ -495,6 +624,9 @@ public class NhapSachGUI {
             txt_array_top[0].setText(getID());
             txt_array_top[3].setText(LocalDate.now().toString());
             initializePhieuNhap();
+            imageLabel.setIcon(null);
+            imagePanel.revalidate();
+            imagePanel.repaint();
             JOptionPane.showMessageDialog(null, "Thanh toán thành công!");
         } catch (SQLException e) {
             e.printStackTrace();

@@ -45,8 +45,8 @@ public class TaiKhoanNVBUS {
         return true;
     }
 
-    public boolean hasPermission(String username, int maCN, String maHD){
-        return taiKhoanDAO.hasPermission(username, maCN, maHD);
-    }
+    // public boolean hasPermission(String username, int maCN, String maHD){
+    //     return taiKhoanDAO.hasPermission(username, maCN, maHD);
+    // }
 
 }

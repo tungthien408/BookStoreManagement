@@ -7,8 +7,8 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -26,71 +26,62 @@ import BUS.NhanVienBUS;
 import DTO.NhanVienDTO;
 
 public class NhanVienGUI {
-    Tool tool = new Tool();
-    JPanel panel, panelDetail;
-    List<NhanVienDTO> nhanVienList;
-    JTextField[] txt_array = new JTextField[6];
-    int width = 1200;
-    int width_sideMenu = 151;
-    int height = (int) (width * 0.625);
-    JButton btn[] = new JButton[6];
-    JTable table;
-    NhanVienBUS nhanVienBUS = new NhanVienBUS();
+    private Tool tool = new Tool();
+    private JPanel panel, panelDetail;
+    private List<NhanVienDTO> nhanVienList;
+    private JTextField[] txt_array = new JTextField[6];
+    private int width = 1200;
+    private int width_sideMenu = 151;
+    private int height = (int) (width * 0.625);
+    private JButton btn[] = new JButton[6];
+    private JTable table;
+    private NhanVienBUS nhanVienBus = new NhanVienBUS();
     private JTextField[] txt_array_search = new JTextField[1];
     private JTextField txt_search;
     private JComboBox<String> comboBox;
 
     private int selectedRow = -1;
-    private int lastSelectedRow = -1; // Lưu dòng được chọn trước đó
+    private int lastSelectedRow = -1;
     private boolean update = false;
     private boolean add = false;
     private boolean delete = false;
-    int count = 0;
+    private int count = 0;
 
     public String getID() {
         String str = String.valueOf(count);
-        while (str.length() != 3)
+        while (str.length() != 3) {
             str = "0" + str;
-        return "TG" + str;
+        }
+        return "NV" + str; // Fixed prefix to "NV" for consistency with MaNV
     }
 
     public NhanVienGUI() {
         txt_search = new JTextField();
-<<<<<<< HEAD
         txt_array_search = new JTextField[]{txt_search};
-=======
-        txt_array_search = new JTextField[] { txt_search };
->>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
-        // birth_choose = new JCalendar();
+        for (int i = 0; i < txt_array.length; i++) {
+            txt_array[i] = new JTextField();
+            txt_array[i].setCursor(new Cursor(Cursor.TEXT_CURSOR));
+        }
+
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel.setBackground(new Color(202, 220, 252));
 
+        panel.add(createSearchPanel(), BorderLayout.NORTH);
         panel.add(createNhanVienTable(), BorderLayout.WEST);
-
         panel.add(createPanelButton(), BorderLayout.CENTER);
 
-        // Chi tiết sản phẩm
-        String txt_label[] = { "Mã NV", "Tên", "Địa chỉ", "Số điện thoại", "Chức vụ", "Ngày sinh" };
+        String[] txt_label = { "Mã NV", "Tên", "Địa chỉ", "Số điện thoại", "Chức vụ", "Ngày sinh" };
         panel.add(createPanelDetail(txt_array, txt_label), BorderLayout.SOUTH);
-        for (int i = 0; i < txt_array.length; i++) {
-            txt_array[i].setCursor(new Cursor(Cursor.TEXT_CURSOR));
 
-<<<<<<< HEAD
-=======
-        }
-
->>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
-        panel.add(createSearchPanel(), BorderLayout.NORTH);
         timkiem();
     }
 
     private JPanel createNhanVienTable() {
-        String column[] = { "Mã NV", "Họ Tên", "Chức vụ", "Địa chỉ", "Số điện thoại", "Ngày sinh" };
+        String[] column = { "Mã NV", "Họ Tên", "Chức vụ", "Địa chỉ", "Số điện thoại", "Ngày sinh" };
         DefaultTableModel model = new DefaultTableModel(column, 0);
 
-        // Lấy dữ liệu từ cơ sở dữ liệu
         try {
-            nhanVienList = nhanVienBUS.getAllNhanVien();
+            nhanVienList = nhanVienBus.getAllNhanVien();
             for (NhanVienDTO nv : nhanVienList) {
                 model.addRow(new Object[] {
                         nv.getMaNV(),
@@ -100,23 +91,24 @@ public class NhanVienGUI {
                         nv.getSdt(),
                         nv.getNgaySinh()
                 });
+            }
+            if (!nhanVienList.isEmpty()) {
                 String maNV = nhanVienList.get(nhanVienList.size() - 1).getMaNV();
                 String numericPart = maNV.substring(2);
                 count = Integer.parseInt(numericPart) + 1;
+            } else {
+                count = 1;
             }
-
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu từ cơ sở dữ liệu: " + e.getMessage());
         }
 
-        // Bảng
         table = tool.createTable(model, column);
-        table.setDefaultEditor(Object.class, null); // Không cho chỉnh sửa trực tiếp trên bảng
+        table.setDefaultEditor(Object.class, null);
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(850, 440));
 
-        // Thêm MouseListener cho bảng
         table.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -130,22 +122,18 @@ public class NhanVienGUI {
 
                 selectedRow = table.getSelectedRow();
 
-                // Nếu click vào cùng một dòng đã chọn trước đó
                 if (selectedRow == lastSelectedRow && selectedRow >= 0) {
-                    // Hủy chọn dòng
                     table.clearSelection();
                     update = false;
                     delete = false;
 
-                    // Reset dữ liệu trong các ô nhập
                     for (JTextField txt : txt_array) {
                         txt.setText("");
                         txt.setEditable(true);
                     }
 
-                    lastSelectedRow = -1; // Reset chỉ số dòng
+                    lastSelectedRow = -1;
                 } else if (selectedRow >= 0) {
-                    // Click vào dòng mới
                     for (int i = 0; i < txt_array.length; i++) {
                         if (table.getValueAt(selectedRow, i) instanceof java.util.Date) {
                             java.util.Date date = (java.util.Date) table.getValueAt(selectedRow, i);
@@ -153,43 +141,38 @@ public class NhanVienGUI {
                             txt_array[i].setText(sdf.format(date));
                             continue;
                         }
-                        txt_array[i].setText((String) table.getValueAt(selectedRow, i));
+                        txt_array[i].setText(String.valueOf(table.getValueAt(selectedRow, i)));
                         txt_array[i].setEditable(false);
                     }
-                    if (update == true) {
+                    if (update) {
                         tool.Editable(txt_array, true);
                         txt_array[0].setEditable(false);
                     }
-                    if (delete == true) {
+                    if (delete) {
                         tool.Editable(txt_array, false);
                     }
 
                     lastSelectedRow = selectedRow;
                 }
-
             }
         });
 
-        // Tạo khoảng cách xung quanh bảng
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 30, 10)); // Top, Left, Bottom, Right
-
-        // Tạo panel FlowLayout để có thể tùy chỉnh kích cỡ bảng
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 30, 10));
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelTable.add(scrollPane);
         return panelTable;
     }
 
     private JPanel createPanelButton() {
-        // Panel chứa button
         String[] btn_txt = { "Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Hủy" };
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(btn, btn_txt, new Color(0, 36, 107), Color.WHITE, "y"));
-        // panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
-        // Gắn sự kiện cho các nút
         btn[0].addActionListener(e -> addNhanVien());
         btn[1].addActionListener(e -> updateNhanVien());
         btn[2].addActionListener(e -> deleteNhanVien());
+        btn[3].addActionListener(e -> importExcel());
+        btn[4].addActionListener(e -> exportExcel());
         btn[5].addActionListener(e -> cancel());
 
         return panelBtn;
@@ -197,47 +180,37 @@ public class NhanVienGUI {
 
     private JPanel createPanelDetail(JTextField[] txt_array, String[] txt_label) {
         panelDetail = tool.createDetailPanel(txt_array, txt_label, null, 850, 200, 0.5, 3, false);
-
-        // JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        // wrappedPanel.add(panelDetail);
-        // wrappedPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 70, 0));
-        // return wrappedPanel;
         return panelDetail;
     }
 
     private JPanel createSearchPanel() {
-<<<<<<< HEAD
-        String[] searchOptions = {"Mã nhân viên", "Tên nhân viên", "SDT"};
-=======
         String[] searchOptions = { "Mã nhân viên", "Tên nhân viên", "SDT" };
->>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
         comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
         searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
         return searchPanel;
     }
-<<<<<<< HEAD
-=======
 
->>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
     private void timkiem() {
         comboBox.addActionListener(e -> {
             String selectedOption = (String) comboBox.getSelectedItem();
             filterTable(txt_array_search[0].getText(), selectedOption);
         });
 
+        // Add real-time search
+        txt_array_search[0].addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                String selectedOption = (String) comboBox.getSelectedItem();
+                filterTable(txt_array_search[0].getText(), selectedOption);
+            }
+        });
     }
 
-<<<<<<< HEAD
-        private void filterTable(String query, String searchType) {
-            DefaultTableModel model = (DefaultTableModel) table.getModel();
-            model.setRowCount(0); // Xóa dữ liệu cũ
-=======
     private void filterTable(String query, String searchType) {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.setRowCount(0); // Xóa dữ liệu cũ
->>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
+        model.setRowCount(0);
         try {
             for (NhanVienDTO nv : nhanVienList) {
                 boolean match = false;
@@ -253,15 +226,6 @@ public class NhanVienGUI {
                         break;
                 }
                 if (match) {
-<<<<<<< HEAD
-                    model.addRow(new Object[]{
-                        nv.getMaNV(),
-                        nv.getHoTen(),
-                        nv.getChucVu(),
-                        nv.getDiaChi(),
-                        nv.getSdt(),
-                        nv.getNgaySinh()
-=======
                     model.addRow(new Object[] {
                             nv.getMaNV(),
                             nv.getHoTen(),
@@ -269,7 +233,6 @@ public class NhanVienGUI {
                             nv.getDiaChi(),
                             nv.getSdt(),
                             nv.getNgaySinh()
->>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
                     });
                 }
             }
@@ -279,13 +242,11 @@ public class NhanVienGUI {
         }
     }
 
-    // Phương thức làm mới bảng
     private void refreshTable() {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.setRowCount(0); // Xóa dữ liệu cũ
-        // Lấy dữ liệu từ cơ sở dữ liệu
+        model.setRowCount(0);
         try {
-            nhanVienList = nhanVienBUS.getAllNhanVien();
+            nhanVienList = nhanVienBus.getAllNhanVien();
             for (NhanVienDTO nv : nhanVienList) {
                 model.addRow(new Object[] {
                         nv.getMaNV(),
@@ -295,9 +256,13 @@ public class NhanVienGUI {
                         nv.getSdt(),
                         nv.getNgaySinh()
                 });
+            }
+            if (!nhanVienList.isEmpty()) {
                 String maNV = nhanVienList.get(nhanVienList.size() - 1).getMaNV();
                 String numericPart = maNV.substring(2);
                 count = Integer.parseInt(numericPart) + 1;
+            } else {
+                count = 1;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -305,12 +270,11 @@ public class NhanVienGUI {
         }
     }
 
-    // Phương thức thêm nhân viên
     private void addNhanVien() {
         table.clearSelection();
         update = false;
         delete = false;
-        if (add == false) {
+        if (!add) {
             add = true;
             tool.clearFields(txt_array);
             tool.clearButtons(btn);
@@ -331,22 +295,32 @@ public class NhanVienGUI {
                 NhanVienDTO nv = new NhanVienDTO();
                 nv.setMaNV(txt_array[0].getText().trim());
                 nv.setHoTen(txt_array[1].getText().trim());
-                nv.setChucVu(txt_array[2].getText().trim());
-                nv.setDiaChi(txt_array[3].getText().trim());
-                nv.setSdt(txt_array[4].getText().trim());
-                String startDate = txt_array[5].getText();
-                SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
-                java.util.Date date = sdf1.parse(startDate);
+                nv.setDiaChi(txt_array[2].getText().trim());
+                nv.setSdt(txt_array[3].getText().trim());
+                nv.setChucVu(txt_array[4].getText().trim());
+
+                String startDate = txt_array[5].getText().trim();
+                if (startDate.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Ngày sinh không được để trống!");
+                    return;
+                }
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                sdf.setLenient(false);
+                java.util.Date date;
+                try {
+                    date = sdf.parse(startDate);
+                } catch (ParseException pe) {
+                    JOptionPane.showMessageDialog(null, "Ngày sinh phải có định dạng dd-MM-yyyy (ví dụ: 25-12-2000)");
+                    return;
+                }
                 java.sql.Date sqlStartDate = new java.sql.Date(date.getTime());
                 nv.setNgaySinh(sqlStartDate);
-
-                // bất hợp lí ở code 247
 
                 if (!checkValidate(nv)) {
                     return;
                 }
 
-                if (nhanVienBUS.addNhanVien(nv)) {
+                if (nhanVienBus.addNhanVien(nv)) {
                     JOptionPane.showMessageDialog(null, "Thêm nhân viên thành công!");
                     cancel();
                 } else {
@@ -359,16 +333,15 @@ public class NhanVienGUI {
         }
     }
 
-    // Phương thức sửa nhân viên
     private void updateNhanVien() {
-        if (add == true) {
+        if (add) {
             tool.clearFields(txt_array);
         }
         add = false;
         delete = false;
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên để sửa!");
-        } else if (update == false) {
+        } else if (!update) {
             update = true;
             tool.clearButtons(btn);
             tool.Editable(txt_array, true);
@@ -390,12 +363,24 @@ public class NhanVienGUI {
                 NhanVienDTO nv = new NhanVienDTO();
                 nv.setMaNV(txt_array[0].getText().trim());
                 nv.setHoTen(txt_array[1].getText().trim());
-                nv.setChucVu(txt_array[2].getText().trim());
-                nv.setDiaChi(txt_array[3].getText().trim());
-                nv.setSdt(txt_array[4].getText().trim());
-                String startDate = txt_array[5].getText();
-                SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
-                java.util.Date date = sdf1.parse(startDate);
+                nv.setDiaChi(txt_array[2].getText().trim());
+                nv.setSdt(txt_array[3].getText().trim());
+                nv.setChucVu(txt_array[4].getText().trim());
+
+                String startDate = txt_array[5].getText().trim();
+                if (startDate.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Ngày sinh không được để trống!");
+                    return;
+                }
+                SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+                sdf.setLenient(false);
+                java.util.Date date;
+                try {
+                    date = sdf.parse(startDate);
+                } catch (ParseException pe) {
+                    JOptionPane.showMessageDialog(null, "Ngày sinh phải có định dạng dd-MM-yyyy (ví dụ: 25-12-2000)");
+                    return;
+                }
                 java.sql.Date sqlStartDate = new java.sql.Date(date.getTime());
                 nv.setNgaySinh(sqlStartDate);
 
@@ -408,7 +393,7 @@ public class NhanVienGUI {
                     return;
                 }
 
-                if (nhanVienBUS.updateNhanVien(nv)) {
+                if (nhanVienBus.updateNhanVien(nv)) {
                     JOptionPane.showMessageDialog(null, "Sửa nhân viên thành công!");
                     cancel();
                 } else {
@@ -421,43 +406,42 @@ public class NhanVienGUI {
         }
     }
 
-    // Phương thức xóa nhân viên
     private void deleteNhanVien() {
-        if (add == true) {
+        if (add) {
             tool.clearFields(txt_array);
         }
         add = false;
         update = false;
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên để sửa!");
-        }
-        // else if (delete==false){
-        // tool.clearButtons(btn);
-        // tool.Editable(txt_array,false);
-        // btn[2].setBackground(new Color(202, 220, 252));
-        // btn[2].setForeground(Color.BLACK);
-        // btn[5].setBackground(Color.RED);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên để xóa!");
+        } else if (!delete) {
+            tool.clearButtons(btn);
+            tool.Editable(txt_array, false);
+            btn[2].setBackground(new Color(202, 220, 252));
+            btn[2].setForeground(Color.BLACK);
+            btn[5].setBackground(Color.RED);
 
-        // // for (int i = 0, length = btn.length - 1; i < length; i++) {
-        // // if (i != 0) {
-        // // btn[i].setVisible(false);
-        // // }
-        // // }
+            for (int i = 0, length = btn.length - 1; i < length; i++) {
+                if (i != 2) {
+                    btn[i].setVisible(false);
+                }
+            }
 
-        // delete=true;
-        // }
-        else {
+            delete = true;
+        } else {
             try {
-                String maTG = txt_array[0].getText().trim();
-                if (maTG.isEmpty()) {
+                String maNV = txt_array[0].getText().trim();
+                if (maNV.isEmpty()) {
                     JOptionPane.showMessageDialog(null, "Vui lòng chọn nhân viên để xóa!");
                     return;
                 }
                 if (JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa nhân viên này?",
                         "Xóa thông tin nhân viên", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                    if (nhanVienBUS.deleteNhanVien(maTG)) {
+                    if (nhanVienBus.deleteNhanVien(maNV)) {
                         JOptionPane.showMessageDialog(null, "Xóa nhân viên thành công!");
                         cancel();
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Xóa nhân viên thất bại!");
                     }
                 }
             } catch (Exception e) {
@@ -480,7 +464,6 @@ public class NhanVienGUI {
     }
 
     private boolean checkValidate(NhanVienDTO nv) {
-        // Kiểm tra dữ liệu đầu vào
         if (nv.getMaNV().trim().isEmpty() || nv.getHoTen().trim().isEmpty() || nv.getChucVu().trim().isEmpty()
                 || nv.getDiaChi().trim().isEmpty() || nv.getSdt().trim().isEmpty() || nv.getNgaySinh() == null) {
             JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ các trường thông tin");
@@ -508,12 +491,22 @@ public class NhanVienGUI {
             }
         }
 
-        if (!nv.getNgaySinh().toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate()
-                .isAfter(LocalDate.now().minusYears(18))) {
+        java.util.Date today = new java.util.Date();
+        java.util.Date eighteenYearsAgo = new java.util.Date(today.getTime() - (18L * 365 * 24 * 60 * 60 * 1000));
+        if (nv.getNgaySinh().after(eighteenYearsAgo)) {
             JOptionPane.showMessageDialog(null, "Nhân viên phải trên 18 tuổi");
             return false;
         }
+
         return true;
+    }
+
+    private void importExcel() {
+        JOptionPane.showMessageDialog(null, "Chức năng Nhập Excel chưa được triển khai!");
+    }
+
+    private void exportExcel() {
+        JOptionPane.showMessageDialog(null, "Chức năng Xuất Excel chưa được triển khai!");
     }
 
     public JPanel getPanel() {

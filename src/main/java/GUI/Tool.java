@@ -5,23 +5,15 @@
 
 package GUI;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Image;
 import java.awt.Insets;
 import java.awt.LayoutManager;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -38,8 +30,6 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 
 import com.toedter.calendar.JCalendar;
-
-import DTO.SachDTO;
 
 public class Tool {
 	public Tool() {
@@ -448,7 +438,6 @@ public class Tool {
 		return true;
 	}
 
-<<<<<<< HEAD
 	public JPanel createSearchTextFieldTest(JComboBox<String> comboBox,JTextField[] textField) {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         
@@ -465,44 +454,4 @@ public class Tool {
     }
 
 	
-=======
-	public JPanel createSearchTextFieldTest(JComboBox<String> comboBox, JTextField[] textField) {
-		JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-
-		// JTextField textField = new JTextField(20);
-		textField[0].setPreferredSize(new Dimension(200, 30));
-		textField[0].setBackground(new Color(202, 220, 252));
-		comboBox.setBackground(new Color(202, 220, 252));
-		comboBox.setPreferredSize(new Dimension(120, 30));
-		searchPanel.add(textField[0]);
-		searchPanel.add(comboBox);
-
-		return searchPanel;
-	}
-
-	JPanel createDetailContainer(JPanel detailPanel, String[] labels) {
-		// Container chính dùng BorderLayout
-		JPanel container = new JPanel(new BorderLayout());
-		// Tạo hàng label
-		JPanel labelPanel = new JPanel(new GridLayout(1, labels.length, 10, 0));
-		for (String txt : labels) {
-			JLabel lbl = new JLabel(txt, SwingConstants.CENTER);
-			lbl.setFont(lbl.getFont().deriveFont(Font.BOLD));
-			labelPanel.add(lbl);
-		}
-		container.add(labelPanel, BorderLayout.NORTH);
-
-		// Đặt detailPanel xuống giữa
-		container.add(detailPanel, BorderLayout.CENTER);
-
-		// Tạo khoảng cách xung quanh
-		container.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
-		return container;
-	}
-
-	public JPanel createButtonPanel(int i, int height, String[] strings) {
-		// TODO Auto-generated method stub
-		throw new UnsupportedOperationException("Unimplemented method 'createButtonPanel'");
-	}
->>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
 }
