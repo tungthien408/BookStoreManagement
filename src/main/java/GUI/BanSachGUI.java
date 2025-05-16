@@ -522,6 +522,7 @@ public class BanSachGUI {
         g2d.drawString("Ngày ......... Tháng .......... Năm ..........", 490, 270 + rowCount * 25);
         g2d.drawString("KHÁCH HÀNG", 150, 350 + rowCount * 25);
         g2d.drawString("NGƯỜI BÁN HÀNG", 470, 350 + rowCount * 25);
+        g2d.dispose();
         try {
             ImageIO.write(img, "png", new File("HoaDonBan\\Hoa_Don_Ban.png"));
             Desktop.getDesktop().open(new File("HoaDonBan\\Hoa_Don_Ban.png"));
