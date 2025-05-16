@@ -252,4 +252,8 @@ public class TaiKhoanGUI {
     public JPanel getPanel() {
         return this.panel;
     }
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7

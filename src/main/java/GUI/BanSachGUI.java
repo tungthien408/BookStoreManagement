@@ -4,31 +4,25 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-import java.net.URL;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+import java.awt.Graphics2D;
 
 import BUS.ChiTietHoaDonBUS;
 import BUS.HoaDonBUS;
@@ -47,20 +41,24 @@ public class BanSachGUI {
     private static final int SIDE_MENU_WIDTH = 151;
     private static final int HEIGHT = (int) (WIDTH * 0.625);
     private static final String INVOICE_ID_PREFIX = "HD";
+    private static final String DEFAULT_IMAGE_PATH = "/images/Book/the_little_prince.jpg";
 
     private Tool tool = new Tool();
     private JPanel panel, paymentPanel;
-    private JTextField[] txt_array_top = new JTextField[6];
+    private JTextField[] txt_array_top = new JTextField[5];
     private JTextField[] txt_array_down = new JTextField[2];
+<<<<<<< HEAD
     // private JTextField[] txt_array_search = new JTextField[1];
     private JTextField txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_date, txt_total;
+=======
+    private JTextField[] txt_array_search = new JTextField[1];
+    private JTextField txt_invoiceId, txt_employeeId, txt_customerPhone, txt_date, txt_total;
+>>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
     private JTextField txt_bookId, txt_quantity;
     // private JTextField txt_search;
     private JButton[] buttons = new JButton[3];
     private JButton[] searchbutton = new JButton[1];
     private JTable table_down, table_top;
-    private JLabel imageLabel; // <<< ADD THIS
-    private JPanel imagePanel; // <<< ADD THIS
     private int selectedRow = -1;
     private int lastSelectedRow = -1;
     private int count = 0;  
@@ -87,11 +85,25 @@ public class BanSachGUI {
     }
 
     private void initializeTextFields() {
+        // txt_invoiceId = new JTextField();
+        // txt_employeeId = new JTextField();
+        // System.out.println(nv.getHoTen());
+        // txt_customerPhone = new JTextField();
+        // txt_date = new JTextField();
+        // txt_total = new JTextField();
+        // txt_bookId = new JTextField();
+        // txt_quantity = new JTextField();
         txt_search = new JTextField();
+<<<<<<< HEAD
         txt_array_search = new JTextField[]{txt_search};
         txt_array_top = new JTextField[]{txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_date, txt_total};
         txt_array_down = new JTextField[]{txt_bookId, txt_quantity};
         txt_array_search = new JTextField[]{txt_search};
+=======
+        txt_array_top = new JTextField[] { txt_invoiceId, txt_employeeId, txt_customerPhone, txt_date, txt_total };
+        txt_array_down = new JTextField[] { txt_bookId, txt_quantity };
+        txt_array_search = new JTextField[] { txt_search };
+>>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
     }
 
     private void initializeMainPanel() {
@@ -103,34 +115,19 @@ public class BanSachGUI {
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         panel.add(createTable_top(), BorderLayout.WEST);
 
-        String[] txt_label_top = {"Mã hóa đơn", "Nhân viên", "SDT KH", "Tên KH", "Ngày bán", "Tổng tiền"};
-        panel.add(createDetailPanel_top(400, 0, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
+        String[] txt_label_top = { "Mã hóa đơn", "Nhân viên", "SDT KH", "Ngày bán", "Tổng tiền" };
+        panel.add(createDetailPanel_top(400, 30, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
 
-        // --- Setup for the lower part (details + image) ---
-        JPanel lowerPanel = new JPanel(new BorderLayout(10, 0)); // Use BorderLayout
-
-        String[] txt_label_down = {"Mã sách", "Số lượng"}; // Renamed from txt_label for clarity
-        // Create the detail panel for book ID and quantity (pass null for img)
-        JPanel detailPanelDown = createDetailPanel_down(300, 10, txt_array_down, txt_label_down /* REMOVED img */);
-        lowerPanel.add(detailPanelDown, BorderLayout.CENTER); // Add details to the center
-
-        // Create and add the image panel
-        imagePanel = new JPanel(new BorderLayout()); // Panel to hold the image label
-        imageLabel = new JLabel(); // Initialize the image label
-        imageLabel.setHorizontalAlignment(JLabel.CENTER);
-        imageLabel.setVerticalAlignment(JLabel.CENTER);
-        // Set a preferred size for the image area
-        imagePanel.setPreferredSize(new Dimension(200, 260)); // Adjust size as needed
-        imagePanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 0, 0)); // Adjust padding
-        imagePanel.add(imageLabel, BorderLayout.CENTER);
-        lowerPanel.add(imagePanel, BorderLayout.WEST); // Add image panel to the left
-
-        // Add the lower panel containing details and image to the paymentPanel
-        paymentPanel.add(lowerPanel, BorderLayout.WEST); // Place details+image on the WEST side of paymentPanel
-
-        // Add other components to paymentPanel
+        String[] txt_label = { "Mã sách", "Số lượng" };
+        ImageIcon img = null;
+        try {
+            img = new ImageIcon(getClass().getResource(DEFAULT_IMAGE_PATH));
+        } catch (Exception e) {
+            System.err.println("Image not found: " + e.getMessage());
+        }
+        paymentPanel.add(createDetailPanel_down(500, 10, txt_array_down, txt_label, img), BorderLayout.WEST);
         paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
-        paymentPanel.add(createTable_down(), BorderLayout.EAST); // Keep table_down on the EAST
+        paymentPanel.add(createTable_down(), BorderLayout.EAST);
 
         panel.add(paymentPanel, BorderLayout.SOUTH);
     }
@@ -145,15 +142,24 @@ public class BanSachGUI {
     }
 
     private String getID() {
+        count++;
         return INVOICE_ID_PREFIX + String.format("%03d", count);
     }
 
     private JPanel createSearchPanel() {
+<<<<<<< HEAD
         String[] searchOptions = {"Mã sách", "Tên sách"};
         comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
         searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
+=======
+        String[] searchOptions = { "Mã sách", "Tên sách" };
+        JComboBox<String> comboBox = new JComboBox<>(searchOptions);
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(Box.createHorizontalStrut(33));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox, searchbutton, txt_array_search));
+>>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
         return searchPanel;
     }
 
@@ -195,17 +201,17 @@ public class BanSachGUI {
     }
 
     private JPanel createTable_top() {
-        String[] column = {"Mã sách", "Tên sách", "Số lượng", "Đơn giá"};
+        String[] column = { "Mã sách", "Tên sách", "Số lượng", "Đơn giá" };
         DefaultTableModel model = new DefaultTableModel(column, 0);
 
         try {
             sachList = sachBUS.getAllSach();
             for (SachDTO sach : sachList) {
-                model.addRow(new Object[]{
+                model.addRow(new Object[] {
                         sach.getMaSach(),
                         sach.getTenSach(),
                         sach.getSoLuong(),
-                        sach.getDonGia()+10000
+                        sach.getDonGia() + 10000
                 });
             }
         } catch (Exception e) {
@@ -222,8 +228,8 @@ public class BanSachGUI {
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelTable.add(scrollPane);
 
-        // --- COMBINED LISTENER FOR TEXT FIELDS AND IMAGE ---
         table_top.getSelectionModel().addListSelectionListener(e -> {
+<<<<<<< HEAD
             // Prevent processing during model updates
             if (!e.getValueIsAdjusting()) {
                 selectedRow = table_top.getSelectedRow();
@@ -337,17 +343,21 @@ try {
                     imagePanel.revalidate();
                     imagePanel.repaint();
                 }
+=======
+            selectedRow = table_top.getSelectedRow();
+            if (selectedRow >= 0) {
+                txt_array_down[0].setText((String) table_top.getValueAt(selectedRow, 0));
+                txt_array_down[0].setEditable(false);
+                txt_array_down[1].setEditable(true);
+>>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
             }
         });
-
-        // Remove the old MouseAdapter if it only handled text fields
-        // table_top.addMouseListener(new MouseAdapter() { ... }); // REMOVE or comment out
 
         return panelTable;
     }
 
     private JPanel createTable_down() {
-        String[] column = {"Mã sách", "Tên sách", "Số lượng", "Đơn giá"};
+        String[] column = { "Mã sách", "Tên sách", "Số lượng", "Đơn giá" };
         DefaultTableModel model = new DefaultTableModel(column, 0);
         table_down = tool.createTable(model, column);
         table_down.setDefaultEditor(Object.class, null);
@@ -361,23 +371,14 @@ try {
                 selectedRow = table_down.getSelectedRow();
                 if (selectedRow == lastSelectedRow && selectedRow >= 0) {
                     table_down.clearSelection();
-                    // Clear fields if needed when deselecting from table_down
-                    // txt_array_down[0].setText("");
-                    // txt_array_down[1].setText("");
+                    for (JTextField txt : txt_array_down) {
+                        txt.setText("");
+                        txt.setEditable(true);
+                    }
                     lastSelectedRow = -1;
                 } else if (selectedRow >= 0) {
-                    // You might want to update fields based on table_down selection
-                    // for editing purposes, but DON'T load the image here.
-                    String bookId = (String) table_down.getValueAt(selectedRow, 0); // Get ID from table_down
-                    txt_array_down[0].setText(bookId);
-                    txt_array_down[1].setText(String.valueOf(table_down.getValueAt(selectedRow, 2))); // Get quantity from table_down
-
-                    // REMOVE IMAGE LOADING LOGIC FROM HERE
-                    // try {
-                    //     img = new ImageIcon(...)
-                    // } catch (...) { ... }
-
-                    // Make fields non-editable if selecting from table_down
+                    txt_array_down[0].setText((String) table_down.getValueAt(selectedRow, 1));
+                    txt_array_down[1].setText(String.valueOf(table_down.getValueAt(selectedRow, 2)));
                     for (JTextField txt : txt_array_down) {
                         txt.setEditable(false);
                     }
@@ -392,49 +393,24 @@ try {
     }
 
     private JPanel createDetailPanel_top(int width, int padding_top, JTextField[] txt_array,
-                                        String[] txt_label, ImageIcon img) {
-        JPanel panelDetail = tool.createDetailPanel(txt_array, txt_label, img, width, 250, 2, 6, false);
+            String[] txt_label, ImageIcon img) {
+        JPanel panelDetail = tool.createDetailPanel(txt_array, txt_label, img, width, 300, 2, 5, false);
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(padding_top, 0, 0, 0));
 
-        // {txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_date, txt_total}
         txt_array[0].setEditable(false);
         txt_array[1].setEditable(false);
         txt_array[1].setText(nv.getHoTen());
-        txt_array[2].setEditable(true);
+        txt_array[2].setEditable(false);
+        txt_array[3].setEditable(false);
         txt_array[4].setEditable(false);
-
-        // on txt_array[2] add event to check if the phone number is typed correctly
-        // if so, check that phone number on the customer list
-        // if the phone number is existed, print the customer's name on txt_array[3]
-        // else enable the txt_array[3] editable the let the user type the customer's name
-
-        txt_array[2].addKeyListener(new java.awt.event.KeyAdapter() {
-            @Override
-            public void keyReleased(java.awt.event.KeyEvent e) {
-                String sdt = txt_array[2].getText();
-                if (sdt.matches("(02|03|05|07|08|09)\\d{8}")) { // Check if the phone number is valid
-                    KhachHangDTO khachHang = khachHangBUS.getMaKhachHangBySdt(sdt);
-                    if (khachHang != null) {
-                        txt_array[3].setText(khachHang.getHoTen());
-                        txt_array[3].setEditable(false);
-                    } else {
-                        txt_array[3].setEditable(true);
-                        txt_array[3].setText("");
-                    }
-                } else {
-                    txt_array[3].setText("Số điện thoại không hợp lệ!");
-                }
-            }
-        });
         return wrappedPanel;
     }
 
     private JPanel createDetailPanel_down(int width, int padding_top, JTextField[] txt_array,
-                                         String[] txt_label /* REMOVED ImageIcon img */) {
-        // Pass null for the image parameter to tool.createDetailPanel
-        JPanel panelDetail = tool.createDetailPanel(txt_array, txt_label, null, width, 300, 1, 2, false); // Use 1 column, 2 rows for label/field pairs
+            String[] txt_label, ImageIcon img) {
+        JPanel panelDetail = tool.createDetailPanel(txt_array, txt_label, img, width, 300, 2, 5, false);
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(padding_top, 0, 0, 0));
@@ -442,7 +418,7 @@ try {
     }
 
     private JPanel createButtonPanel() {
-        String[] buttonTexts = {"Thêm", "Xóa", "Thanh toán"};
+        String[] buttonTexts = { "Thêm", "Xóa", "Thanh toán" };
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(tool.createButtonPanel(buttons, buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
         buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 110, 25));
@@ -456,62 +432,58 @@ try {
     private void addChiTietHoaDon() {
         txt_array_top[0].setEditable(false);
         txt_array_top[0].setText(getID());
-        // txt_array_top[1].setEditable(true);
-        txt_array_top[4].setText(LocalDate.now().toString());
+        txt_array_top[1].setEditable(false); // Đặt mã nhân viên không đặt tên vì hàm kiểm tra tồn tại nhân viên
+        txt_array_top[1].setText(nv.getMaNV()); // chỉ so mã nhân viên chứ không so tên nhân viên
+        txt_array_top[2].setEditable(true);
+        txt_array_top[3].setText(LocalDate.now().toString());
 
         selectedRow = table_top.getSelectedRow();
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn một sách từ danh sách!");
             return;
         }
-            String maSach = table_top.getValueAt(selectedRow, 0).toString();
-            String tenSach = table_top.getValueAt(selectedRow, 1).toString();
-            String soLuongStr = txt_array_down[1].getText().trim();
-            int donGia = Integer.parseInt(table_top.getValueAt(selectedRow, 3).toString());
+        String maSach = table_top.getValueAt(selectedRow, 0).toString();
+        String tenSach = table_top.getValueAt(selectedRow, 1).toString();
+        String soLuongStr = txt_array_down[1].getText().trim();
+        int donGia = Integer.parseInt(table_top.getValueAt(selectedRow, 3).toString());
 
-            if (soLuongStr.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Vui lòng nhập số lượng!");
-                return;
+        if (soLuongStr.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng nhập số lượng!");
+            return;
+        }
+
+        int soLuong = Integer.parseInt(soLuongStr);
+        if (soLuong <= 0) {
+            JOptionPane.showMessageDialog(null, "Số lượng phải lớn hơn 0!");
+            return;
+        }
+
+        SachDTO sach = sachBUS.getSachByMaSach(maSach);
+        if (sach == null) {
+            JOptionPane.showMessageDialog(null, "Sách không tồn tại!");
+            return;
+        }
+
+        if (soLuong > sach.getSoLuong()) {
+            JOptionPane.showMessageDialog(null, "Số lượng sách trong kho không đủ!");
+            return;
+        }
+
+        DefaultTableModel model = (DefaultTableModel) table_down.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String maSachCu = model.getValueAt(i, 0).toString().trim();
+            if (maSach.equals(maSachCu)) {
+                int soLuongCu = Integer.parseInt(model.getValueAt(i, 2).toString());
+                soLuong += soLuongCu;
+                model.removeRow(i);
+                break;
             }
+        }
+        model.addRow(new Object[] { maSach, tenSach, soLuong, donGia });
 
-            if (!soLuongStr.matches("\\d")) {
-                JOptionPane.showMessageDialog(null, "Số lượng phải là ký tự số");
-                return;
-            }
-            int soLuong = Integer.parseInt(soLuongStr);
-
-            if (soLuong <= 0) {
-                JOptionPane.showMessageDialog(null, "Số lượng phải lớn hơn 0!");
-                return;
-            }
-
-            SachDTO sach = sachBUS.getSachByMaSach(maSach);
-            if (sach == null) {
-                JOptionPane.showMessageDialog(null, "Sách không tồn tại!");
-                return;
-            }
-
-            if (soLuong > sach.getSoLuong()) {
-                JOptionPane.showMessageDialog(null, "Số lượng sách trong kho không đủ!");
-                return;
-            }
-
-            DefaultTableModel model = (DefaultTableModel) table_down.getModel();
-            for (int i = 0; i < model.getRowCount(); i++) {
-                String maSachCu = model.getValueAt(i, 0).toString().trim();
-                if (maSach.equals(maSachCu)) {
-                    int soLuongCu = Integer.parseInt(model.getValueAt(i, 2).toString());
-                    soLuong += soLuongCu;
-                    model.removeRow(i);
-                    break;
-                }
-            }
-            model.addRow(new Object[]{maSach, tenSach, soLuong, donGia});
-
-            updateTotal();
-            txt_array_down[0].setText("");
-            txt_array_down[1].setText("");
-
+        updateTotal();
+        txt_array_down[0].setText("");
+        txt_array_down[1].setText("");
 
     }
 
@@ -528,16 +500,16 @@ try {
         JOptionPane.showMessageDialog(null, "Xóa chi tiết hóa đơn thành công!");
     }
 
-    private void thanhToan()  {
+    private void thanhToan() {
+
         try {
             String maHD = txt_array_top[0].getText().trim();
-            String maNV = nv.getMaNV();
+            String maNV = txt_array_top[1].getText().trim();
             String sdtKhach = txt_array_top[2].getText().trim();
-            String tenKhach = txt_array_top[3].getText().trim(); // Ensure this line is correctly placed within a valid method or block
-            String ngayBanStr = txt_array_top[4].getText().trim();
-            String tongTienStr = txt_array_top[5].getText().trim();
+            String ngayBanStr = txt_array_top[3].getText().trim();
+            String tongTienStr = txt_array_top[4].getText().trim();
 
-            if (maNV.isEmpty() || sdtKhach.isEmpty() || tenKhach.isEmpty() || ngayBanStr.isEmpty() || tongTienStr.isEmpty()) {
+            if (maNV.isEmpty() || sdtKhach.isEmpty() || ngayBanStr.isEmpty() || tongTienStr.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin hóa đơn!");
                 return;
             }
@@ -547,24 +519,17 @@ try {
                 return;
             }
 
+            KhachHangDTO maKH = khachHangBUS.getMaKhachHangBySdt(sdtKhach);
+            if (maKH == null) {
+                JOptionPane.showMessageDialog(null, "Số điện thoại khách hàng không tồn tại!");
+                return;
+            }
+
             DefaultTableModel model = (DefaultTableModel) table_down.getModel();
             if (model.getRowCount() == 0) {
                 JOptionPane.showMessageDialog(null, "Vui lòng thêm ít nhất một sách vào hóa đơn!");
                 return;
             }
-
-            KhachHangDTO maKH = khachHangBUS.getMaKhachHangBySdt(sdtKhach);
-            if (maKH == null) {
-                maKH = new KhachHangDTO(); // Initialize maKH
-                System.out.println("Ma Khach Hang: " + getNextMaKH());
-                maKH.setMaKH(getNextMaKH());
-                maKH.setHoTen(tenKhach);
-                maKH.setSdt(sdtKhach);
-                maKH.setTrangThaiXoa(0);
-                maKH.setDiem(0);
-                khachHangBUS.addKhachHang(maKH);
-            }
-
 
             int tongTien = Integer.parseInt(tongTienStr);
             Date ngayBan;
@@ -603,31 +568,27 @@ try {
                 sachBUS.updateSoLuongTonSanPham(maSach, soLuongHienTai - soLuong);
             }
 
-      
             refreshTable();
             model.setRowCount(0);
 
             for (JTextField txt : txt_array_top) {
-                if (txt != txt_employeeName) {
+                if (txt != txt_employeeId) {
                     txt.setText("");
                 }
-                txt.setEditable(txt != txt_invoiceId && txt != txt_employeeName && txt != txt_date && txt != txt_total);
+                txt.setEditable(txt != txt_invoiceId && txt != txt_date && txt != txt_total);
             }
             for (JTextField txt : txt_array_down) {
                 txt.setText("");
             }
-
-            count++;
             txt_array_top[0].setText(getID());
-            txt_array_top[4].setText(LocalDate.now().toString());
-            initializeHoaDon();
+            txt_array_top[3].setText(LocalDate.now().toString());
 
             JOptionPane.showMessageDialog(null, "Thanh toán thành công!");
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi thanh toán: " + e.getMessage());
         }
-
+        Inhoadon();
     }
 
     private void updateTotal() {
@@ -638,7 +599,7 @@ try {
             int donGia = Integer.parseInt(model.getValueAt(i, 3).toString());
             tongTien += soLuong * donGia;
         }
-        txt_array_top[5].setText(String.valueOf(tongTien));
+        txt_array_top[4].setText(String.valueOf(tongTien));
     }
 
     private void refreshTable() {
@@ -647,7 +608,7 @@ try {
         try {
             sachList = sachBUS.getAllSach();
             for (SachDTO sach : sachList) {
-                model.addRow(new Object[]{
+                model.addRow(new Object[] {
                         sach.getMaSach(),
                         sach.getTenSach(),
                         sach.getSoLuong(),
@@ -660,17 +621,9 @@ try {
         }
     }
 
-    private String getNextMaKH() {
-        String maKH = "KH";
-        int count = khachHangBUS.getCountKhachHang() + 1;
-        if (count < 10) {
-            maKH += "00" + count;
-        } else if (count < 100) {
-            maKH += "0" + count;
-        } else {
-            maKH += count;
-        }
-        return maKH;
+    public void Inhoadon() {
+
+        JOptionPane.showMessageDialog(null, "In hóa đơn thành công!");
     }
 
     public JPanel getPanel() {

@@ -22,6 +22,7 @@ USE `book`;
 --
 -- Table structure for table `QUYEN`
 --
+<<<<<<< HEAD
 CREATE TABLE `QUYEN` (
     `maQuyen` VARCHAR(255) NOT NULL PRIMARY KEY,
     `tenQuyen` NVARCHAR(50) NOT NULL,
@@ -34,6 +35,101 @@ INSERT INTO `QUYEN` (`maQuyen`, `tenQuyen`) VALUES
 ('1245', N'Quản lý'),                    -- 1: Nhập sách, 2: Hóa đơn bán, 4: Sách, 5: Nhà xuất bản
 ('1246', N'Bán hàng'),                   -- 1: Nhập sách, 2: Hóa đơn bán, 4: Sách, 6: Tác giả
 ('1248', N'Kế toán');                    -- 1: Nhập sách, 2: Hóa đơn bán, 4: Sách, 8: Khách hàng
+=======
+CREATE TABLE QUYEN (
+    `maQuyen` INT NOT NULL PRIMARY KEY,
+    `tenQuyen` NVARCHAR(50) NOT NULL,
+    `trangThaiXoa` INT NOT NULL DEFAULT 0
+);
+
+INSERT INTO QUYEN (maQuyen, tenQuyen) VALUES
+(1, N'Quản trị viên (admin)'),
+(2, N'Quản lý'),
+(3, N'Bán hàng'),
+(4, N'Kế toán');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `CHUCNANG`
+--
+CREATE TABLE CHUCNANG (
+    `maCN` INT NOT NULL PRIMARY KEY,
+    `tenCN` NVARCHAR(50) NOT NULL,
+    `trangThaiXoa` INT NOT NULL DEFAULT 0
+);
+
+INSERT INTO CHUCNANG (maCN, tenCN) VALUES
+(1, N'Quản Lí Sản Phẩm'),
+(2, N'Quản Lí Cấu Hình'),
+(3, N'Quản Lí Khách Hàng'),
+(4, N'Quản Lí Nhân Viên'),
+(5, N'Quản Lí Tài Khoản'),
+(6, N'Quản Lí Nhà Cung Cấp'),
+(7, N'Quản Lí Nhập Hàng'),
+(8, N'Quản Lí Xuất Hàng'),
+(9, N'Quản Lí Phân Quyền'),
+(10, N'Quản Lí Bảo Hành'),
+(11, N'Quản Lí Thống Kê');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `HANHDONG`
+--
+CREATE TABLE HANHDONG (
+    `maHD` VARCHAR(10) PRIMARY KEY,
+    `tenHD` NVARCHAR(30) NOT NULL,
+    `trangThaiXoa` INT NOT NULL DEFAULT 0
+);
+
+INSERT INTO HANHDONG (`maHD`, `tenHD`) VALUES
+('view', N'XEM'), 
+('add', N'THÊM'), 
+('edit', N'SỬA'), 
+('delete', N'XÓA');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `CHITIETCHUCNANG`
+--
+CREATE TABLE CHITIETCHUCNANG (
+    `maCN` INT NOT NULL,
+    `maQuyen` INT NOT NULL,
+    `maHD` VARCHAR(10) NOT NULL,
+    `trangThaiXoa` INT NOT NULL DEFAULT 0,
+    PRIMARY KEY (`maCN`, `maQuyen`, `maHD`),
+    FOREIGN KEY (`maCN`) REFERENCES CHUCNANG(`maCN`),
+    FOREIGN KEY (`maQuyen`) REFERENCES QUYEN(`maQuyen`),
+    FOREIGN KEY (`maHD`) REFERENCES HANHDONG(`maHD`)
+);
+
+INSERT INTO CHITIETCHUCNANG (`maCN`, `maQuyen`, `maHD`) VALUES
+(1, 1, 'add'), (1, 1, 'delete'), (1, 1, 'edit'), (1, 1, 'view'),
+(1, 2, 'add'), (1, 2, 'delete'), (1, 2, 'edit'), (1, 2, 'view'),
+(1, 3, 'add'), (1, 3, 'delete'), (1, 3, 'edit'), (1, 3, 'view'),
+(2, 1, 'add'), (2, 1, 'delete'), (2, 1, 'edit'), (2, 1, 'view'),
+(2, 2, 'add'), (2, 2, 'delete'), (2, 2, 'edit'), (2, 2, 'view'),
+(2, 3, 'add'), (2, 3, 'delete'), (2, 3, 'edit'), (2, 3, 'view'),
+(3, 1, 'add'), (3, 1, 'delete'), (3, 1, 'edit'), (3, 1, 'view'),
+(3, 2, 'add'), (3, 2, 'delete'), (3, 2, 'edit'), (3, 2, 'view'),
+(3, 3, 'add'), (3, 3, 'delete'), (3, 3, 'edit'), (3, 3, 'view'),
+(4, 1, 'add'), (4, 1, 'delete'), (4, 1, 'edit'), (4, 1, 'view'),
+(4, 2, 'add'), (4, 2, 'delete'), (4, 2, 'edit'), (4, 2, 'view'),
+(5, 1, 'add'), (5, 1, 'delete'), (5, 1, 'edit'), (5, 1, 'view'),
+(6, 1, 'add'), (6, 1, 'delete'), (6, 1, 'edit'), (6, 1, 'view'),
+(7, 1, 'add'), (7, 1, 'delete'), (7, 1, 'edit'), (7, 1, 'view'),
+(7, 2, 'add'), (7, 2, 'delete'), (7, 2, 'edit'), (7, 2, 'view'),
+(8, 1, 'add'), (8, 1, 'delete'), (8, 1, 'edit'), (8, 1, 'view'),
+(8, 2, 'add'), (8, 2, 'delete'), (8, 2, 'edit'), (8, 2, 'view'),
+(8, 3, 'add'), (8, 3, 'delete'), (8, 3, 'edit'), (8, 3, 'view'),
+(9, 1, 'add'), (9, 1, 'delete'), (9, 1, 'edit'), (9, 1, 'view'),
+(10, 1, 'add'), (10, 1, 'delete'), (10, 1, 'edit'), (10, 1, 'view'),
+(10, 2, 'add'), (10, 2, 'delete'), (10, 2, 'edit'), (10, 2, 'view'),
+(11, 1, 'add'), (11, 1, 'delete'), (11, 1, 'edit'), (11, 1, 'view'),
+(11, 4, 'add'), (11, 4, 'delete'), (11, 4, 'edit'), (11, 4, 'view');
+>>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
 
 -- --------------------------------------------------------
 
@@ -41,6 +137,7 @@ INSERT INTO `QUYEN` (`maQuyen`, `tenQuyen`) VALUES
 -- Table structure for table `nhanvien`
 --
 CREATE TABLE `nhanvien` (
+<<<<<<< HEAD
     `MaNV` VARCHAR(10) NOT NULL,
     `HoTen` VARCHAR(255) NOT NULL,
     `ChucVu` VARCHAR(255) NOT NULL,
@@ -50,6 +147,17 @@ CREATE TABLE `nhanvien` (
     `NgaySinh` DATE NOT NULL,
     `trangThaiXoa` INT NOT NULL DEFAULT 0,
     PRIMARY KEY (`MaNV`)
+=======
+  `MaNV` VARCHAR(10) NOT NULL,
+  `HoTen` VARCHAR(255) NOT NULL,
+  `ChucVu` VARCHAR(255) NOT NULL,
+  `DiaChi` VARCHAR(255) NOT NULL,
+  `SDT` VARCHAR(10) NOT NULL,
+  `Cccd` VARCHAR(12) NOT NULL,
+  `NgaySinh` DATE NOT NULL,
+  `trangThaiXoa` INT NOT NULL DEFAULT 0,
+  PRIMARY KEY (`MaNV`)
+>>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `nhanvien` (`MaNV`, `HoTen`, `ChucVu`, `DiaChi`, `SDT`, `Cccd`, `NgaySinh`, `trangThaiXoa`) VALUES
@@ -65,6 +173,7 @@ INSERT INTO `nhanvien` (`MaNV`, `HoTen`, `ChucVu`, `DiaChi`, `SDT`, `Cccd`, `Nga
 -- Table structure for table `taikhoannv`
 --
 CREATE TABLE `taikhoannv` (
+<<<<<<< HEAD
     `MANV` VARCHAR(50) NOT NULL PRIMARY KEY, -- Changed to primary key for unique login
     `PASS` VARCHAR(255) NOT NULL,
     `trangThaiXoa` INT NOT NULL DEFAULT 0,
@@ -80,6 +189,24 @@ INSERT INTO `taikhoannv` (`MANV`, `PASS`, `maQuyen`, `trangThaiXoa`) VALUES
 ( 'NV03', '12345678', '1245', 0),   -- Quản lý
 ('NV04', '12345678', '1246', 0),   -- Bán hàng
 ( 'NV05', '12345678', '1248', 0);   -- Kế toán
+=======
+  `tenDangNhap` VARCHAR(50) NOT NULL,
+  `MANV` VARCHAR(10) NOT NULL,
+  `PASS` VARCHAR(255) NOT NULL,
+  `trangThaiXoa` INT NOT NULL DEFAULT 0,
+  `maQuyen` INT NOT NULL,
+  FOREIGN KEY (`maQuyen`) REFERENCES QUYEN(`maQuyen`),
+  PRIMARY KEY (`MANV`),
+  FOREIGN KEY (`MANV`) REFERENCES `nhanvien` (`MaNV`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `taikhoannv` (`tenDangNhap`,`MANV`, `PASS`, `maQuyen`, `trangThaiXoa`) VALUES
+('ad','NV01', 'admin', 1, 0),
+('ad1','NV02', 'hashed_password_2', 2, 0),
+('ad2','NV03', 'hashed_password_3', 2, 0),
+('ad3','NV04', 'hashed_password_4', 3, 0),
+('ad4','NV05', 'hashed_password_5', 4, 0);
+>>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
 
 -- --------------------------------------------------------
 
@@ -150,14 +277,22 @@ CREATE TABLE `sach` (
 INSERT INTO `sach` (`MASACH`, `TenSach`, `TheLoai`, `SoLuong`, `DonGia`, `MATG`, `MANXB`, `trangThaiXoa`, `img`) VALUES
 ('S001', 'Cho Tôi Xin Một Vé Đi Tuổi Thơ', 'Truyện dài', 100, 85000, 'TG01', 'NXB01', 0, 'cho_toi_xin_mot_ve_di_tuoi_tho.jpg'),
 ('S002', 'Dế Mèn Phiêu Lưu Ký', 'Truyện thiếu nhi', 150, 65000, 'TG02', 'NXB01', 0, 'de_men_phieu_luu_ky.jpg'),
+<<<<<<< HEAD
 ('S003', 'Chí Phèo', 'Truyện ngắn', 80, 45000, 'TG03', 'NXB04', 0, 'chi_pheo.png'),
+=======
+('S003', 'Chí Phèo', 'Truyện ngắn', 80, 45000, 'TG03', 'NXB04', 0, 'chi_pheo.jpg'),
+>>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
 ('S004', 'Tắt Đèn', 'Tiểu thuyết', 60, 75000, 'TG04', 'NXB04', 0, 'tat_den.jpg'),
 ('S005', 'Cô Gái Đến Từ Hôm Qua', 'Truyện dài', 120, 80000, 'TG01', 'NXB02', 0, 'co_gai_den_tu_hom_qua.jpg'),
 ('S006', 'Mắt Biếc', 'Truyện dài', 90, 82000, 'TG01', 'NXB03', 0, 'mat_biec.jpg'),
 ('S007', 'Tôi Là Bêtô', 'Truyện thiếu nhi', 110, 70000, 'TG01', 'NXB01', 0, 'toi_la_beto.jpg'),
 ('S008', 'Tôi Thấy Hoa Vàng Trên Cỏ Xanh', 'Truyện dài', 95, 85000, 'TG01', 'NXB02', 0, 'toi_thay_hoa_vang_tren_co_xanh.jpg'),
 ('S009', 'Nhà Chử', 'Tiểu thuyết', 70, 60000, 'TG02', 'NXB03', 0, 'nha_chu.jpg'),
+<<<<<<< HEAD
 ('S010', 'Truyện Tây Bắc', 'Truyện ngắn', 100, 65000, 'TG02', 'NXB05', 0, 'truyen_tay_bac.png'),
+=======
+('S010', 'Truyện Tây Bắc', 'Truyện ngắn', 100, 65000, 'TG02', 'NXB05', 0, 'truyen_tay_bac.jpg'),
+>>>>>>> 7b71cabb0245129aa9c13762ed971e2043a02cd7
 ('S011', 'Kim Đồng', 'Truyện thiếu nhi', 130, 60000, 'TG02', 'NXB01', 0, 'kim_dong.jpg'),
 ('S012', 'Chiều Chiều', 'Truyện ngắn', 75, 58000, 'TG02', 'NXB02', 0, 'chieu_chieu.jpg'),
 ('S013', 'Giấc Mộng Ông Thợ Dìu', 'Truyện ngắn', 60, 62000, 'TG02', 'NXB03', 0, 'giac_mong_ong_tho_diu.jpg'),

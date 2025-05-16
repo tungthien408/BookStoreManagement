@@ -6,6 +6,13 @@
   "configurations": [
     {
       "type": "java",
+      "name": "Lib",
+      "request": "launch",
+      "mainClass": "Service.Lib",
+      "projectName": "BookStoreManagement"
+    },
+    {
+      "type": "java",
       "name": "ScrollPaneWithButtons",
       "request": "launch",
       "mainClass": "GUI.ScrollPaneWithButtons",

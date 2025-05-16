@@ -29,6 +29,7 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
 import BUS.ChiTietPhieuNhapBUS;
+import BUS.KhachHangBUS;
 import BUS.NXBBUS;
 import BUS.NhanVienBUS;
 import BUS.PhieuNhapBUS;
