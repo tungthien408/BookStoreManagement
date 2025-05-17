@@ -4,21 +4,14 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 
-import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -37,13 +30,12 @@ public class SachGUI {
     private static final int HEIGHT = (int) (WIDTH * 0.625);
     private static final int TABLE_WIDTH = 850;
     private static final int TABLE_HEIGHT = 300;
-    private static final int DETAIL_PANEL_WIDTH = 850;
-    private static final int DETAIL_PANEL_HEIGHT = 150;
-    private static final String DEFAULT_IMAGE_PATH = "/images/Book/the_little_prince.jpg";
+    private static final int DETAIL_PANEL_WIDTH = 500;
+    private static final int DETAIL_PANEL_HEIGHT = 200;
 
     private Tool tool = new Tool();
     private JPanel panel, panelDetail;
-    private JTextField[] txt_array = new JTextField[6]; // For maSach, tenSach, theLoai, soLuong, donGia, maTG, maNXB
+    private JTextField[] txt_array = new JTextField[6]; // For maSach, tenSach, theLoai, soLuong, donGia, maTG
     private JButton[] buttons = new JButton[6];
     private JTable table;
     private List<SachDTO> sachList;
@@ -57,8 +49,6 @@ public class SachGUI {
     private boolean update = false;
     private boolean delete = false;
     private int count = 0;
-    private JLabel imageLabel; // For displaying the book image
-    private JPanel imagePanel; // Panel to hold the image
     private JTextField[] txt_array_search = new JTextField[1];
     private JTextField txt_search;
     private JComboBox<String> comboBox;
@@ -78,26 +68,7 @@ public class SachGUI {
         panel.setBackground(new Color(202, 220, 252));
         initializeTextFields();
         initializeData();
-        panel.add(createSearchPanel(), BorderLayout.NORTH);
-        panel.add(createBookTable(), BorderLayout.CENTER);
-        panel.add(createPanelButton(), BorderLayout.EAST);
-        String[] txt_label = { "Mã sách", "Tên sách", "Thể loại", "Số lượng", "Đơn giá", "Mã tác giả" };
-        JPanel lowerPanel = new JPanel(new BorderLayout(10, 0));
-        lowerPanel.add(createDetailPanel(txt_array, txt_label), BorderLayout.EAST);
-        // panel.add(createDetailPanel(txt_array, txt_label), BorderLayout.SOUTH);
-
-        // Initialize the image panel
-        imagePanel = new JPanel(new BorderLayout());
-        imageLabel = new JLabel();
-        imageLabel.setHorizontalAlignment(JLabel.CENTER);
-        imageLabel.setVerticalAlignment(JLabel.CENTER);
-        imagePanel.setPreferredSize(new Dimension(200, 260)); // Adjust size as needed
-        imagePanel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        imagePanel.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 0));
-        imagePanel.add(imageLabel, BorderLayout.CENTER);
-        lowerPanel.add(imagePanel, BorderLayout.WEST); // Add the image panel to the right
-
-        // panel.add(lowerPanel, BorderLayout.CENTER);
+        setupPanelLayout();
         timkiem();
     }
 
@@ -119,6 +90,27 @@ public class SachGUI {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi tải dữ liệu sách: " + e.getMessage());
         }
+    }
+
+    private void setupPanelLayout() {
+        // Add search panel at the top
+        panel.add(createSearchPanel(), BorderLayout.NORTH);
+
+        // Create a center panel to hold table and detail panel
+        JPanel centerPanel = new JPanel(new BorderLayout());
+
+        // Add table to the center
+        centerPanel.add(createBookTable(), BorderLayout.NORTH);
+
+        // Create lower panel for detail
+        String[] txt_label = { "Mã sách", "Tên sách", "Thể loại", "Số lượng", "Đơn giá", "Mã tác giả" };
+        centerPanel.add(createDetailPanel(txt_array, txt_label), BorderLayout.CENTER);
+
+        // Add center panel to main panel
+        panel.add(centerPanel, BorderLayout.CENTER);
+
+        // Add button panel to the right
+        panel.add(createPanelButton(), BorderLayout.EAST);
     }
 
     private JPanel createBookTable() {
@@ -145,6 +137,7 @@ public class SachGUI {
         table.setDefaultEditor(Object.class, null);
         JScrollPane scrollPane = new JScrollPane(table);
         scrollPane.setPreferredSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 10, 10));
 
         table.addMouseListener(new MouseAdapter() {
             @Override
@@ -170,9 +163,6 @@ public class SachGUI {
                     }
 
                     lastSelectedRow = -1;
-                    imageLabel.setIcon(null); // Clear the image
-                    imagePanel.revalidate();
-                    imagePanel.repaint();
                 } else if (selectedRow >= 0) {
                     for (int i = 0; i < txt_array.length; i++) {
                         txt_array[i].setText(String.valueOf(table.getValueAt(selectedRow, i)));
@@ -187,95 +177,12 @@ public class SachGUI {
                     }
 
                     lastSelectedRow = selectedRow;
-
-                    // --- Load and Display the Image ---
-                    String bookId = table.getValueAt(selectedRow, 0).toString();
-                    SachDTO sach = sachBUS.getSachByMaSach(bookId);
-
-                    if (sach != null) {
-                        ImageIcon finalIcon = null;
-                        BufferedImage originalImage = null;
-
-                        try {
-                            String imgName = sach.getImg();
-                            if (imgName != null && !imgName.trim().isEmpty()) {
-                                String absoluteImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/"
-                                        + imgName;
-                                File imageFile = new File(absoluteImagePath);
-
-                                if (imageFile.exists() && imageFile.isFile()) {
-                                    originalImage = ImageIO.read(imageFile);
-
-                                    if (originalImage != null) {
-                                        int targetWidth = imagePanel.getPreferredSize().width;
-                                        int targetHeight = imagePanel.getPreferredSize().height;
-                                        if (targetWidth <= 0)
-                                            targetWidth = 200;
-                                        if (targetHeight <= 0)
-                                            targetHeight = 250;
-
-                                        Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight,
-                                                Image.SCALE_SMOOTH);
-                                        finalIcon = new ImageIcon(scaledImage);
-                                    } else {
-                                        System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
-                                    }
-                                } else {
-                                    System.err.println("Image file not found or is not a file: " + absoluteImagePath);
-                                }
-                            } else {
-                                System.err.println("Image name is null or empty for book: " + bookId);
-                            }
-                        } catch (IOException ioEx) {
-                            System.err.println(
-                                    "IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
-                            ioEx.printStackTrace();
-                        }
-
-                        // Load default image if necessary
-                        if (finalIcon == null) {
-                            try {
-                                BufferedImage defaultOriginal = null;
-                                String defaultImagePath = "/home/thien408/Documents/programming/java/Java/DoAn/BookStoreManagement/images/Book/default.jpg";
-                                File defaultImageFile = new File(defaultImagePath);
-                                if (defaultImageFile.exists()) {
-                                    defaultOriginal = ImageIO.read(defaultImageFile);
-                                }
-
-                                if (defaultOriginal != null) {
-                                    int targetWidth = imagePanel.getPreferredSize().width;
-                                    int targetHeight = imagePanel.getPreferredSize().height;
-                                    if (targetWidth <= 0)
-                                        targetWidth = 200;
-                                    if (targetHeight <= 0)
-                                        targetHeight = 250;
-
-                                    Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight,
-                                            Image.SCALE_SMOOTH);
-                                    finalIcon = new ImageIcon(scaledDefault);
-                                }
-                            } catch (IOException ioEx) {
-                                System.err.println("IOException reading default image: " + ioEx.getMessage());
-                            }
-                        }
-
-                        // Update the image label
-                        imageLabel.setIcon(finalIcon);
-                        imagePanel.revalidate();
-                        imagePanel.repaint();
-                    }
                 }
             }
         });
 
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(10, 40, 30, 10));
-        // JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel panelTable = new JPanel();
+        JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelTable.add(scrollPane);
-        panelTable.setBackground(Color.GREEN);
-        panelTable.setPreferredSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT - 100));
-        panelTable.setMinimumSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT - 100));
-        panelTable.setMaximumSize(new Dimension(TABLE_WIDTH, TABLE_HEIGHT - 100));
         return panelTable;
     }
 
@@ -295,8 +202,8 @@ public class SachGUI {
     }
 
     private JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label) {
-        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, DETAIL_PANEL_WIDTH, DETAIL_PANEL_HEIGHT, 0.5,
-                3, false);
+        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, DETAIL_PANEL_WIDTH, DETAIL_PANEL_HEIGHT, 0.5, 3,
+                false);
 
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
@@ -319,11 +226,19 @@ public class SachGUI {
             filterTable(txt_array_search[0].getText(), selectedOption);
         });
 
+        // Add real-time search
+        txt_array_search[0].addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                String selectedOption = (String) comboBox.getSelectedItem();
+                filterTable(txt_array_search[0].getText(), selectedOption);
+            }
+        });
     }
 
     private void filterTable(String query, String searchType) {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
-        model.setRowCount(0); // Xóa dữ liệu cũ
+        model.setRowCount(0);
         try {
             for (SachDTO sach : sachList) {
                 boolean match = false;
@@ -382,7 +297,6 @@ public class SachGUI {
     }
 
     private void addSach() {
-
         table.clearSelection();
         update = false;
         delete = false;

@@ -2,23 +2,20 @@ package DTO;
 
 public class TaiKhoanNVDTO {
     private String maNV;
-    private String pass;
-    private int maQuyen;
+    private String matKhau;
     private int trangThaiXoa;
+    private String maQuyen;
 
-    // Constructor mặc định
-    public TaiKhoanNVDTO() {
-    }
+    public TaiKhoanNVDTO() {}
 
-    // Constructor đầy đủ
-    public TaiKhoanNVDTO(String maNV, String pass,int maQuyen, int trangThaiXoa) {
+    public TaiKhoanNVDTO( String maNV, String matKhau, int trangThaiXoa, String maQuyen) {
         this.maNV = maNV;
-        this.pass = pass;
+        this.matKhau = matKhau;
         this.trangThaiXoa = trangThaiXoa;
         this.maQuyen = maQuyen;
     }
 
-    // Getters và Setters
+
     public String getMaNV() {
         return maNV;
     }
@@ -27,12 +24,12 @@ public class TaiKhoanNVDTO {
         this.maNV = maNV;
     }
 
-    public String getPass() {
-        return pass;
+    public String getMatKhau() {
+        return matKhau;
     }
 
-    public void setPass(String pass) {
-        this.pass = pass;
+    public void setMatKhau(String matKhau) {
+        this.matKhau = matKhau;
     }
 
     public int getTrangThaiXoa() {
@@ -42,10 +39,12 @@ public class TaiKhoanNVDTO {
     public void setTrangThaiXoa(int trangThaiXoa) {
         this.trangThaiXoa = trangThaiXoa;
     }
-    public void setMaQuyen(int maQuyen) {
-        this.maQuyen = maQuyen;
-    }
-    public int getMaQuyen() {
+
+    public String getMaQuyen() {
         return maQuyen;
+    }
+
+    public void setMaQuyen(String maQuyen) {
+        this.maQuyen = maQuyen;
     }
 }

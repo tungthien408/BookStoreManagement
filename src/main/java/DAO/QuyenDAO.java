@@ -1,124 +1,91 @@
 package DAO;
 
-import DTO.QuyenDTO;
-import Service.Data;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
+import DTO.QuyenDTO;
+import Service.Data;
 
 public class QuyenDAO {
-    public int add(QuyenDTO obj){
-        String sql = "INSERT INTO quyen (maQuyen , tenQuyen) VALUES (?, ?)";
+
+    public int add(QuyenDTO obj) {
+        String sql = "INSERT INTO quyen (maQuyen, tenQuyen) VALUES (?, ?)";
         try (Connection conn = Data.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)){
-            ps.setInt(1, obj.getMaQuyen());
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, obj.getMaQuyen());
             ps.setString(2, obj.getTenQuyen());
             return ps.executeUpdate();
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
     }
-    
-    public int update(QuyenDTO obj){
-        String sql = "UPDATE quyen SET tenQuyen=? WHERE maQuyen=?";
+
+    public int update(QuyenDTO obj, String originalMaQuyen) { // Added originalMaQuyen parameter
+        String sql = "UPDATE quyen SET maQuyen = ?, tenQuyen = ? WHERE maQuyen = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)){
-            ps.setString(1, obj.getTenQuyen());
-            ps.setInt(2, obj.getMaQuyen());
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, obj.getMaQuyen()); // New maQuyen
+            ps.setString(2, obj.getTenQuyen()); // New tenQuyen
+            ps.setString(3, originalMaQuyen);   // Original maQuyen for WHERE clause
             return ps.executeUpdate();
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
     }
-    
-    public int delete(int maQuyen){
-        String sql ="UPDATE quyen SET trangThaiXoa=1 WHERE maQuyen=?";
+
+    public int delete(String maQuyen) {
+        String sql = "UPDATE quyen SET trangThaiXoa = 1 WHERE maQuyen = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)){
-            ps.setInt(1, maQuyen);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, maQuyen);
             return ps.executeUpdate();
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         return 0;
     }
-    
-    public ArrayList<QuyenDTO> getAll(){
-        ArrayList<QuyenDTO> dsquyen = new ArrayList<>();
-        String sql = "SELECT * FROM quyen WHERE trangThaiXoa=0";
+
+    public ArrayList<QuyenDTO> getAll() {
+        ArrayList<QuyenDTO> dsQuyen = new ArrayList<>();
+        String sql = "SELECT * FROM quyen WHERE trangThaiXoa = 0";
         try (Connection conn = Data.getConnection();
-             Statement stm = conn.createStatement();
-             ResultSet rs = stm.executeQuery(sql)){
-            while(rs.next()){
-                dsquyen.add( new QuyenDTO(
-                    rs.getInt("maQuyen"),
-                    rs.getString("tenQuyen")
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                dsQuyen.add(new QuyenDTO(
+                    rs.getString("maQuyen"),
+                    rs.getString("tenQuyen"),
+                    rs.getInt("trangThaiXoa")
                 ));
             }
-        }catch(SQLException e){
+        } catch (SQLException e) {
             e.printStackTrace();
         }
-        return dsquyen;
+        return dsQuyen;
     }
-    
-    public QuyenDTO getById(int id){
-        String sql ="SELECT * FROM quyen WHERE maQuyen=? AND trangThaiXoa=0";
+
+    public QuyenDTO getById(String maQuyen) {
+        String sql = "SELECT * FROM quyen WHERE maQuyen = ? AND trangThaiXoa = 0";
         try (Connection conn = Data.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)){
-            ps.setInt(1, id);
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+            ps.setString(1, maQuyen);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return new QuyenDTO(
-                        rs.getInt("maQuyen"),
-                        rs.getString("tenQuyen")
+                        rs.getString("maQuyen"),
+                        rs.getString("tenQuyen"),
+                        rs.getInt("trangThaiXoa")
                     );
                 }
             }
-        }catch(SQLException e){
-            e.printStackTrace();
-        }
-        return null;
-    }
-    
-    public String getTenQuyenByMaQuyen(int maQuyen) {
-        String sql = "SELECT tenQuyen FROM quyen WHERE maQuyen=? AND trangThaiXoa=0";
-        try (Connection conn = Data.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, maQuyen);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getString("tenQuyen");
-                }
-            }
         } catch (SQLException e) {
             e.printStackTrace();
         }
         return null;
     }
-    
-    public int getMaQuyenByTenQuyen(String tenQuyen) {
-        String sql = "SELECT maQuyen FROM quyen WHERE tenQuyen=? AND trangThaiXoa=0";
-        try (Connection conn = Data.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(1, tenQuyen);
-            try (ResultSet rs = ps.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("maQuyen");
-                }
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return -1; 
-    }
-
-
-    
 }
