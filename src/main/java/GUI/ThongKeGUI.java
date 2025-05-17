@@ -108,7 +108,7 @@ public class ThongKeGUI {
         panel_Table.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         // Initialize tables
-        String[] columnNames_SanPham = { "STT", "Mã Sách", "Tên Sách", "Số lượng Nhập", "Số lượng Bán" };
+        String[] columnNames_SanPham = { "STT", "Mã Sách", "Tên Sách", "Số lượng Nhập", "Số lượng đã Bán" };
         String[] columnNames_KhachHang = { "STT", "SĐT", "Tên Khách Hàng", "Điểm tích lũy" };
         String[] columnNames_DoanhThu = { "STT", "Mã Hóa Đơn", "Ngày", "Tổng Tiền" };
 
@@ -224,6 +224,15 @@ public class ThongKeGUI {
 
             // Load products
             List<SachDTO> sachList = sachBUS.getAllSach();
+            List<SachDTO> sachDaBanList = sachBUS.getSoLuongDaBan();
+            for (SachDTO sach : sachList) {
+                for (SachDTO sachBan : sachDaBanList) {
+                    if (sach.getMaSach().equals(sachBan.getMaSach())) {
+                        sach.setSoLuongDaBan(sachBan.getSoLuongDaBan());
+                        break;
+                    }
+                }
+            }
             for (int i = 0; i < sachList.size(); i++) {
                 SachDTO sach = sachList.get(i);
                 model_SanPham.addRow(new Object[] {
@@ -231,7 +240,7 @@ public class ThongKeGUI {
                         sach.getMaSach(),
                         sach.getTenSach(),
                         sach.getSoLuong(),
-                        sach.getDonGia()
+                        sach.getSoLuongDaBan()
                 });
             }
 
@@ -254,7 +263,8 @@ public class ThongKeGUI {
 
     private void searchTables(String query) {
         refreshTable(); // Reset tables before filtering
-        if (query.isEmpty()) return;
+        if (query.isEmpty())
+            return;
 
         // Search Doanh Thu (Invoices)
         for (int i = model_DoanhThu.getRowCount() - 1; i >= 0; i--) {
@@ -311,7 +321,8 @@ public class ThongKeGUI {
                 }
             }
         } catch (ParseException e) {
-            JOptionPane.showMessageDialog(null, "Định dạng ngày không hợp lệ! Vui lòng nhập theo định dạng dd-MM-yyyy (ví dụ: 25-12-2023)");
+            JOptionPane.showMessageDialog(null,
+                    "Định dạng ngày không hợp lệ! Vui lòng nhập theo định dạng dd-MM-yyyy (ví dụ: 25-12-2023)");
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage());

@@ -1,4 +1,5 @@
 package DAO;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -14,7 +15,7 @@ public class SachDAO {
     public boolean create(SachDTO sach) {
         String sql = "INSERT INTO sach (MASACH, TenSach, TheLoai, SoLuong, DonGia, MATG, MANXB, trangThaiXoa, img) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sach.getMaSach());
             stmt.setString(2, sach.getTenSach());
             stmt.setString(3, sach.getTheLoai());
@@ -36,8 +37,8 @@ public class SachDAO {
         List<SachDTO> list = new ArrayList<>();
         String sql = "SELECT * FROM sach WHERE trangThaiXoa = 0";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql);
-             ResultSet rs = stmt.executeQuery()) {
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
                 SachDTO sach = new SachDTO();
                 sach.setMaSach(rs.getString("MASACH"));
@@ -61,7 +62,7 @@ public class SachDAO {
     public SachDTO getByMaSach(String maSach) {
         String sql = "SELECT * FROM sach WHERE MASACH = ? AND trangThaiXoa = 0";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maSach);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
@@ -88,7 +89,7 @@ public class SachDAO {
     public boolean update(SachDTO sach) {
         String sql = "UPDATE sach SET TenSach = ?, TheLoai = ?, SoLuong = ?, DonGia = ?, MATG = ?, MANXB = ?, trangThaiXoa = ?, img = ? WHERE MASACH = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, sach.getTenSach());
             stmt.setString(2, sach.getTheLoai());
             stmt.setInt(3, sach.getSoLuong());
@@ -109,7 +110,7 @@ public class SachDAO {
     public boolean delete(String maSach) {
         String sql = "UPDATE sach SET trangThaiXoa = 1 WHERE MASACH = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+                PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, maSach);
             return stmt.executeUpdate() > 0;
         } catch (SQLException e) {
@@ -118,10 +119,10 @@ public class SachDAO {
         }
     }
 
-    public int getSoLuongTonSanPham(String maSach){
+    public int getSoLuongTonSanPham(String maSach) {
         String sql = "SELECT SoLuong FROM sach WHERE MASACH=?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, maSach);
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
@@ -133,14 +134,14 @@ public class SachDAO {
         }
         return -1;
     }
-    
+
     public int updateSoLuongTonSanPham(String maSach, int soLuongTon) {
         String sql = "UPDATE sach SET SoLuong = ? WHERE MASACH = ?";
         try (Connection conn = Data.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, soLuongTon);
             ps.setString(2, maSach);
-            return ps.executeUpdate(); 
+            return ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -150,7 +151,7 @@ public class SachDAO {
     public boolean existsByMaSach(String maSach) {
         String sql = "SELECT 1 FROM sach WHERE MASACH = ? AND trangThaiXoa = 0 LIMIT 1";
         try (Connection conn = Data.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+                PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, maSach);
             try (ResultSet rs = ps.executeQuery()) {
                 return rs.next();
@@ -160,4 +161,24 @@ public class SachDAO {
             return false;
         }
     }
+
+    public List<SachDTO> getSoLuongDaBan() {
+        List<SachDTO> list = new ArrayList<>();
+        String sql = "SELECT MASACH, SUM(SoLuong) AS SoLuongDaBan " +
+                "FROM chitiethoadon GROUP BY MASACH";
+        try (Connection conn = Data.getConnection();
+                PreparedStatement ps = conn.prepareStatement(sql);
+                ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                SachDTO s = new SachDTO();
+                s.setMaSach(rs.getString("MASACH"));
+                s.setSoLuongDaBan(rs.getInt("SoLuongDaBan"));
+                list.add(s);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
 }

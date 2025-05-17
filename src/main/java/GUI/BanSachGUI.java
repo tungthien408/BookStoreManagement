@@ -52,7 +52,8 @@ public class BanSachGUI {
     private JPanel panel, paymentPanel;
     private JTextField[] txt_array_top = new JTextField[7];
     private JTextField[] txt_array_down = new JTextField[2];
-    private JTextField txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_point, txt_date, txt_total;
+    private JTextField txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_point, txt_date,
+            txt_total;
     private JTextField txt_bookId, txt_quantity;
     private JTextField txt_search;
     private JButton[] buttons = new JButton[3];
@@ -87,7 +88,7 @@ public class BanSachGUI {
 
     private void initializeTextFields() {
         txt_search = new JTextField();
-        txt_array_search = new JTextField[]{txt_search};
+        txt_array_search = new JTextField[] { txt_search };
         txt_invoiceId = new JTextField();
         txt_employeeName = new JTextField();
         txt_customerPhone = new JTextField();
@@ -97,8 +98,9 @@ public class BanSachGUI {
         txt_total = new JTextField();
         txt_bookId = new JTextField();
         txt_quantity = new JTextField();
-        txt_array_top = new JTextField[]{txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_point, txt_date, txt_total};
-        txt_array_down = new JTextField[]{txt_bookId, txt_quantity};
+        txt_array_top = new JTextField[] { txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName,
+                txt_point, txt_date, txt_total };
+        txt_array_down = new JTextField[] { txt_bookId, txt_quantity };
     }
 
     private void initializeMainPanel() {
@@ -110,11 +112,12 @@ public class BanSachGUI {
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         panel.add(createTable_top(), BorderLayout.WEST);
 
-        String[] txt_label_top = {"Mã hóa đơn", "Nhân viên", "SDT KH", "Tên KH", "Điểm tích lũy", "Ngày bán", "Tổng tiền"};
+        String[] txt_label_top = { "Mã hóa đơn", "Nhân viên", "SDT KH", "Tên KH", "Điểm tích lũy", "Ngày bán",
+                "Tổng tiền" };
         panel.add(createDetailPanel_top(450, -10, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
 
         JPanel lowerPanel = new JPanel(new BorderLayout(10, 0));
-        String[] txt_label_down = {"Mã sách", "Số lượng"};
+        String[] txt_label_down = { "Mã sách", "Số lượng" };
         JPanel detailPanelDown = createDetailPanel_down(300, 10, txt_array_down, txt_label_down);
         lowerPanel.add(detailPanelDown, BorderLayout.CENTER);
 
@@ -148,7 +151,7 @@ public class BanSachGUI {
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = {"Mã sách", "Tên sách"};
+        String[] searchOptions = { "Mã sách", "Tên sách" };
         comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
@@ -178,11 +181,11 @@ public class BanSachGUI {
                         break;
                 }
                 if (match) {
-                    model.addRow(new Object[]{
-                        sach.getMaSach(),
-                        sach.getTenSach(),
-                        sach.getSoLuong(),
-                        sach.getDonGia() + 10000
+                    model.addRow(new Object[] {
+                            sach.getMaSach(),
+                            sach.getTenSach(),
+                            sach.getSoLuong(),
+                            sach.getDonGia() + 10000
                     });
                 }
             }
@@ -193,17 +196,17 @@ public class BanSachGUI {
     }
 
     private JPanel createTable_top() {
-        String[] column = {"Mã sách", "Tên sách", "Số lượng", "Đơn giá"};
+        String[] column = { "Mã sách", "Tên sách", "Số lượng", "Đơn giá" };
         DefaultTableModel model = new DefaultTableModel(column, 0);
 
         try {
             sachList = sachBUS.getAllSach();
             for (SachDTO sach : sachList) {
-                model.addRow(new Object[]{
-                    sach.getMaSach(),
-                    sach.getTenSach(),
-                    sach.getSoLuong(),
-                    sach.getDonGia() + 10000
+                model.addRow(new Object[] {
+                        sach.getMaSach(),
+                        sach.getTenSach(),
+                        sach.getSoLuong(),
+                        sach.getDonGia() + 10000
                 });
             }
         } catch (Exception e) {
@@ -249,9 +252,12 @@ public class BanSachGUI {
                                         System.out.println("Successfully read image file: " + absoluteImagePath);
                                         int targetWidth = imagePanel.getPreferredSize().width;
                                         int targetHeight = imagePanel.getPreferredSize().height;
-                                        if (targetWidth <= 0) targetWidth = 200;
-                                        if (targetHeight <= 0) targetHeight = 250;
-                                        Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                                        if (targetWidth <= 0)
+                                            targetWidth = 200;
+                                        if (targetHeight <= 0)
+                                            targetHeight = 250;
+                                        Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight,
+                                                Image.SCALE_SMOOTH);
                                         finalIcon = new ImageIcon(scaledImage);
                                         System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
                                     } else {
@@ -264,10 +270,12 @@ public class BanSachGUI {
                                 System.err.println("Image name is null or empty for book: " + bookId);
                             }
                         } catch (IOException ioEx) {
-                            System.err.println("IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
+                            System.err.println(
+                                    "IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
                             ioEx.printStackTrace();
                         } catch (Exception ex) {
-                            System.err.println("General error processing image " + sach.getImg() + ": " + ex.getMessage());
+                            System.err.println(
+                                    "General error processing image " + sach.getImg() + ": " + ex.getMessage());
                             ex.printStackTrace();
                         }
 
@@ -285,9 +293,12 @@ public class BanSachGUI {
                                 if (defaultOriginal != null) {
                                     int targetWidth = imagePanel.getPreferredSize().width;
                                     int targetHeight = imagePanel.getPreferredSize().height;
-                                    if (targetWidth <= 0) targetWidth = 200;
-                                    if (targetHeight <= 0) targetHeight = 250;
-                                    Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                                    if (targetWidth <= 0)
+                                        targetWidth = 200;
+                                    if (targetHeight <= 0)
+                                        targetHeight = 250;
+                                    Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight,
+                                            Image.SCALE_SMOOTH);
                                     finalIcon = new ImageIcon(scaledDefault);
                                     System.out.println("Loaded and scaled default image.");
                                 }
@@ -324,7 +335,7 @@ public class BanSachGUI {
 
     private JPanel createTable_down() {
         // table
-        String[] column = {"Mã sách", "Tên sách", "Số lượng", "Đơn giá"};
+        String[] column = { "Mã sách", "Tên sách", "Số lượng", "Đơn giá" };
         DefaultTableModel model = new DefaultTableModel(column, 0);
         table_down = tool.createTable(model, column);
         table_down.setDefaultEditor(Object.class, null);
@@ -363,16 +374,17 @@ public class BanSachGUI {
     }
 
     private JPanel createDetailPanel_top(int width, int padding_top, JTextField[] txt_array,
-                                        String[] txt_label, ImageIcon img) {
+            String[] txt_label, ImageIcon img) {
         JPanel panelDetail = tool.createDetailPanel(txt_array, txt_label, img, width, 320, 2, 7, false);
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(padding_top, 0, 0, 0));
 
-        // txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_point, txt_date, txt_total
+        // txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName,
+        // txt_point, txt_date, txt_total
         txt_array[0].setEditable(false); // txt_invoiceId
         txt_array[1].setEditable(false); // txt_employeeName
-        txt_array[1].setText(nv.getHoTen()); 
+        txt_array[1].setText(nv.getHoTen());
         txt_array[2].setEditable(true); // txt_customerPhone
         txt_array[3].setText("Anonymous"); // txt_customerName
         txt_array[5].setEditable(false); // txt_date
@@ -382,6 +394,7 @@ public class BanSachGUI {
 
         txt_array[2].addKeyListener(new java.awt.event.KeyAdapter() {
             private String previousPhoneNumber = "";
+
             @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
                 String sdt = txt_array[2].getText().trim();
@@ -401,7 +414,8 @@ public class BanSachGUI {
                         int tien = Integer.parseInt(txt_array[6].getText());
                         if (khachHang.getDiem() > tien) {
                             tienGiamGia = 0;
-                        } else tienGiamGia = Integer.parseInt(txt_array[4].getText()) * 1000;
+                        } else
+                            tienGiamGia = Integer.parseInt(txt_array[4].getText()) * 1000;
                     } else {
                         txt_array[3].setEditable(true);
                         txt_array[3].setText("");
@@ -427,8 +441,7 @@ public class BanSachGUI {
                 String diemStr = txt_array[4].getText();
                 if (diemStr.isBlank() || !diemStr.matches("\\d+")) {
                     tienGiamGia = 0;
-                }
-                else {
+                } else {
                     int diem = Integer.parseInt(diemStr);
                     int tien = Integer.parseInt(txt_array[6].getText());
                     if (diem * 1000 > tien) {
@@ -444,7 +457,7 @@ public class BanSachGUI {
     }
 
     private JPanel createDetailPanel_down(int width, int padding_top, JTextField[] txt_array,
-                                         String[] txt_label) {
+            String[] txt_label) {
         JPanel panelDetail = tool.createDetailPanel(txt_array, txt_label, null, width, 300, 1, 2, false);
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
@@ -453,7 +466,7 @@ public class BanSachGUI {
     }
 
     private JPanel createButtonPanel() {
-        String[] buttonTexts = {"Thêm", "Xóa", "Thanh toán"};
+        String[] buttonTexts = { "Thêm", "Xóa", "Thanh toán" };
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(tool.createButtonPanel(buttons, buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
         // buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 60, 25));
@@ -517,7 +530,7 @@ public class BanSachGUI {
                 break;
             }
         }
-        model.addRow(new Object[]{maSach, tenSach, soLuong, donGia});
+        model.addRow(new Object[] { maSach, tenSach, soLuong, donGia });
 
         updateTotal();
         int diem = Integer.parseInt(txt_array_top[4].getText());
@@ -548,7 +561,8 @@ public class BanSachGUI {
 
     private void thanhToan() {
         try {
-            // txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_point, txt_date, txt_total
+            // txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName,
+            // txt_point, txt_date, txt_total
             String maHD = txt_array_top[0].getText().trim();
             String maNV = nv.getMaNV();
             String sdtKhach = txt_array_top[2].getText().trim();
@@ -556,11 +570,12 @@ public class BanSachGUI {
             String diemStr = txt_array_top[4].getText().trim();
             String ngayBanStr = txt_array_top[5].getText().trim();
             String tongTienStr = txt_array_top[6].getText().trim();
-            
+
             KhachHangDTO maKH;
             int diem;
 
-            if (maNV.isEmpty() || tenKhach.isEmpty() || ngayBanStr.isEmpty() || tongTienStr.isEmpty() || (!sdtKhach.isBlank() && diemStr.isEmpty())) {
+            if (maNV.isEmpty() || tenKhach.isEmpty() || ngayBanStr.isEmpty() || tongTienStr.isEmpty()
+                    || (!sdtKhach.isBlank() && diemStr.isEmpty())) {
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin hóa đơn!");
                 return;
             }
@@ -606,14 +621,15 @@ public class BanSachGUI {
                 diem = Integer.parseInt(diemStr);
 
                 if (diem < 0) {
-                    JOptionPane.showMessageDialog(null, "Điểm tích lũy được áp dụng phải lớn hơn 0 và phải chứa ký tự số");
+                    JOptionPane.showMessageDialog(null,
+                            "Điểm tích lũy được áp dụng phải lớn hơn 0 và phải chứa ký tự số");
                     return;
                 }
-    
+
                 if (maKH.getDiem() < diem) {
                     JOptionPane.showMessageDialog(null, "Điểm tích lũy của khách hàng không đủ để được áp dụng");
                     return;
-                }    
+                }
             } else {
                 diem = 0;
             }
@@ -656,6 +672,7 @@ public class BanSachGUI {
             }
 
             refreshTable();
+            InHoaDon();
             model.setRowCount(0);
 
             for (JTextField txt : txt_array_top) {
@@ -680,8 +697,10 @@ public class BanSachGUI {
             txt_array_top[5].setEditable(false);
             txt_array_top[6].setEditable(false);
             initializeHoaDon();
-            if (diem != 0) maKH.setDiem(maKH.getDiem() - diem);
-            else maKH.setDiem(maKH.getDiem() + (int)(tongTien / 1000));
+            if (diem != 0)
+                maKH.setDiem(maKH.getDiem() - diem);
+            else
+                maKH.setDiem(maKH.getDiem() + (int) (tongTien / 1000));
             khachHangBUS.updateKhachHang(maKH);
 
             JOptionPane.showMessageDialog(null, "Thanh toán thành công!");
@@ -713,11 +732,11 @@ public class BanSachGUI {
         try {
             sachList = sachBUS.getAllSach();
             for (SachDTO sach : sachList) {
-                model.addRow(new Object[]{
-                    sach.getMaSach(),
-                    sach.getTenSach(),
-                    sach.getSoLuong(),
-                    sach.getDonGia()
+                model.addRow(new Object[] {
+                        sach.getMaSach(),
+                        sach.getTenSach(),
+                        sach.getSoLuong(),
+                        sach.getDonGia()
                 });
             }
         } catch (Exception e) {
@@ -737,6 +756,12 @@ public class BanSachGUI {
             maKH += count;
         }
         return maKH;
+    }
+
+    private void InHoaDon() {
+        // Implement the logic to print the invoice
+        // This is a placeholder for the actual implementation
+        System.out.println("In hóa đơn...");
     }
 
     public JPanel getPanel() {
