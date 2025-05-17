@@ -3,8 +3,11 @@ package GUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -22,6 +25,7 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -178,11 +182,11 @@ public class NhapSachGUI {
                         break;
                 }
                 if (match) {
-                    model.addRow(new Object[]{
-                        sach.getMaSach(),
-                        sach.getTenSach(),
-                        sach.getSoLuong(),
-                        sach.getDonGia()
+                    model.addRow(new Object[] {
+                            sach.getMaSach(),
+                            sach.getTenSach(),
+                            sach.getSoLuong(),
+                            sach.getDonGia()
                     });
                 }
             }
@@ -248,9 +252,12 @@ public class NhapSachGUI {
                                     System.out.println("Successfully read image file: " + absoluteImagePath);
                                     int targetWidth = imagePanel.getPreferredSize().width;
                                     int targetHeight = imagePanel.getPreferredSize().height;
-                                    if (targetWidth <= 0) targetWidth = 200;
-                                    if (targetHeight <= 0) targetHeight = 250;
-                                    Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                                    if (targetWidth <= 0)
+                                        targetWidth = 200;
+                                    if (targetHeight <= 0)
+                                        targetHeight = 250;
+                                    Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight,
+                                            Image.SCALE_SMOOTH);
                                     finalIcon = new ImageIcon(scaledImage);
                                     System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
                                 } else {
@@ -263,7 +270,8 @@ public class NhapSachGUI {
                             System.err.println("Image name is null or empty for book: " + bookId);
                         }
                     } catch (IOException ioEx) {
-                        System.err.println("IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
+                        System.err.println(
+                                "IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
                         ioEx.printStackTrace();
                     } catch (Exception ex) {
                         System.err.println("General error processing image " + sach.getImg() + ": " + ex.getMessage());
@@ -284,9 +292,12 @@ public class NhapSachGUI {
                             if (defaultOriginal != null) {
                                 int targetWidth = imagePanel.getPreferredSize().width;
                                 int targetHeight = imagePanel.getPreferredSize().height;
-                                if (targetWidth <= 0) targetWidth = 200;
-                                if (targetHeight <= 0) targetHeight = 250;
-                                Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                                if (targetWidth <= 0)
+                                    targetWidth = 200;
+                                if (targetHeight <= 0)
+                                    targetHeight = 250;
+                                Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight,
+                                        Image.SCALE_SMOOTH);
                                 finalIcon = new ImageIcon(scaledDefault);
                                 System.out.println("Loaded and scaled default image.");
                             }
@@ -366,9 +377,12 @@ public class NhapSachGUI {
                                     System.out.println("Successfully read image file: " + absoluteImagePath);
                                     int targetWidth = imagePanel.getPreferredSize().width;
                                     int targetHeight = imagePanel.getPreferredSize().height;
-                                    if (targetWidth <= 0) targetWidth = 200;
-                                    if (targetHeight <= 0) targetHeight = 250;
-                                    Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                                    if (targetWidth <= 0)
+                                        targetWidth = 200;
+                                    if (targetHeight <= 0)
+                                        targetHeight = 250;
+                                    Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight,
+                                            Image.SCALE_SMOOTH);
                                     finalIcon = new ImageIcon(scaledImage);
                                     System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
                                 } else {
@@ -381,7 +395,8 @@ public class NhapSachGUI {
                             System.err.println("Image name is null or empty for book: " + bookId);
                         }
                     } catch (IOException ioEx) {
-                        System.err.println("IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
+                        System.err.println(
+                                "IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
                         ioEx.printStackTrace();
                     } catch (Exception ex) {
                         System.err.println("General error processing image " + sach.getImg() + ": " + ex.getMessage());
@@ -402,9 +417,12 @@ public class NhapSachGUI {
                             if (defaultOriginal != null) {
                                 int targetWidth = imagePanel.getPreferredSize().width;
                                 int targetHeight = imagePanel.getPreferredSize().height;
-                                if (targetWidth <= 0) targetWidth = 200;
-                                if (targetHeight <= 0) targetHeight = 250;
-                                Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                                if (targetWidth <= 0)
+                                    targetWidth = 200;
+                                if (targetHeight <= 0)
+                                    targetHeight = 250;
+                                Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight,
+                                        Image.SCALE_SMOOTH);
                                 finalIcon = new ImageIcon(scaledDefault);
                                 System.out.println("Loaded and scaled default image.");
                             }
@@ -611,6 +629,7 @@ public class NhapSachGUI {
             }
 
             refreshTable();
+            Inhoadon();
             model.setRowCount(0);
 
             for (JTextField txt : txt_array_top) {
@@ -661,6 +680,100 @@ public class NhapSachGUI {
         } catch (Exception e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi làm mới bảng: " + e.getMessage());
+        }
+    }
+
+    public void Inhoadon() {
+        DefaultTableModel model = (DefaultTableModel) table_down.getModel();
+        int rowCount = model.getRowCount();
+        int imgWidth = 900;
+        int imgHeight = 500 + rowCount * 25 + 100;
+        BufferedImage img = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_RGB);
+        Graphics2D g2d = img.createGraphics();
+        g2d.setColor(Color.WHITE);
+        g2d.fillRect(0, 0, imgWidth, imgHeight);
+        g2d.setColor(Color.BLACK);
+        g2d.setFont(new Font("New Times Roman", Font.BOLD, 18));
+        g2d.drawString("HÓA ĐƠN NHẬP HÀNG", 500, 30);
+        g2d.drawString("CỬA HÀNG BÁN SÁCH", 75, 30);
+        g2d.setFont(new Font("New Times Roman", Font.BOLD, 16));
+        g2d.drawString("Địa chỉ:............................. ", 51, 54);
+        g2d.drawString("ĐT:....................................", 51, 78);
+        g2d.drawString("Mặt hàng nhập (Hoặc nghành nghề kinh doanh)", 423, 66);
+        g2d.drawString("Tên nhân viên:.....................................", 51, 128);
+        g2d.drawString("Địa chỉ:.....................................", 51, 152);
+        g2d.drawLine(51, 160, imgWidth - 51, 160);
+
+        // Draw column headers
+        g2d.drawString("STT", 68, 182);
+        g2d.drawString("TÊN HÀNG", 200, 182);
+        g2d.drawString("SỐ LƯỢNG", 370, 182);
+        g2d.drawString("ĐƠN GIÁ", 520, 182);
+        g2d.drawString("THÀNH TIỀN", 700, 182);
+        g2d.drawLine(51, 160, imgWidth - 51, 160); // Horizontal line
+        // Draw vertical lines to separate columns
+        g2d.setFont(new Font("New Times Roman", Font.BOLD, 14));
+        for (int row = 0; row < rowCount; row++) {
+            String stt = String.valueOf(row + 1);
+            String tenHang = model.getValueAt(row, 1).toString();
+            String soLuong = model.getValueAt(row, 2).toString();
+            String donGia = model.getValueAt(row, 3).toString();
+            String thanhTien = String.valueOf(Integer.parseInt(soLuong) * Integer.parseInt(donGia));
+
+            g2d.drawString(stt, 79, 210 + row * 25);
+            g2d.drawString(tenHang, 125, 210 + row * 25);
+            g2d.drawString(soLuong, 410, 210 + row * 25);
+            g2d.drawString(donGia, 520, 210 + row * 25);
+            g2d.drawString(thanhTien, 700, 210 + row * 25);
+
+            g2d.drawLine(51, 160, 51, 214 + rowCount * 25);
+            g2d.drawLine(120, 160, 120, 214 + rowCount * 25); // STT - TÊN HÀNG
+            g2d.drawLine(365, 160, 365, 214 + rowCount * 25); // TÊN HÀNG - SỐ LƯỢNG
+            g2d.drawLine(460, 160, 460, 214 + rowCount * 25); // SỐ LƯỢNG - ĐƠN GIÁ
+            g2d.drawLine(650, 160, 650, 214 + rowCount * 25); // ĐƠN GIÁ - THÀNH TIỀN
+            g2d.drawLine(imgWidth - 51, 160, imgWidth - 51, 214 + rowCount * 25); // THÀNH TIỀN - right border
+
+            g2d.drawLine(51, 214 + row * 25, imgWidth - 51, 214 + row * 25); // Horizontal line
+            if (row == rowCount - 1) {
+                g2d.drawLine(51, 240 + row * 25, imgWidth - 51, 240 + row * 25); // Horizontal line
+                g2d.setFont(new Font("New Times Roman", Font.BOLD, 16));
+                g2d.drawString("CỘNG: ", 125, 235 + row * 25);
+                g2d.setFont(new Font("New Times Roman", Font.BOLD, 16));
+                g2d.drawString(String.valueOf(txt_array_top[4].getText()) + "VNĐ", 700, 235 + row * 25);
+            }
+        }
+        g2d.drawLine(51, 204 - 12, imgWidth - 51, 204 - 12);
+
+        // Draw footer
+        g2d.getFont().deriveFont(16f);
+        g2d.drawString(
+                "Thành tiền:........................." + txt_array_top[4].getText()
+                        + "..VNĐ..............................................................",
+                51, 245 + rowCount * 25);
+        g2d.drawString("Ngày ......... Tháng .......... Năm ..........", 490, 270 + rowCount * 25);
+        g2d.drawString("NGƯỜI GIAO HÀNG", 150, 350 + rowCount * 25);
+        g2d.drawString("NHÂN VIÊN", 470, 350 + rowCount * 25);
+        g2d.dispose();
+        try {
+            ImageIO.write(img, "png", new File("HoaDonNhap\\Hoa_Don_Nhap.png"));
+            Desktop.getDesktop().open(new File("HoaDonNhap\\Hoa_Don_Nhap.png"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            JFrame frame = new JFrame("Hóa đơn nhập hàng");
+            frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            frame.setSize(900, 800);
+            frame.setLocationRelativeTo(null);
+
+            JLabel label = new JLabel(new ImageIcon(img));
+            label.setBackground(Color.black);
+            frame.add(label);
+
+            frame.setVisible(true);
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi in hóa đơn: " + e.getMessage());
         }
     }
 
