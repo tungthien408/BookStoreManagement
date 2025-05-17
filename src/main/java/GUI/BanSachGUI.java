@@ -374,12 +374,21 @@ public class BanSachGUI {
         txt_array[1].setEditable(false); // txt_employeeName
         txt_array[1].setText(nv.getHoTen()); 
         txt_array[2].setEditable(true); // txt_customerPhone
+        txt_array[3].setText("Anonymous"); // txt_customerName
         txt_array[5].setEditable(false); // txt_date
+        txt_array[5].setText(LocalDate.now().toString());
+        txt_array[6].setText("");
+        txt_array[6].setEditable(false); // txt_total
 
         txt_array[2].addKeyListener(new java.awt.event.KeyAdapter() {
+            private String previousPhoneNumber = "";
             @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
-                String sdt = txt_array[2].getText();
+                String sdt = txt_array[2].getText().trim();
+                if (sdt.equals(previousPhoneNumber)) {
+                    return; // Skip if the phone number hasn't changed
+                }
+                previousPhoneNumber = sdt;
                 if (sdt.matches("(02|03|05|07|08|09)\\d{8}")) {
                     KhachHangDTO khachHang = khachHangBUS.getMaKhachHangBySdt(sdt);
                     if (khachHang != null) {
@@ -387,36 +396,47 @@ public class BanSachGUI {
                         txt_array[3].setEditable(false);
                         txt_array[4].setText(khachHang.getDiem() + "");
                         txt_array[4].setEditable(true);
+                        System.out.println("Tong tien: " + txt_array[6].getText());
+
+                        int tien = Integer.parseInt(txt_array[6].getText());
+                        if (khachHang.getDiem() > tien) {
+                            tienGiamGia = 0;
+                        } else tienGiamGia = Integer.parseInt(txt_array[4].getText()) * 1000;
                     } else {
                         txt_array[3].setEditable(true);
                         txt_array[3].setText("");
                         txt_array[4].setText("0");
                         txt_array[4].setEditable(false);
+                        tienGiamGia = 0;
                     }
-                } else {
+                } else if (!sdt.isBlank()) {
                     tienGiamGia = 0;
                     txt_array[3].setText("Số điện thoại không hợp lệ!");
-                }
-                tienGiamGia = Integer.parseInt(txt_array[4].getText()) * 1000;
-                int tien = Integer.parseInt(txt_array[4].getText());
-                if (tienGiamGia > tien) {
-                    tienGiamGia = tien;
-                    txt_array[4].setText(String.valueOf(tienGiamGia / 1000));
+                } else {
+                    tienGiamGia = 0;
+                    txt_array[4].setText("");
+                    txt_array[4].setEditable(false);
                 }
                 updateTotal();
             }
         });
 
-        txt_array[3].addKeyListener(new java.awt.event.KeyAdapter() {
+        txt_array[4].addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
-                String diemStr = txt_array[3].getText();
+                String diemStr = txt_array[4].getText();
                 if (diemStr.isBlank() || !diemStr.matches("\\d+")) {
                     tienGiamGia = 0;
-                    return;
                 }
-                int diem = Integer.parseInt(diemStr);
-                tienGiamGia = diem * 1000;
+                else {
+                    int diem = Integer.parseInt(diemStr);
+                    int tien = Integer.parseInt(txt_array[6].getText());
+                    if (diem * 1000 > tien) {
+                        tienGiamGia = 0;
+                    } else {
+                        tienGiamGia = diem * 1000;
+                    }
+                }
                 updateTotal();
             }
         });
@@ -500,6 +520,15 @@ public class BanSachGUI {
         model.addRow(new Object[]{maSach, tenSach, soLuong, donGia});
 
         updateTotal();
+        int diem = Integer.parseInt(txt_array_top[4].getText());
+        int tien = Integer.parseInt(txt_array_top[6].getText());
+        if (diem * 1000 > tien) {
+            tienGiamGia = 0;
+        } else {
+            tienGiamGia = diem * 1000;
+        }
+
+        updateTotal();
         txt_array_down[0].setText("");
         txt_array_down[1].setText("");
     }
@@ -528,12 +557,15 @@ public class BanSachGUI {
             String ngayBanStr = txt_array_top[5].getText().trim();
             String tongTienStr = txt_array_top[6].getText().trim();
             
-            if (maNV.isEmpty() || sdtKhach.isEmpty() || tenKhach.isEmpty() || ngayBanStr.isEmpty() || tongTienStr.isEmpty() || diemStr.isEmpty()) {
+            KhachHangDTO maKH;
+            int diem;
+
+            if (maNV.isEmpty() || tenKhach.isEmpty() || ngayBanStr.isEmpty() || tongTienStr.isEmpty() || (!sdtKhach.isBlank() && diemStr.isEmpty())) {
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin hóa đơn!");
                 return;
             }
 
-            if (!sdtKhach.matches("(02|03|05|07|08|09)\\d{8}")) {
+            if (!sdtKhach.isBlank() && !sdtKhach.matches("(02|03|05|07|08|09)\\d{8}")) {
                 JOptionPane.showMessageDialog(null, "Số điện thoại không hợp lệ!");
                 return;
             }
@@ -543,7 +575,7 @@ public class BanSachGUI {
                 return;
             }
 
-            if (!diemStr.matches("\\d+")) {
+            if (!sdtKhach.isBlank() && !diemStr.matches("\\d+")) {
                 JOptionPane.showMessageDialog(null, "Điểm tích lũy được áp dụng phải chứa ký tự số");
                 return;
             }
@@ -554,27 +586,36 @@ public class BanSachGUI {
                 return;
             }
 
-            KhachHangDTO maKH = khachHangBUS.getMaKhachHangBySdt(sdtKhach);
-            if (maKH == null) {
-                maKH = new KhachHangDTO();
-                maKH.setMaKH(getNextMaKH());
-                maKH.setHoTen(tenKhach);
-                maKH.setSdt(sdtKhach);
-                maKH.setTrangThaiXoa(0);
-                maKH.setDiem(0);
-                khachHangBUS.addKhachHang(maKH);
+            if (!sdtKhach.isEmpty()) {
+                maKH = khachHangBUS.getMaKhachHangBySdt(sdtKhach);
+                if (maKH == null) {
+                    maKH = new KhachHangDTO();
+                    maKH.setMaKH(getNextMaKH());
+                    maKH.setHoTen(tenKhach);
+                    maKH.setSdt(sdtKhach);
+                    maKH.setTrangThaiXoa(0);
+                    maKH.setDiem(0);
+                    boolean b = khachHangBUS.addKhachHang(maKH);
+                }
+            } else {
+                maKH = khachHangBUS.getKhachHangByMaKH("KH000");
+                diemStr = "null";
             }
 
-            int diem = Integer.parseInt(diemStr);
+            if (!diemStr.equals("null")) {
+                diem = Integer.parseInt(diemStr);
 
-            if (diem < 0) {
-                JOptionPane.showMessageDialog(null, "Điểm tích lũy được áp dụng phải lớn hơn 0 và phải chứa ký tự số");
-                return;
-            }
-
-            if (maKH.getDiem() < diem) {
-                JOptionPane.showMessageDialog(null, "Điểm tích lũy của khách hàng không đủ để được áp dụng");
-                return;
+                if (diem < 0) {
+                    JOptionPane.showMessageDialog(null, "Điểm tích lũy được áp dụng phải lớn hơn 0 và phải chứa ký tự số");
+                    return;
+                }
+    
+                if (maKH.getDiem() < diem) {
+                    JOptionPane.showMessageDialog(null, "Điểm tích lũy của khách hàng không đủ để được áp dụng");
+                    return;
+                }    
+            } else {
+                diem = 0;
             }
 
             int tongTien = Integer.parseInt(tongTienStr);
@@ -629,10 +670,18 @@ public class BanSachGUI {
 
             count++;
             txt_array_top[0].setText(getID());
+            txt_array_top[0].setEditable(false);
+            txt_array_top[1].setText(nv.getHoTen());
+            txt_array_top[1].setEditable(false);
+            txt_array_top[3].setText("Anonymous");
+            txt_array_top[3].setEditable(false);
+            txt_array_top[4].setEditable(false);
             txt_array_top[5].setText(LocalDate.now().toString());
+            txt_array_top[5].setEditable(false);
+            txt_array_top[6].setEditable(false);
             initializeHoaDon();
-            if (diem == 0) maKH.setDiem(maKH.getDiem() - diem);
-            else maKH.setDiem(maKH.getDiem() + (int)(tongTien * 0.1));
+            if (diem != 0) maKH.setDiem(maKH.getDiem() - diem);
+            else maKH.setDiem(maKH.getDiem() + (int)(tongTien / 1000));
             khachHangBUS.updateKhachHang(maKH);
 
             JOptionPane.showMessageDialog(null, "Thanh toán thành công!");
@@ -651,6 +700,9 @@ public class BanSachGUI {
             tongTien += soLuong * donGia;
         }
 
+        if (tienGiamGia > tongTien) {
+            txt_array_top[4].setText(String.valueOf(tongTien));
+        }
         tongTien -= tienGiamGia;
         txt_array_top[6].setText(String.valueOf(tongTien));
     }

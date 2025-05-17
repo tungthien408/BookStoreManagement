@@ -20,16 +20,16 @@ USE `book`;
 -- --------------------------------------------------------
 
 --
--- Table structure for table `QUYEN`
+-- Table structure for table `quyen`
 --
-CREATE TABLE `QUYEN` (
+CREATE TABLE `quyen` (
     `maQuyen` VARCHAR(255) NOT NULL PRIMARY KEY,
     `tenQuyen` NVARCHAR(50) NOT NULL,
     `trangThaiXoa` INT NOT NULL DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- Updated QUYEN data with standardized maQuyen (0-9 permissions)
-INSERT INTO `QUYEN` (`maQuyen`, `tenQuyen`) VALUES
+-- Updated quyen data with standardized maQuyen (0-9 permissions)
+INSERT INTO `quyen` (`maQuyen`, `tenQuyen`) VALUES
 ('0123456789', N'Quản trị viên (admin)'), -- All permissions
 ('1245', N'Quản lý'),                    -- 1: Nhập sách, 2: Hóa đơn bán, 4: Sách, 5: Nhà xuất bản
 ('1246', N'Bán hàng'),                   -- 1: Nhập sách, 2: Hóa đơn bán, 4: Sách, 6: Tác giả
@@ -69,7 +69,7 @@ CREATE TABLE `taikhoannv` (
     `PASS` VARCHAR(255) NOT NULL,
     `trangThaiXoa` INT NOT NULL DEFAULT 0,
     `maQuyen` VARCHAR(255) NOT NULL,
-    FOREIGN KEY (`maQuyen`) REFERENCES `QUYEN`(`maQuyen`) ON DELETE RESTRICT,
+    FOREIGN KEY (`maQuyen`) REFERENCES `quyen`(`maQuyen`) ON DELETE RESTRICT,
     FOREIGN KEY (`MANV`) REFERENCES `nhanvien` (`MaNV`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -200,6 +200,7 @@ CREATE TABLE `khachhang` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 INSERT INTO `khachhang` (`MAKH`, `SDT`, `HoTen`, `Diem`, `trangThaiXoa`) VALUES
+('KH000', '0123456789', 'Anonymous', 0, 0),
 ('KH001', '0912345678', 'Nguyễn Văn An', 100, 0),
 ('KH002', '0987654321', 'Trần Thị Bình', 50, 0),
 ('KH003', '0935432109', 'Lê Minh Châu', 200, 0),
