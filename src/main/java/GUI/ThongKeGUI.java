@@ -294,8 +294,17 @@ public class ThongKeGUI {
     }
 
     private void filterByDate() {
+        JScrollPane scrollPane = (JScrollPane) panel_Table.getComponent(0);
+        JTable currentTable = (JTable) scrollPane.getViewport().getView();
         String startDateStr = textFieldTu.getText().trim();
         String endDateStr = textFieldDen.getText().trim();
+
+        if (currentTable != table_DoanhThu) {
+            if (startDateStr.isEmpty() || endDateStr.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Lọc chỉ áp dụng cho bảng Doanh Thu!");
+                return;
+            }
+        }
         if (startDateStr.isEmpty() || endDateStr.isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng nhập cả ngày bắt đầu và ngày kết thúc!");
             return;
