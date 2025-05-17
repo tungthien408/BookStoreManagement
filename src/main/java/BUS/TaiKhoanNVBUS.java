@@ -27,26 +27,23 @@ public class TaiKhoanNVBUS {
     public TaiKhoanNVDTO getTaiKhoanById(String maNV) {
         return taiKhoanDAO.getById(maNV);
     }
-        // Kiểm tra đăng nhập
+
+    // Kiểm tra đăng nhập
     public boolean checkLogin(String maNV, String pass, Integer trangThaiXoa) {
-        if (maNV == null || maNV.trim().isEmpty()) {
-            return false;
-        }
-        if (pass == null || pass.trim().isEmpty()) {
+        if (maNV == null || maNV.trim().isEmpty() || pass == null || pass.trim().isEmpty()) {
             return false;
         }
 
-        // TaiKhoanNVDTO taiKhoan = taiKhoanDAO.getById(maNV);
-        // if (taiKhoan == null) {
-        //     return false;
-        // }
+        TaiKhoanNVDTO taiKhoan = taiKhoanDAO.getById(maNV);
+        if (taiKhoan == null) {
+            return false;
+        }
 
-        // return taiKhoan.getMatKhau().equals(pass) && taiKhoan.getTrangThaiXoa() == 0;
-        return true;
+        return taiKhoan.getMatKhau().equals(pass) && taiKhoan.getTrangThaiXoa() == 0;
     }
 
     // public boolean hasPermission(String username, int maCN, String maHD){
-    //     return taiKhoanDAO.hasPermission(username, maCN, maHD);
+    // return taiKhoanDAO.hasPermission(username, maCN, maHD);
     // }
 
 }
