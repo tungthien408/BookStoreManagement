@@ -18,6 +18,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -49,9 +50,9 @@ public class BanSachGUI {
 
     private Tool tool = new Tool();
     private JPanel panel, paymentPanel;
-    private JTextField[] txt_array_top = new JTextField[6];
+    private JTextField[] txt_array_top = new JTextField[7];
     private JTextField[] txt_array_down = new JTextField[2];
-    private JTextField txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_date, txt_total;
+    private JTextField txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_point, txt_date, txt_total;
     private JTextField txt_bookId, txt_quantity;
     private JTextField txt_search;
     private JButton[] buttons = new JButton[3];
@@ -62,6 +63,7 @@ public class BanSachGUI {
     private int selectedRow = -1;
     private int lastSelectedRow = -1;
     private int count = 0;
+    private int tienGiamGia = 0;
     private JTextField[] txt_array_search = new JTextField[1];
     private JComboBox<String> comboBox;
 
@@ -90,11 +92,12 @@ public class BanSachGUI {
         txt_employeeName = new JTextField();
         txt_customerPhone = new JTextField();
         txt_customerName = new JTextField();
+        txt_point = new JTextField();
         txt_date = new JTextField();
         txt_total = new JTextField();
         txt_bookId = new JTextField();
         txt_quantity = new JTextField();
-        txt_array_top = new JTextField[]{txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_date, txt_total};
+        txt_array_top = new JTextField[]{txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_point, txt_date, txt_total};
         txt_array_down = new JTextField[]{txt_bookId, txt_quantity};
     }
 
@@ -107,8 +110,8 @@ public class BanSachGUI {
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         panel.add(createTable_top(), BorderLayout.WEST);
 
-        String[] txt_label_top = {"Mã hóa đơn", "Nhân viên", "SDT KH", "Tên KH", "Ngày bán", "Tổng tiền"};
-        panel.add(createDetailPanel_top(400, 0, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
+        String[] txt_label_top = {"Mã hóa đơn", "Nhân viên", "SDT KH", "Tên KH", "Điểm tích lũy", "Ngày bán", "Tổng tiền"};
+        panel.add(createDetailPanel_top(450, -10, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
 
         JPanel lowerPanel = new JPanel(new BorderLayout(10, 0));
         String[] txt_label_down = {"Mã sách", "Số lượng"};
@@ -125,7 +128,7 @@ public class BanSachGUI {
         lowerPanel.add(imagePanel, BorderLayout.WEST);
 
         paymentPanel.add(lowerPanel, BorderLayout.WEST);
-        paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
+        // paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
         paymentPanel.add(createTable_down(), BorderLayout.EAST);
 
         panel.add(paymentPanel, BorderLayout.SOUTH);
@@ -320,13 +323,13 @@ public class BanSachGUI {
     }
 
     private JPanel createTable_down() {
+        // table
         String[] column = {"Mã sách", "Tên sách", "Số lượng", "Đơn giá"};
         DefaultTableModel model = new DefaultTableModel(column, 0);
         table_down = tool.createTable(model, column);
         table_down.setDefaultEditor(Object.class, null);
         JScrollPane scrollPane = new JScrollPane(table_down);
-        scrollPane.setPreferredSize(new Dimension(500, 300));
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
+        scrollPane.setPreferredSize(new Dimension(500, 240));
 
         table_down.addMouseListener(new MouseAdapter() {
             @Override
@@ -347,23 +350,31 @@ public class BanSachGUI {
             }
         });
 
-        JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel panelTable = new JPanel();
+        panelTable.setLayout(new BoxLayout(panelTable, BoxLayout.Y_AXIS)); // Stack components vertically
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(60, 0, 0, 0));
+        scrollPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panelTable.add(scrollPane);
+        panelTable.add(createButtonPanel());
+        panelTable.add(Box.createVerticalStrut(50)); // Add 20px spacing
+        panelTable.setBorder(BorderFactory.createEmptyBorder(90, 10, 0, 10));
+        // panelTable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         return panelTable;
     }
 
     private JPanel createDetailPanel_top(int width, int padding_top, JTextField[] txt_array,
                                         String[] txt_label, ImageIcon img) {
-        JPanel panelDetail = tool.createDetailPanel(txt_array, txt_label, img, width, 250, 2, 6, false);
+        JPanel panelDetail = tool.createDetailPanel(txt_array, txt_label, img, width, 320, 2, 7, false);
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(padding_top, 0, 0, 0));
 
-        txt_array[0].setEditable(false);
-        txt_array[1].setEditable(false);
-        txt_array[1].setText(nv.getHoTen());
-        txt_array[2].setEditable(true);
-        txt_array[4].setEditable(false);
+        // txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_point, txt_date, txt_total
+        txt_array[0].setEditable(false); // txt_invoiceId
+        txt_array[1].setEditable(false); // txt_employeeName
+        txt_array[1].setText(nv.getHoTen()); 
+        txt_array[2].setEditable(true); // txt_customerPhone
+        txt_array[5].setEditable(false); // txt_date
 
         txt_array[2].addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
@@ -374,13 +385,39 @@ public class BanSachGUI {
                     if (khachHang != null) {
                         txt_array[3].setText(khachHang.getHoTen());
                         txt_array[3].setEditable(false);
+                        txt_array[4].setText(khachHang.getDiem() + "");
+                        txt_array[4].setEditable(true);
                     } else {
                         txt_array[3].setEditable(true);
                         txt_array[3].setText("");
+                        txt_array[4].setText("0");
+                        txt_array[4].setEditable(false);
                     }
                 } else {
+                    tienGiamGia = 0;
                     txt_array[3].setText("Số điện thoại không hợp lệ!");
                 }
+                tienGiamGia = Integer.parseInt(txt_array[4].getText()) * 1000;
+                int tien = Integer.parseInt(txt_array[4].getText());
+                if (tienGiamGia > tien) {
+                    tienGiamGia = tien;
+                    txt_array[4].setText(String.valueOf(tienGiamGia / 1000));
+                }
+                updateTotal();
+            }
+        });
+
+        txt_array[3].addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                String diemStr = txt_array[3].getText();
+                if (diemStr.isBlank() || !diemStr.matches("\\d+")) {
+                    tienGiamGia = 0;
+                    return;
+                }
+                int diem = Integer.parseInt(diemStr);
+                tienGiamGia = diem * 1000;
+                updateTotal();
             }
         });
         return wrappedPanel;
@@ -399,7 +436,8 @@ public class BanSachGUI {
         String[] buttonTexts = {"Thêm", "Xóa", "Thanh toán"};
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(tool.createButtonPanel(buttons, buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 110, 25));
+        // buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 60, 25));
+        buttonPanel.setBorder(BorderFactory.createLineBorder(Color.GREEN));
 
         buttons[0].addActionListener(e -> addChiTietHoaDon());
         buttons[1].addActionListener(e -> deleteChiTietHoaDon());
@@ -410,7 +448,7 @@ public class BanSachGUI {
     private void addChiTietHoaDon() {
         txt_array_top[0].setEditable(false);
         txt_array_top[0].setText(getID());
-        txt_array_top[4].setText(LocalDate.now().toString());
+        txt_array_top[5].setText(LocalDate.now().toString());
 
         selectedRow = table_top.getSelectedRow();
         if (selectedRow == -1) {
@@ -481,20 +519,32 @@ public class BanSachGUI {
 
     private void thanhToan() {
         try {
+            // txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_point, txt_date, txt_total
             String maHD = txt_array_top[0].getText().trim();
             String maNV = nv.getMaNV();
             String sdtKhach = txt_array_top[2].getText().trim();
             String tenKhach = txt_array_top[3].getText().trim();
-            String ngayBanStr = txt_array_top[4].getText().trim();
-            String tongTienStr = txt_array_top[5].getText().trim();
-
-            if (maNV.isEmpty() || sdtKhach.isEmpty() || tenKhach.isEmpty() || ngayBanStr.isEmpty() || tongTienStr.isEmpty()) {
+            String diemStr = txt_array_top[4].getText().trim();
+            String ngayBanStr = txt_array_top[5].getText().trim();
+            String tongTienStr = txt_array_top[6].getText().trim();
+            
+            if (maNV.isEmpty() || sdtKhach.isEmpty() || tenKhach.isEmpty() || ngayBanStr.isEmpty() || tongTienStr.isEmpty() || diemStr.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin hóa đơn!");
+                return;
+            }
+
+            if (!sdtKhach.matches("(02|03|05|07|08|09)\\d{8}")) {
+                JOptionPane.showMessageDialog(null, "Số điện thoại không hợp lệ!");
                 return;
             }
 
             if (!nhanVienBUS.isNhanVienExists(maNV)) {
                 JOptionPane.showMessageDialog(null, "Mã nhân viên không tồn tại!");
+                return;
+            }
+
+            if (!diemStr.matches("\\d+")) {
+                JOptionPane.showMessageDialog(null, "Điểm tích lũy được áp dụng phải chứa ký tự số");
                 return;
             }
 
@@ -513,6 +563,18 @@ public class BanSachGUI {
                 maKH.setTrangThaiXoa(0);
                 maKH.setDiem(0);
                 khachHangBUS.addKhachHang(maKH);
+            }
+
+            int diem = Integer.parseInt(diemStr);
+
+            if (diem < 0) {
+                JOptionPane.showMessageDialog(null, "Điểm tích lũy được áp dụng phải lớn hơn 0 và phải chứa ký tự số");
+                return;
+            }
+
+            if (maKH.getDiem() < diem) {
+                JOptionPane.showMessageDialog(null, "Điểm tích lũy của khách hàng không đủ để được áp dụng");
+                return;
             }
 
             int tongTien = Integer.parseInt(tongTienStr);
@@ -567,8 +629,11 @@ public class BanSachGUI {
 
             count++;
             txt_array_top[0].setText(getID());
-            txt_array_top[4].setText(LocalDate.now().toString());
+            txt_array_top[5].setText(LocalDate.now().toString());
             initializeHoaDon();
+            if (diem == 0) maKH.setDiem(maKH.getDiem() - diem);
+            else maKH.setDiem(maKH.getDiem() + (int)(tongTien * 0.1));
+            khachHangBUS.updateKhachHang(maKH);
 
             JOptionPane.showMessageDialog(null, "Thanh toán thành công!");
         } catch (SQLException e) {
@@ -585,7 +650,9 @@ public class BanSachGUI {
             int donGia = Integer.parseInt(model.getValueAt(i, 3).toString());
             tongTien += soLuong * donGia;
         }
-        txt_array_top[5].setText(String.valueOf(tongTien));
+
+        tongTien -= tienGiamGia;
+        txt_array_top[6].setText(String.valueOf(tongTien));
     }
 
     private void refreshTable() {
