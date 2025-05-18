@@ -242,7 +242,7 @@ public class NhapSachGUI {
                         String imgName = sach.getImg();
                         System.out.println("Image name from database: " + imgName);
                         if (imgName != null && !imgName.trim().isEmpty()) {
-                            String absoluteImagePath = "D:\\BookStoreManagement\\images\\Book\\" + imgName;
+                            String absoluteImagePath = System.getProperty("user.dir") + "/images/Book/" + imgName;
                             System.out.println("Constructed image path: " + absoluteImagePath);
                             java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
                             File imageFile = imagePath.toFile();
@@ -282,7 +282,7 @@ public class NhapSachGUI {
                         System.err.println("Attempting to load and scale default image...");
                         try {
                             BufferedImage defaultOriginal = null;
-                            String defaultImagePath = "D:\\BookStoreManagement\\images\\Book\\default.jpg";
+                            String defaultImagePath = System.getProperty("user.dir") + "/images/Book/default.jpg";
                             File defaultImageFile = new File(defaultImagePath);
                             if (defaultImageFile.exists()) {
                                 defaultOriginal = ImageIO.read(defaultImageFile);
@@ -367,7 +367,7 @@ public class NhapSachGUI {
                         String imgName = sach.getImg();
                         System.out.println("Image name from database: " + imgName);
                         if (imgName != null && !imgName.trim().isEmpty()) {
-                            String absoluteImagePath = "D:\\BookStoreManagement\\images\\Book\\" + imgName;
+                            String absoluteImagePath = System.getProperty("user.dir") + "/images/Book/" + imgName;
                             System.out.println("Constructed image path: " + absoluteImagePath);
                             java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
                             File imageFile = imagePath.toFile();
@@ -407,7 +407,7 @@ public class NhapSachGUI {
                         System.err.println("Attempting to load and scale default image...");
                         try {
                             BufferedImage defaultOriginal = null;
-                            String defaultImagePath = "D:\\BookStoreManagement\\images\\Book\\default.jpg";
+                            String defaultImagePath = System.getProperty("user.dir") + "/images/Book/default.jpg";
                             File defaultImageFile = new File(defaultImagePath);
                             if (defaultImageFile.exists()) {
                                 defaultOriginal = ImageIO.read(defaultImageFile);
