@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -445,6 +446,14 @@ public class HoaDonBanGUI {
                         "Lỗi khi xuất Excel: " + ex.getMessage(),
                         "Lỗi", JOptionPane.ERROR_MESSAGE);
             }
+        }
+
+        try {
+            Desktop.getDesktop().open(fileChooser.getSelectedFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi mở file: " + e.getMessage(), "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
