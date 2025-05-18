@@ -9,6 +9,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -19,6 +20,7 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -41,6 +43,11 @@ import DTO.NhanVienDTO;
 import DTO.PhieuNhapDTO;
 import DTO.SachDTO;
 import DTO.TaiKhoanNVDTO;
+
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFCell;
 
 public class HoaDonNhapGUI {
     private static final int WIDTH = 1200;
@@ -67,7 +74,7 @@ public class HoaDonNhapGUI {
 
     public HoaDonNhapGUI() {
         txt_search = new JTextField();
-        txt_array_search = new JTextField[]{txt_search};
+        txt_array_search = new JTextField[] { txt_search };
         panel = tool.createPanel(WIDTH - SIDE_MENU_WIDTH, HEIGHT, new BorderLayout());
         initializeData();
         panel.add(createSearchPanel(), BorderLayout.NORTH);
@@ -86,7 +93,7 @@ public class HoaDonNhapGUI {
     }
 
     private JPanel createHoaDonNhapTable() {
-        String[] columns = {"Mã phiếu nhập", "Mã nhân viên", "Ngày nhập", "Tổng tiền", "Mã NXB"};
+        String[] columns = { "Mã phiếu nhập", "Mã nhân viên", "Ngày nhập", "Tổng tiền", "Mã NXB" };
         tableModel = new DefaultTableModel(columns, 0) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -96,12 +103,12 @@ public class HoaDonNhapGUI {
 
         if (phieuNhapList != null) {
             for (PhieuNhapDTO phieuNhap : phieuNhapList) {
-                tableModel.addRow(new Object[]{
-                    phieuNhap.getMaPN(),
-                    phieuNhap.getMaNV(),
-                    phieuNhap.getNgayNhap().toString(),
-                    phieuNhap.getTongTien(),
-                    phieuNhap.getMaNXB()
+                tableModel.addRow(new Object[] {
+                        phieuNhap.getMaPN(),
+                        phieuNhap.getMaNV(),
+                        phieuNhap.getNgayNhap().toString(),
+                        phieuNhap.getTongTien(),
+                        phieuNhap.getMaNXB()
                 });
             }
         }
@@ -117,7 +124,7 @@ public class HoaDonNhapGUI {
     }
 
     private JPanel createPanelButton(TaiKhoanNVDTO account) {
-        String[] btnText = {"Chi tiết", "Nhập Excel", "Xuất Excel", "Xem chi tiết"};
+        String[] btnText = { "Chi tiết", "Nhập Excel", "Xuất Excel", "Xem chi tiết" };
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(buttons, btnText, new Color(0, 36, 107), Color.WHITE, "y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -127,7 +134,7 @@ public class HoaDonNhapGUI {
             buttons[i].setFocusable(false);
         }
         buttons[0].addActionListener(e -> showInvoiceDetails());
-        buttons[1].addActionListener(e -> importFromExcel());
+        // buttons[1].addActionListener(e -> importFromExcel());
         buttons[2].addActionListener(e -> exportToExcel());
         buttons[3].addActionListener(e -> viewInvoiceDetails());
 
@@ -135,7 +142,7 @@ public class HoaDonNhapGUI {
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = {"Mã phiếu nhập", "Mã nhân viên", "Mã NXB"};
+        String[] searchOptions = { "Mã phiếu nhập", "Mã nhân viên", "Mã NXB" };
         comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
@@ -161,7 +168,8 @@ public class HoaDonNhapGUI {
             }
         });
 
-        comboBox.addActionListener(e -> filterTable(txt_array_search[0].getText(), (String) comboBox.getSelectedItem()));
+        comboBox.addActionListener(
+                e -> filterTable(txt_array_search[0].getText(), (String) comboBox.getSelectedItem()));
     }
 
     private void filterTable(String query, String searchType) {
@@ -181,12 +189,12 @@ public class HoaDonNhapGUI {
                         break;
                 }
                 if (match) {
-                    tableModel.addRow(new Object[]{
-                        phieuNhap.getMaPN(),
-                        phieuNhap.getMaNV(),
-                        phieuNhap.getNgayNhap().toString(),
-                        phieuNhap.getTongTien(),
-                        phieuNhap.getMaNXB()
+                    tableModel.addRow(new Object[] {
+                            phieuNhap.getMaPN(),
+                            phieuNhap.getMaNV(),
+                            phieuNhap.getNgayNhap().toString(),
+                            phieuNhap.getTongTien(),
+                            phieuNhap.getMaNXB()
                     });
                 }
             }
@@ -199,7 +207,8 @@ public class HoaDonNhapGUI {
     private void viewInvoiceDetails() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn một phiếu nhập để xem chi tiết!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn một phiếu nhập để xem chi tiết!", "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -215,7 +224,8 @@ public class HoaDonNhapGUI {
         // Fetch invoice details
         List<ChiTietPhieuNhapDTO> chiTietList = chiTietPhieuNhapBUS.getChiTietPhieuNhapByMaPN(maPN);
         if (chiTietList == null || chiTietList.isEmpty()) {
-            JOptionPane.showMessageDialog(null, "Không tìm thấy chi tiết phiếu nhập!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Không tìm thấy chi tiết phiếu nhập!", "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
             return;
         }
 
@@ -261,7 +271,8 @@ public class HoaDonNhapGUI {
             ChiTietPhieuNhapDTO chiTiet = chiTietList.get(i);
             SachDTO sach = sachBUS.getSachByMaSach(chiTiet.getMaSach());
             if (sach == null) {
-                JOptionPane.showMessageDialog(null, "Sách không tồn tại: " + chiTiet.getMaSach(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Sách không tồn tại: " + chiTiet.getMaSach(), "Lỗi",
+                        JOptionPane.ERROR_MESSAGE);
                 g2d.dispose();
                 return;
             }
@@ -274,7 +285,8 @@ public class HoaDonNhapGUI {
             try {
                 thanhTien = chiTiet.getSoLuong() * chiTiet.getGiaNhap();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Dữ liệu số lượng hoặc đơn giá không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Dữ liệu số lượng hoặc đơn giá không hợp lệ!", "Lỗi",
+                        JOptionPane.ERROR_MESSAGE);
                 g2d.dispose();
                 return;
             }
@@ -308,8 +320,8 @@ public class HoaDonNhapGUI {
         try {
             LocalDate date = LocalDate.parse(ngayNhap);
             g2d.drawString(String.format("Ngày %02d Tháng %02d Năm %04d",
-                date.getDayOfMonth(), date.getMonthValue(), date.getYear()),
-                500, tableEndY + 60);
+                    date.getDayOfMonth(), date.getMonthValue(), date.getYear()),
+                    500, tableEndY + 60);
         } catch (Exception e) {
             g2d.drawString("Ngày: " + ngayNhap, 500, tableEndY + 60);
         }
@@ -338,7 +350,8 @@ public class HoaDonNhapGUI {
             frame.setVisible(true);
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi lưu hoặc hiển thị hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Lỗi khi lưu hoặc hiển thị hóa đơn: " + e.getMessage(), "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -355,7 +368,8 @@ public class HoaDonNhapGUI {
 
         int sel = table.getSelectedRow();
         if (sel == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hóa đơn để xem chi tiết!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hóa đơn để xem chi tiết!", "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
             g.dispose();
             return;
         }
@@ -368,7 +382,7 @@ public class HoaDonNhapGUI {
 
         g.drawRect(30, 180, 540, 300);
         g.setFont(new Font("Arial", Font.BOLD, 14));
-        int[] colX = {30, 150, 260, 380, 480};
+        int[] colX = { 30, 150, 260, 380, 480 };
         for (int x : colX) {
             g.drawLine(x, 180, x, 180 + 300);
         }
@@ -376,12 +390,14 @@ public class HoaDonNhapGUI {
         int[] rows = table.getSelectedRows();
         int n = rows.length;
         if (n == 0) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hóa đơn để xem chi tiết!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hóa đơn để xem chi tiết!", "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
             g.dispose();
             return;
         }
         if (n > 5) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn không quá 5 hóa đơn để xem chi tiết!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn không quá 5 hóa đơn để xem chi tiết!", "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
             g.dispose();
             return;
         }
@@ -394,7 +410,7 @@ public class HoaDonNhapGUI {
             g.drawLine(30, y, 30 + 540, y);
         }
 
-        String[] labels = {"Mã Phiếu Nhập", "Mã Nhân Viên", "Ngày Nhập", "Tổng tiền", "Mã NXB"};
+        String[] labels = { "Mã Phiếu Nhập", "Mã Nhân Viên", "Ngày Nhập", "Tổng tiền", "Mã NXB" };
         int yLabel = 180 + (30 + ascent) / 2;
         for (int c = 0; c < labels.length; c++) {
             g.drawString(labels[c], colX[c] + 10, yLabel);
@@ -436,12 +452,61 @@ public class HoaDonNhapGUI {
         }
     }
 
-    private void importFromExcel() {
-        JOptionPane.showMessageDialog(null, "Chức năng Nhập Excel đang được phát triển!");
-    }
+    // private void importFromExcel() {
+    // //Tú bảo bỏ cái này
+    // }
 
     private void exportToExcel() {
-        JOptionPane.showMessageDialog(null, "Chức năng Xuất Excel đang được phát triển!");
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Lưu Phiếu Nhập dưới dạng Excel");
+        fileChooser.setSelectedFile(new File("Danh_sach_phieu_nhap.xlsx"));
+        int userSelection = fileChooser.showSaveDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                XSSFSheet sheet = workbook.createSheet("Phiếu Nhập");
+
+                // Tạo header
+                XSSFRow headerRow = sheet.createRow(0);
+                for (int col = 0; col < tableModel.getColumnCount(); col++) {
+                    XSSFCell cell = headerRow.createCell(col);
+                    cell.setCellValue(tableModel.getColumnName(col));
+                }
+
+                // Ghi dữ liệu
+                for (int row = 0; row < tableModel.getRowCount(); row++) {
+                    XSSFRow excelRow = sheet.createRow(row + 1);
+                    for (int col = 0; col < tableModel.getColumnCount(); col++) {
+                        XSSFCell cell = excelRow.createCell(col);
+                        Object value = tableModel.getValueAt(row, col);
+                        if (value instanceof Number) {
+                            cell.setCellValue(((Number) value).doubleValue());
+                        } else {
+                            cell.setCellValue(value != null ? value.toString() : "");
+                        }
+                    }
+                }
+
+                // Tự động điều chỉnh độ rộng cột
+                for (int col = 0; col < tableModel.getColumnCount(); col++) {
+                    sheet.autoSizeColumn(col);
+                }
+
+                // Ghi file xuống đĩa
+                try (FileOutputStream fos = new FileOutputStream(fileToSave)) {
+                    workbook.write(fos);
+                }
+
+                JOptionPane.showMessageDialog(null,
+                        "Xuất Excel thành công! File được lưu tại: " + fileToSave.getAbsolutePath(),
+                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null,
+                        "Lỗi khi xuất Excel: " + ex.getMessage(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     public JPanel getPanel() {

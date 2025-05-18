@@ -8,6 +8,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +19,7 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -28,6 +30,11 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import BUS.ChiTietHoaDonBUS;
 import BUS.HoaDonBUS;
@@ -62,7 +69,7 @@ public class HoaDonBanGUI {
 
     public HoaDonBanGUI() {
         txt_search = new JTextField();
-        txt_array_search = new JTextField[]{txt_search};
+        txt_array_search = new JTextField[] { txt_search };
         panel = tool.createPanel(WIDTH - SIDE_MENU_WIDTH, HEIGHT, new BorderLayout());
         initializeData();
         panel.add(createSearchPanel(), BorderLayout.NORTH);
@@ -81,17 +88,17 @@ public class HoaDonBanGUI {
     }
 
     private JPanel createHoaDonBanTable() {
-        String[] columns = {"Mã hóa đơn", "Mã nhân viên", "Mã khách hàng", "Ngày bán", "Tổng tiền"};
+        String[] columns = { "Mã hóa đơn", "Mã nhân viên", "Mã khách hàng", "Ngày bán", "Tổng tiền" };
         DefaultTableModel model = new DefaultTableModel(columns, 0);
         try {
             if (hoaDonList != null) {
                 for (HoaDonDTO hoaDon : hoaDonList) {
-                    model.addRow(new Object[]{
-                        hoaDon.getMaHD(),
-                        hoaDon.getMaNV(),
-                        hoaDon.getMaKH(),
-                        hoaDon.getNgayBan().toString(),
-                        hoaDon.getTongTien()
+                    model.addRow(new Object[] {
+                            hoaDon.getMaHD(),
+                            hoaDon.getMaNV(),
+                            hoaDon.getMaKH(),
+                            hoaDon.getNgayBan().toString(),
+                            hoaDon.getTongTien()
                     });
                 }
             }
@@ -111,7 +118,7 @@ public class HoaDonBanGUI {
     }
 
     private JPanel createPanelButton() {
-        String[] btnText = {"Chi tiết", "Nhập Excel", "Xuất Excel", "Xem chi tiết"};
+        String[] btnText = { "Chi tiết", "Nhập Excel", "Xuất Excel", "Xem chi tiết" };
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(buttons, btnText, new Color(0, 36, 107), Color.WHITE, "y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -126,7 +133,7 @@ public class HoaDonBanGUI {
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = {"Mã hóa đơn", "Mã nhân viên", "Mã khách hàng"};
+        String[] searchOptions = { "Mã hóa đơn", "Mã nhân viên", "Mã khách hàng" };
         comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
@@ -137,7 +144,8 @@ public class HoaDonBanGUI {
     private void viewInvoiceDetails() {
         int selectedRow = tableModel.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hóa đơn để xem chi tiết!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hóa đơn để xem chi tiết!", "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -174,7 +182,7 @@ public class HoaDonBanGUI {
         // Draw header
         g2d.drawString("HÓA ĐƠN BÁN HÀNG", imgWidth / 2 - 100, 30);
         g2d.drawString("CỬA HÀNG BÁN SÁCH", 50, 50);
-        g2d.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+        g2d.setFont(new Font("Times New Roman", Font.BOLD, 16));
         // TODO: Replace with actual store address and phone from config or database
         g2d.drawString("Địa chỉ: 123 Đường Sách, Quận 1, TP.HCM", 50, 70);
         g2d.drawString("ĐT: 0123-456-789", 50, 90);
@@ -194,13 +202,14 @@ public class HoaDonBanGUI {
         g2d.drawLine(50, 175, imgWidth - 50, 175);
 
         // Draw table content
-        g2d.setFont(new Font("Times New Roman", Font.PLAIN, 14));
+        g2d.setFont(new Font("Times New Roman", Font.BOLD, 14));
         int totalAmount = 0;
         for (int i = 0; i < rowCount; i++) {
             ChiTietHoaDonDTO chiTiet = chiTietList.get(i);
             SachDTO sach = sachBUS.getSachByMaSach(chiTiet.getMaSach());
             if (sach == null) {
-                JOptionPane.showMessageDialog(null, "Sách không tồn tại: " + chiTiet.getMaSach(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Sách không tồn tại: " + chiTiet.getMaSach(), "Lỗi",
+                        JOptionPane.ERROR_MESSAGE);
                 g2d.dispose();
                 return;
             }
@@ -213,7 +222,8 @@ public class HoaDonBanGUI {
             try {
                 thanhTien = chiTiet.getSoLuong() * chiTiet.getGia();
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Dữ liệu số lượng hoặc đơn giá không hợp lệ!", "Lỗi", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(null, "Dữ liệu số lượng hoặc đơn giá không hợp lệ!", "Lỗi",
+                        JOptionPane.ERROR_MESSAGE);
                 g2d.dispose();
                 return;
             }
@@ -243,12 +253,12 @@ public class HoaDonBanGUI {
         g2d.drawString(totalAmount + " VNĐ", 650, tableEndY + 25);
 
         // Draw footer
-        g2d.setFont(new Font("Times New Roman", Font.PLAIN, 16));
+        g2d.setFont(new Font("Times New Roman", Font.BOLD, 16));
         try {
             LocalDate date = LocalDate.parse(ngayBan);
             g2d.drawString(String.format("Ngày %02d Tháng %02d Năm %04d",
-                date.getDayOfMonth(), date.getMonthValue(), date.getYear()),
-                500, tableEndY + 60);
+                    date.getDayOfMonth(), date.getMonthValue(), date.getYear()),
+                    500, tableEndY + 60);
         } catch (Exception e) {
             g2d.drawString("Ngày: " + ngayBan, 500, tableEndY + 60);
         }
@@ -277,7 +287,8 @@ public class HoaDonBanGUI {
             frame.setVisible(true);
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi lưu hoặc hiển thị hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Lỗi khi lưu hoặc hiển thị hóa đơn: " + e.getMessage(), "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -285,7 +296,8 @@ public class HoaDonBanGUI {
         // Existing method retained for compatibility
         int sel = tableModel.getSelectedRow();
         if (sel == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hóa đơn để xem chi tiết!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hóa đơn để xem chi tiết!", "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -309,7 +321,7 @@ public class HoaDonBanGUI {
 
         g.drawRect(30, 180, 540, 300);
         g.setFont(new Font("Arial", Font.BOLD, 14));
-        int[] colX = {30, 140, 250, 380, 480, 570};
+        int[] colX = { 30, 140, 250, 380, 480, 570 };
         for (int x : colX) {
             g.drawLine(x, 180, x, 180 + 300);
         }
@@ -317,11 +329,13 @@ public class HoaDonBanGUI {
         int[] rows = tableModel.getSelectedRows();
         int n = rows.length;
         if (n == 0) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hóa đơn để xem chi tiết!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn một hóa đơn để xem chi tiết!", "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
         if (n > 5) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn không quá 5 hóa đơn để xem chi tiết!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn không quá 5 hóa đơn để xem chi tiết!", "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -333,7 +347,7 @@ public class HoaDonBanGUI {
             g.drawLine(30, y, 30 + 540, y);
         }
 
-        String[] labels = {"Mã Đơn Hàng", "Mã Nhân Viên", "Mã Khách Hàng", "Ngày bán", "Tổng tiền"};
+        String[] labels = { "Mã Đơn Hàng", "Mã Nhân Viên", "Mã Khách Hàng", "Ngày bán", "Tổng tiền" };
         int yLabel = 180 + (30 + ascent) / 2;
         for (int c = 0; c < labels.length; c++) {
             g.drawString(labels[c], colX[c] + 10, yLabel);
@@ -371,7 +385,8 @@ public class HoaDonBanGUI {
             frame.setVisible(true);
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi lưu hoặc hiển thị hóa đơn: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Lỗi khi lưu hoặc hiển thị hóa đơn: " + e.getMessage(), "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
@@ -381,8 +396,56 @@ public class HoaDonBanGUI {
     }
 
     private void exportToExcel() {
-        JOptionPane.showMessageDialog(null, "Chức năng Xuất Excel đang được phát triển!");
-        // Implement Excel export logic using Apache POI
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setDialogTitle("Lưu Phiếu Nhập dưới dạng Excel");
+        fileChooser.setSelectedFile(new File("Danh_sach_phieu_ban.xlsx"));
+        int userSelection = fileChooser.showSaveDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                XSSFSheet sheet = workbook.createSheet("Phiếu Bán");
+
+                // Tạo header
+                XSSFRow headerRow = sheet.createRow(0);
+                for (int col = 0; col < tableModel.getColumnCount(); col++) {
+                    XSSFCell cell = headerRow.createCell(col);
+                    cell.setCellValue(tableModel.getColumnName(col));
+                }
+
+                // Ghi dữ liệu
+                for (int row = 0; row < tableModel.getRowCount(); row++) {
+                    XSSFRow excelRow = sheet.createRow(row + 1);
+                    for (int col = 0; col < tableModel.getColumnCount(); col++) {
+                        XSSFCell cell = excelRow.createCell(col);
+                        Object value = tableModel.getValueAt(row, col);
+                        if (value instanceof Number) {
+                            cell.setCellValue(((Number) value).doubleValue());
+                        } else {
+                            cell.setCellValue(value != null ? value.toString() : "");
+                        }
+                    }
+                }
+
+                // Tự động điều chỉnh độ rộng cột
+                for (int col = 0; col < tableModel.getColumnCount(); col++) {
+                    sheet.autoSizeColumn(col);
+                }
+
+                // Ghi file xuống đĩa
+                try (FileOutputStream fos = new FileOutputStream(fileToSave)) {
+                    workbook.write(fos);
+                }
+
+                JOptionPane.showMessageDialog(null,
+                        "Xuất Excel thành công! File được lưu tại: " + fileToSave.getAbsolutePath(),
+                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null,
+                        "Lỗi khi xuất Excel: " + ex.getMessage(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
     }
 
     private void timkiem() {
@@ -404,7 +467,8 @@ public class HoaDonBanGUI {
             }
         });
 
-        comboBox.addActionListener(e -> filterTable(txt_array_search[0].getText(), (String) comboBox.getSelectedItem()));
+        comboBox.addActionListener(
+                e -> filterTable(txt_array_search[0].getText(), (String) comboBox.getSelectedItem()));
     }
 
     private void filterTable(String query, String searchType) {
@@ -425,18 +489,19 @@ public class HoaDonBanGUI {
                         break;
                 }
                 if (match) {
-                    model.addRow(new Object[]{
-                        hoaDon.getMaHD(),
-                        hoaDon.getMaNV(),
-                        hoaDon.getMaKH(),
-                        hoaDon.getNgayBan().toString(),
-                        hoaDon.getTongTien()
+                    model.addRow(new Object[] {
+                            hoaDon.getMaHD(),
+                            hoaDon.getMaNV(),
+                            hoaDon.getMaKH(),
+                            hoaDon.getNgayBan().toString(),
+                            hoaDon.getTongTien()
                     });
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage(), "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
