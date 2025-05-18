@@ -22,6 +22,7 @@ import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -115,10 +116,10 @@ public class NhapSachGUI {
         panel.add(createTable_top(), BorderLayout.WEST);
 
         String[] txt_label_top = { "Mã phiếu nhập", "Nhân viên", "NXB", "Ngày nhập", "Tổng tiền" };
-        panel.add(createDetailPanel_top(400, 30, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
+        panel.add(createDetailPanel_top(400, -10, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
 
         JPanel lowerPanel = new JPanel(new BorderLayout(10, 0));
-        JPanel detailPanelDown = createDetailPanel_down(500, 10, txt_array_down, txt_label);
+        JPanel detailPanelDown = createDetailPanel_down(300, 10, txt_array_down, txt_label);
         lowerPanel.add(detailPanelDown, BorderLayout.CENTER);
 
         imagePanel = new JPanel(new BorderLayout());
@@ -131,7 +132,7 @@ public class NhapSachGUI {
         lowerPanel.add(imagePanel, BorderLayout.WEST);
 
         paymentPanel.add(lowerPanel, BorderLayout.CENTER);
-        paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
+        // paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
         paymentPanel.add(createTable_down(), BorderLayout.EAST);
 
         panel.add(paymentPanel, BorderLayout.SOUTH);
@@ -337,8 +338,8 @@ public class NhapSachGUI {
         table_down = tool.createTable(model, column);
         table_down.setDefaultEditor(Object.class, null);
         JScrollPane scrollPane = new JScrollPane(table_down);
-        scrollPane.setPreferredSize(new Dimension(500, 300));
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
+        scrollPane.setPreferredSize(new Dimension(500, 240));
+        // scrollPane.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
 
         table_down.addMouseListener(new MouseAdapter() {
             @Override
@@ -445,8 +446,14 @@ public class NhapSachGUI {
             }
         });
 
-        JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JPanel panelTable = new JPanel();
+        panelTable.setLayout(new BoxLayout(panelTable, BoxLayout.Y_AXIS));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(60,0,0,0));
+        scrollPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panelTable.add(scrollPane);
+        panelTable.add(createButtonPanel());
+        panelTable.add(Box.createVerticalStrut(50)); // Add 20px spacing
+        panelTable.setBorder(BorderFactory.createEmptyBorder(90,10,0,10));
         return panelTable;
     }
 
@@ -478,7 +485,7 @@ public class NhapSachGUI {
         String[] buttonTexts = { "Thêm", "Xóa", "Thanh toán" };
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(tool.createButtonPanel(buttons, buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 110, 25));
+        // buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 110, 25));
         for (int i = 0; i < buttons.length; i++) {
             buttons[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
             buttons[i].setFocusable(false);

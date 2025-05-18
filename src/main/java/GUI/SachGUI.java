@@ -4,14 +4,21 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Image;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -29,8 +36,8 @@ public class SachGUI {
     private static final int SIDE_MENU_WIDTH = 151;
     private static final int HEIGHT = (int) (WIDTH * 0.625);
     private static final int TABLE_WIDTH = 850;
-    private static final int TABLE_HEIGHT = 300;
-    private static final int DETAIL_PANEL_WIDTH = 500;
+    private static final int TABLE_HEIGHT = 400;
+    private static final int DETAIL_PANEL_WIDTH = 600;
     private static final int DETAIL_PANEL_HEIGHT = 200;
 
     private Tool tool = new Tool();
@@ -38,6 +45,8 @@ public class SachGUI {
     private JTextField[] txt_array = new JTextField[6]; // For maSach, tenSach, theLoai, soLuong, donGia, maTG
     private JButton[] buttons = new JButton[6];
     private JTable table;
+    private JLabel imageLabel;
+    private JPanel imagePanel;
     private List<SachDTO> sachList;
     private SachBUS sachBUS = new SachBUS();
     private NXBBUS nxbBUS = new NXBBUS();
@@ -106,6 +115,17 @@ public class SachGUI {
         String[] txt_label = { "Mã sách", "Tên sách", "Thể loại", "Số lượng", "Đơn giá", "Mã tác giả" };
         centerPanel.add(createDetailPanel(txt_array, txt_label), BorderLayout.CENTER);
 
+        imagePanel = new JPanel(new BorderLayout());
+        imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(JLabel.CENTER);
+        imageLabel.setVerticalAlignment(JLabel.CENTER);
+        imagePanel.setPreferredSize(new Dimension(200, 260));
+        imagePanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 0, 0));
+        imagePanel.add(imageLabel, BorderLayout.CENTER);
+        // imagePanel.setBackground(Color.BLUE);
+        centerPanel.add(imagePanel, BorderLayout.WEST);
+
+
         // Add center panel to main panel
         panel.add(centerPanel, BorderLayout.CENTER);
 
@@ -167,7 +187,19 @@ public class SachGUI {
                     for (int i = 0; i < txt_array.length; i++) {
                         txt_array[i].setText(String.valueOf(table.getValueAt(selectedRow, i)));
                         txt_array[i].setEditable(false);
-                    }
+                    }                    
+                    String bookId = table.getValueAt(selectedRow, 0).toString();
+                    SachDTO sach = sachBUS.getSachByMaSach(bookId);
+
+                    if (sach != null) {
+                        renderBookImage(bookId, sach);
+                    } else {
+                        System.err.println("SachDTO not found for ID: " + bookId);
+                        imageLabel.setIcon(null);
+                        imagePanel.revalidate();
+                        imagePanel.repaint();
+                    }                
+
                     if (update) {
                         tool.Editable(txt_array, true);
                         txt_array[0].setEditable(false);
@@ -183,6 +215,7 @@ public class SachGUI {
 
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelTable.add(scrollPane);
+        panelTable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         return panelTable;
     }
 
@@ -198,6 +231,8 @@ public class SachGUI {
         buttons[4].addActionListener(e -> exportToExcel());
         buttons[5].addActionListener(e -> cancel());
 
+        panelBtn.setBorder(BorderFactory.createLineBorder(Color.GREEN));
+
         return panelBtn;
     }
 
@@ -208,6 +243,7 @@ public class SachGUI {
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
+        wrappedPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
         return wrappedPanel;
     }
 
@@ -478,5 +514,84 @@ public class SachGUI {
 
     public JPanel getPanel() {
         return this.panel;
+    }
+
+    public void renderBookImage(String bookId, SachDTO sach) {
+        ImageIcon finalIcon = null;
+        BufferedImage originalImage = null;
+        try {
+            String imgName = sach.getImg();
+            System.out.println("Image name from database: " + imgName);
+            if (imgName != null && !imgName.trim().isEmpty()) {
+                String absoluteImagePath = System.getProperty("user.dir") + "/images/Book/" + imgName;
+                System.out.println("Constructed image path: " + absoluteImagePath);
+                java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
+                File imageFile = imagePath.toFile();
+                if (imageFile.exists() && imageFile.isFile()) {
+                    originalImage = ImageIO.read(imageFile);
+                    if (originalImage != null) {
+                        System.out.println("Successfully read image file: " + absoluteImagePath);
+                        int targetWidth = imagePanel.getPreferredSize().width;
+                        int targetHeight = imagePanel.getPreferredSize().height;
+                        if (targetWidth <= 0)
+                            targetWidth = 200;
+                        if (targetHeight <= 0)
+                            targetHeight = 250;
+                        Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight,
+                                Image.SCALE_SMOOTH);
+                        finalIcon = new ImageIcon(scaledImage);
+                        System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
+                    } else {
+                        System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
+                    }
+                } else {
+                    System.err.println("Image file not found or is not a file: " + absoluteImagePath);
+                }
+            } else {
+                System.err.println("Image name is null or empty for book: " + bookId);
+            }
+        } catch (IOException ioEx) {
+            System.err.println(
+                    "IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
+            ioEx.printStackTrace();
+        } catch (Exception ex) {
+            System.err.println(
+                    "General error processing image " + sach.getImg() + ": " + ex.getMessage());
+            ex.printStackTrace();
+        }
+
+        if (finalIcon == null) {
+            System.err.println("Attempting to load and scale default image...");
+            try {
+                BufferedImage defaultOriginal = null;
+                String defaultImagePath = System.getProperty("user.dir") + "/images/Book/default.jpg";
+                File defaultImageFile = new File(defaultImagePath);
+                if (defaultImageFile.exists()) {
+                    defaultOriginal = ImageIO.read(defaultImageFile);
+                } else {
+                    System.err.println("Default image file not found at: " + defaultImagePath);
+                }
+                if (defaultOriginal != null) {
+                    int targetWidth = imagePanel.getPreferredSize().width;
+                    int targetHeight = imagePanel.getPreferredSize().height;
+                    if (targetWidth <= 0)
+                        targetWidth = 200;
+                    if (targetHeight <= 0)
+                        targetHeight = 250;
+                    Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight,
+                            Image.SCALE_SMOOTH);
+                    finalIcon = new ImageIcon(scaledDefault);
+                    System.out.println("Loaded and scaled default image.");
+                }
+            } catch (IOException ioEx) {
+                System.err.println("IOException reading default image: " + ioEx.getMessage());
+            } catch (Exception ex) {
+                System.err.println("General error processing default image: " + ex.getMessage());
+            }
+        }
+
+        imageLabel.setIcon(finalIcon);
+        imagePanel.revalidate();
+        imagePanel.repaint();
     }
 }
