@@ -29,7 +29,7 @@ public class NhanVienGUI {
     private Tool tool = new Tool();
     private JPanel panel, panelDetail;
     private List<NhanVienDTO> nhanVienList;
-    private JTextField[] txt_array = new JTextField[6];
+    private JTextField[] txt_array = new JTextField[7];
     private int width = 1200;
     private int width_sideMenu = 151;
     private int height = (int) (width * 0.625);
@@ -49,10 +49,10 @@ public class NhanVienGUI {
 
     public String getID() {
         String str = String.valueOf(count);
-        while (str.length() != 3) {
+        while (str.length() != 2) {
             str = "0" + str;
         }
-        return "NV" + str; // Fixed prefix to "NV" for consistency with MaNV
+        return "NV" + str;
     }
 
     public NhanVienGUI() {
@@ -70,14 +70,15 @@ public class NhanVienGUI {
         panel.add(createNhanVienTable(), BorderLayout.WEST);
         panel.add(createPanelButton(), BorderLayout.CENTER);
 
-        String[] txt_label = { "Mã NV", "Tên", "Địa chỉ", "Số điện thoại", "Chức vụ", "Ngày sinh" };
+        // Aligned with table columns
+        String[] txt_label = { "Mã NV", "Họ Tên", "Chức vụ", "Địa chỉ", "Số điện thoại", "Ngày sinh", "CCCD" };
         panel.add(createPanelDetail(txt_array, txt_label), BorderLayout.SOUTH);
 
         timkiem();
     }
 
     private JPanel createNhanVienTable() {
-        String[] column = { "Mã NV", "Họ Tên", "Chức vụ", "Địa chỉ", "Số điện thoại", "Ngày sinh" };
+        String[] column = { "Mã NV", "Họ Tên", "Chức vụ", "Địa chỉ", "Số điện thoại", "Ngày sinh", "CCCD" };
         DefaultTableModel model = new DefaultTableModel(column, 0);
 
         try {
@@ -89,7 +90,8 @@ public class NhanVienGUI {
                         nv.getChucVu(),
                         nv.getDiaChi(),
                         nv.getSdt(),
-                        nv.getNgaySinh()
+                        nv.getNgaySinh(),
+                        nv.getCccd()
                 });
             }
             if (!nhanVienList.isEmpty()) {
@@ -179,12 +181,12 @@ public class NhanVienGUI {
     }
 
     private JPanel createPanelDetail(JTextField[] txt_array, String[] txt_label) {
-        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, 850, 200, 0.5, 3, false);
+        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, 850, 240, 0.5, 3, false);
         return panelDetail;
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = { "Mã nhân viên", "Tên nhân viên", "SDT" };
+        String[] searchOptions = { "Mã nhân viên", "Tên nhân viên", "SDT", "CCCD" };
         comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
@@ -198,7 +200,6 @@ public class NhanVienGUI {
             filterTable(txt_array_search[0].getText(), selectedOption);
         });
 
-        // Add real-time search
         txt_array_search[0].addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
@@ -224,6 +225,9 @@ public class NhanVienGUI {
                     case "SDT":
                         match = nv.getSdt().toLowerCase().contains(query.toLowerCase());
                         break;
+                    case "CCCD":
+                        match = nv.getCccd().toLowerCase().contains(query.toLowerCase());
+                        break;
                 }
                 if (match) {
                     model.addRow(new Object[] {
@@ -232,7 +236,8 @@ public class NhanVienGUI {
                             nv.getChucVu(),
                             nv.getDiaChi(),
                             nv.getSdt(),
-                            nv.getNgaySinh()
+                            nv.getNgaySinh(),
+                            nv.getCccd()
                     });
                 }
             }
@@ -254,7 +259,8 @@ public class NhanVienGUI {
                         nv.getChucVu(),
                         nv.getDiaChi(),
                         nv.getSdt(),
-                        nv.getNgaySinh()
+                        nv.getNgaySinh(),
+                        nv.getCccd()
                 });
             }
             if (!nhanVienList.isEmpty()) {
@@ -295,9 +301,10 @@ public class NhanVienGUI {
                 NhanVienDTO nv = new NhanVienDTO();
                 nv.setMaNV(txt_array[0].getText().trim());
                 nv.setHoTen(txt_array[1].getText().trim());
-                nv.setDiaChi(txt_array[2].getText().trim());
-                nv.setSdt(txt_array[3].getText().trim());
-                nv.setChucVu(txt_array[4].getText().trim());
+                nv.setChucVu(txt_array[2].getText().trim());
+                nv.setDiaChi(txt_array[3].getText().trim());
+                nv.setSdt(txt_array[4].getText().trim());
+                nv.setCccd(txt_array[6].getText().trim());
 
                 String startDate = txt_array[5].getText().trim();
                 if (startDate.isEmpty()) {
@@ -363,9 +370,10 @@ public class NhanVienGUI {
                 NhanVienDTO nv = new NhanVienDTO();
                 nv.setMaNV(txt_array[0].getText().trim());
                 nv.setHoTen(txt_array[1].getText().trim());
-                nv.setDiaChi(txt_array[2].getText().trim());
-                nv.setSdt(txt_array[3].getText().trim());
-                nv.setChucVu(txt_array[4].getText().trim());
+                nv.setChucVu(txt_array[2].getText().trim());
+                nv.setDiaChi(txt_array[3].getText().trim());
+                nv.setSdt(txt_array[4].getText().trim());
+                nv.setCccd(txt_array[6].getText().trim());
 
                 String startDate = txt_array[5].getText().trim();
                 if (startDate.isEmpty()) {
@@ -465,8 +473,14 @@ public class NhanVienGUI {
 
     private boolean checkValidate(NhanVienDTO nv) {
         if (nv.getMaNV().trim().isEmpty() || nv.getHoTen().trim().isEmpty() || nv.getChucVu().trim().isEmpty()
-                || nv.getDiaChi().trim().isEmpty() || nv.getSdt().trim().isEmpty() || nv.getNgaySinh() == null) {
+                || nv.getDiaChi().trim().isEmpty() || nv.getSdt().trim().isEmpty() || nv.getNgaySinh() == null
+                || nv.getCccd().trim().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ các trường thông tin");
+            return false;
+        }
+
+        if (!isValidName(nv.getHoTen().trim())) {
+            JOptionPane.showMessageDialog(null, "Tên nhân viên chỉ được chứa chữ cái, khoảng trắng, dấu gạch ngang hoặc dấu nháy đơn, không chứa số hoặc ký tự đặc biệt");
             return false;
         }
 
@@ -484,9 +498,18 @@ public class NhanVienGUI {
             return false;
         }
 
+        if (!nv.getCccd().matches("\\d{12}")) {
+            JOptionPane.showMessageDialog(null, "CCCD phải là 12 chữ số");
+            return false;
+        }
+
         for (NhanVienDTO nvien : nhanVienList) {
             if (!nvien.getMaNV().equals(nv.getMaNV()) && nv.getSdt().equals(nvien.getSdt())) {
                 JOptionPane.showMessageDialog(null, "Số điện thoại đã được sử dụng");
+                return false;
+            }
+            if (!nvien.getMaNV().equals(nv.getMaNV()) && nv.getCccd().equals(nvien.getCccd())) {
+                JOptionPane.showMessageDialog(null, "CCCD đã được sử dụng");
                 return false;
             }
         }
@@ -499,6 +522,10 @@ public class NhanVienGUI {
         }
 
         return true;
+    }
+
+    private boolean isValidName(String name) {
+        return name.matches("^[\\p{L}\\s'-]+$");
     }
 
     private void importExcel() {

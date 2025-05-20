@@ -16,6 +16,10 @@ public class NhanVienBUS {
     public boolean isNhanVienExists(String maNV) {
         return nhanVienDAO.existsByMaNV(maNV);
     }
+    private boolean isValidName(String name) {
+        // Allows Unicode letters (including Vietnamese diacritics), spaces, hyphens, and apostrophes
+        return name.matches("^[\\p{L}\\s'-]+$");
+    }
 
     // Thêm nhân viên mới
     public boolean addNhanVien(NhanVienDTO nhanVien) {
@@ -23,6 +27,10 @@ public class NhanVienBUS {
         if (nhanVien.getMaNV() == null || nhanVien.getMaNV().trim().isEmpty()) {
             throw new IllegalArgumentException("Mã nhân viên không được để trống!");
         }
+        if (!isValidName(nhanVien.getHoTen())) {
+            throw new IllegalArgumentException("Họ tên không hợp lệ!");
+        }
+        
         if (nhanVien.getHoTen() == null || nhanVien.getHoTen().trim().isEmpty()) {
             throw new IllegalArgumentException("Họ tên không được để trống!");
         }
@@ -69,6 +77,9 @@ public class NhanVienBUS {
     public boolean updateNhanVien(NhanVienDTO nhanVien) {
         if (nhanVien.getMaNV() == null || nhanVien.getMaNV().trim().isEmpty()) {
             throw new IllegalArgumentException("Mã nhân viên không được để trống!");
+        }
+        if (!isValidName(nhanVien.getHoTen())) {
+            throw new IllegalArgumentException("Họ tên không hợp lệ!");
         }
         if (nhanVien.getHoTen() == null || nhanVien.getHoTen().trim().isEmpty()) {
             throw new IllegalArgumentException("Họ tên không được để trống!");

@@ -32,12 +32,14 @@ import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import BUS.NhanVienBUS;
+import BUS.QuyenBUS;
 import BUS.TaiKhoanNVBUS;
 import DTO.NhanVienDTO;
+import DTO.QuyenDTO;
 import DTO.TaiKhoanNVDTO;
 
 public class TaiKhoanGUI {
-    private Tool tool = new Tool();
+    private Tool Tool = new Tool();
     private JPanel panel, panel_searchCombo, panel_buttons, panel_Table, panel_textField;
     private JButton btn_add, btn_edit, btn_delete, btn_nhapExcel, btn_xuatExcel, btn_huy, btn_viewDetails;
     private int width = 1200;
@@ -51,15 +53,18 @@ public class TaiKhoanGUI {
     private List<TaiKhoanNVDTO> taiKhoanList;
     private TaiKhoanNVBUS taiKhoanNVBUS = new TaiKhoanNVBUS();
     private NhanVienBUS nhanVienBUS = new NhanVienBUS();
+    private QuyenBUS quyenBUS = new QuyenBUS();
+    private JTextField textFieldMaNV, textFieldMatKhau, textFieldChucVu, textFieldMaQuyen, textFieldTenQuyen;
+    private boolean isAdding = false; // Track add mode
 
     public TaiKhoanGUI() {
-        panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
+        panel = Tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel.setBackground(new Color(202, 220, 252));
 
         // Initialize search components
         txt_array_search[0] = new JTextField();
-        panel_searchCombo = tool.createSearchTextField(width - width_sideMenu, height,
-                new String[]{"Mã Nhân viên", "Chức vụ", "Tên quyền"});
+        panel_searchCombo = Tool.createSearchTextField(width - width_sideMenu, height,
+                new String[]{"Mã Nhân viên", "Chức vụ", "Mã quyền"});
         panel_searchCombo.setBorder(BorderFactory.createEmptyBorder(5, 43, 0, 0));
         for (java.awt.Component comp : panel_searchCombo.getComponents()) {
             if (comp instanceof JComboBox) {
@@ -69,65 +74,130 @@ public class TaiKhoanGUI {
             }
         }
 
-        panel_buttons = tool.createPanel(180, height, new FlowLayout(0, 0, 20));
+        panel_buttons = Tool.createPanel(180, height, new FlowLayout(0, 0, 20));
         panel_buttons.setBorder(BorderFactory.createEmptyBorder(0, 25, 0, 0));
         panel_textField = new JPanel(null);
         panel_textField.setBorder(BorderFactory.createEmptyBorder(10, 40, 10, 40));
         panel_textField.setPreferredSize(new Dimension(width - width_sideMenu, 200));
-        panel_Table = tool.createPanel(width - width_sideMenu, height - 200, new BorderLayout());
+        panel_Table = Tool.createPanel(width - width_sideMenu, height - 200, new BorderLayout());
         panel_Table.setBorder(BorderFactory.createEmptyBorder(-2, 40, 0, 0));
 
         // Text fields and labels
         JLabel labelMaNV = new JLabel("Mã Nhân viên:");
         JLabel labelMatKhau = new JLabel("Mật khẩu:");
         JLabel labelChucVu = new JLabel("Chức vụ:");
-        JLabel labelMaQuyen = new JLabel("Tên quyền:");
+        JLabel labelMaQuyen = new JLabel("Mã quyền:");
+        JLabel labelTenQuyen = new JLabel("Tên quyền:");
 
-        JTextField textFieldMaNV = new JTextField();
-        JTextField textFieldMatKhau = new JTextField();
-        JTextField textFieldChucVu = new JTextField();
-        JTextField textFieldMaQuyen = new JTextField();
+        textFieldMaNV = new JTextField();
+        textFieldMatKhau = new JTextField();
+        textFieldChucVu = new JTextField();
+        textFieldMaQuyen = new JTextField();
+        textFieldTenQuyen = new JTextField();
 
         labelMaNV.setBounds(181, 30, 100, 30);
         labelMatKhau.setBounds(500, 30, 100, 30);
         labelChucVu.setBounds(181, 80, 100, 30);
         labelMaQuyen.setBounds(500, 80, 100, 30);
+        labelTenQuyen.setBounds(181, 130, 100, 30);
 
         textFieldMaNV.setBounds(270, 30, 200, 27);
         textFieldMatKhau.setBounds(594, 30, 200, 27);
         textFieldChucVu.setBounds(270, 80, 200, 27);
         textFieldMaQuyen.setBounds(594, 80, 200, 27);
+        textFieldTenQuyen.setBounds(270, 130, 200, 27);
 
         textFieldMaNV.setBackground(new Color(202, 220, 252));
         textFieldMatKhau.setBackground(new Color(202, 220, 252));
         textFieldChucVu.setBackground(new Color(202, 220, 252));
         textFieldMaQuyen.setBackground(new Color(202, 220, 252));
+        textFieldTenQuyen.setBackground(new Color(202, 220, 252));
 
         textFieldMaNV.setCursor(new Cursor(Cursor.TEXT_CURSOR));
         textFieldMatKhau.setCursor(new Cursor(Cursor.TEXT_CURSOR));
         textFieldChucVu.setCursor(new Cursor(Cursor.TEXT_CURSOR));
         textFieldMaQuyen.setCursor(new Cursor(Cursor.TEXT_CURSOR));
+        textFieldTenQuyen.setCursor(new Cursor(Cursor.TEXT_CURSOR));
 
         textFieldMaNV.setEditable(false);
         textFieldMatKhau.setEditable(false);
         textFieldChucVu.setEditable(false);
         textFieldMaQuyen.setEditable(false);
+        textFieldTenQuyen.setEditable(false);
 
         panel_textField.add(labelMaNV);
         panel_textField.add(labelMatKhau);
         panel_textField.add(labelChucVu);
         panel_textField.add(labelMaQuyen);
+        panel_textField.add(labelTenQuyen);
         panel_textField.add(textFieldMaNV);
         panel_textField.add(textFieldMatKhau);
         panel_textField.add(textFieldChucVu);
         panel_textField.add(textFieldMaQuyen);
+        panel_textField.add(textFieldTenQuyen);
+
+        // Add DocumentListener to update Tên quyền when Mã quyền changes
+        textFieldMaQuyen.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateTenQuyen();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateTenQuyen();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateTenQuyen();
+            }
+
+            private void updateTenQuyen() {
+                String maQuyen = textFieldMaQuyen.getText().trim();
+                if (!maQuyen.isEmpty()) {
+                    QuyenDTO quyen = quyenBUS.getQuyenById(maQuyen);
+                    textFieldTenQuyen.setText(quyen != null ? quyen.getTenQuyen() : "");
+                } else {
+                    textFieldTenQuyen.setText("");
+                }
+            }
+        });
+
+        // Add DocumentListener to update Chức vụ when Mã nhân viên changes
+        textFieldMaNV.getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                updateChucVu();
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                updateChucVu();
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                updateChucVu();
+            }
+
+            private void updateChucVu() {
+                String maNV = textFieldMaNV.getText().trim();
+                if (!maNV.isEmpty()) {
+                    NhanVienDTO nv = nhanVienBUS.getNhanVienByMaNV(maNV);
+                    textFieldChucVu.setText(nv != null ? nv.getChucVu() : "");
+                } else {
+                    textFieldChucVu.setText("");
+                }
+            }
+        });
 
         // Table setup
-        String[] columnNames = {"Mã Nhân viên", "Mật khẩu", "Chức vụ", "Tên quyền"};
+        String[] columnNames = {"Mã Nhân viên", "Mật khẩu", "Chức vụ", "Mã quyền", "Tên quyền"};
         taiKhoanList = taiKhoanNVBUS.getAllTaiKhoan();
         nhanVienList = nhanVienBUS.getAllNhanVien();
         modelTaiKhoan = new DefaultTableModel(columnNames, 0);
-        table = tool.createTable(modelTaiKhoan, columnNames);
+        table = Tool.createTable(modelTaiKhoan, columnNames);
         table.setPreferredScrollableViewportSize(new Dimension(800, height - 280));
         table.getTableHeader().setBackground(new Color(0, 36, 107));
         table.getTableHeader().setForeground(Color.white);
@@ -140,7 +210,7 @@ public class TaiKhoanGUI {
         panel_Table.add(scrollPane, BorderLayout.CENTER);
 
         // Buttons
-        btn_add = new JButton("Thêm"); // Initialize btn_add
+        btn_add = new JButton("Thêm");
         btn_edit = new JButton("Sửa");
         btn_delete = new JButton("Xóa");
         btn_nhapExcel = new JButton("Nhập Excel");
@@ -164,6 +234,9 @@ public class TaiKhoanGUI {
 
             @Override
             public void mouseClicked(MouseEvent e) {
+                if (isAdding) {
+                    return; // Prevent table interaction during add mode
+                }
                 int row = table.getSelectedRow();
                 if (row == lastSelectedRow && row >= 0) {
                     table.clearSelection();
@@ -172,23 +245,25 @@ public class TaiKhoanGUI {
                     textFieldMatKhau.setText("");
                     textFieldChucVu.setText("");
                     textFieldMaQuyen.setText("");
+                    textFieldTenQuyen.setText("");
                 } else if (row >= 0) {
                     lastSelectedRow = row;
                     textFieldMaNV.setText(table.getValueAt(row, 0).toString());
                     textFieldMatKhau.setText(table.getValueAt(row, 1).toString());
                     textFieldChucVu.setText(table.getValueAt(row, 2).toString());
                     textFieldMaQuyen.setText(table.getValueAt(row, 3).toString());
+                    textFieldTenQuyen.setText(table.getValueAt(row, 4).toString());
                 }
             }
         });
 
         // Button action listeners
-        btn_add.addActionListener(e -> addTaiKhoan(textFieldMaNV, textFieldMatKhau, textFieldChucVu, textFieldMaQuyen));
-        btn_edit.addActionListener(e -> editTaiKhoan(textFieldMaNV, textFieldMatKhau, textFieldChucVu, textFieldMaQuyen));
+        btn_add.addActionListener(e -> addTaiKhoan(textFieldMaNV, textFieldMatKhau, textFieldChucVu, textFieldMaQuyen, textFieldTenQuyen));
+        btn_edit.addActionListener(e -> editTaiKhoan(textFieldMaNV, textFieldMatKhau, textFieldChucVu, textFieldMaQuyen, textFieldTenQuyen));
         btn_delete.addActionListener(e -> deleteTaiKhoan(textFieldMaNV));
         btn_nhapExcel.addActionListener(e -> JOptionPane.showMessageDialog(null, "Chức năng Nhập Excel chưa được triển khai!"));
         btn_xuatExcel.addActionListener(e -> JOptionPane.showMessageDialog(null, "Chức năng Xuất Excel chưa được triển khai!"));
-        btn_huy.addActionListener(e -> cancel(textFieldMaNV, textFieldMatKhau, textFieldChucVu, textFieldMaQuyen));
+        btn_huy.addActionListener(e -> cancel(textFieldMaNV, textFieldMatKhau, textFieldChucVu, textFieldMaQuyen, textFieldTenQuyen));
         btn_viewDetails.addActionListener(e -> viewDetails());
 
         panel.add(panel_searchCombo, BorderLayout.NORTH);
@@ -227,7 +302,9 @@ public class TaiKhoanGUI {
         try {
             for (TaiKhoanNVDTO tk : taiKhoanList) {
                 NhanVienDTO nv = nhanVienBUS.getNhanVienByMaNV(tk.getMaNV());
+                QuyenDTO quyen = quyenBUS.getQuyenById(tk.getMaQuyen());
                 String chucVu = nv != null ? nv.getChucVu() : "";
+                String tenQuyen = quyen != null ? quyen.getTenQuyen() : "";
                 boolean match = false;
                 switch (searchType) {
                     case "Mã Nhân viên":
@@ -236,7 +313,7 @@ public class TaiKhoanGUI {
                     case "Chức vụ":
                         match = chucVu.toLowerCase().contains(query.toLowerCase());
                         break;
-                    case "Tên quyền":
+                    case "Mã quyền":
                         match = tk.getMaQuyen().toLowerCase().contains(query.toLowerCase());
                         break;
                 }
@@ -245,7 +322,8 @@ public class TaiKhoanGUI {
                         tk.getMaNV(),
                         tk.getMatKhau(),
                         chucVu,
-                        tk.getMaQuyen()
+                        tk.getMaQuyen(),
+                        tenQuyen
                     });
                 }
             }
@@ -262,12 +340,15 @@ public class TaiKhoanGUI {
             nhanVienList = nhanVienBUS.getAllNhanVien();
             for (TaiKhoanNVDTO tk : taiKhoanList) {
                 NhanVienDTO nv = nhanVienBUS.getNhanVienByMaNV(tk.getMaNV());
+                QuyenDTO quyen = quyenBUS.getQuyenById(tk.getMaQuyen());
                 String chucVu = nv != null ? nv.getChucVu() : "";
+                String tenQuyen = quyen != null ? quyen.getTenQuyen() : "";
                 modelTaiKhoan.addRow(new Object[]{
                     tk.getMaNV(),
                     tk.getMatKhau(),
                     chucVu,
-                    tk.getMaQuyen()
+                    tk.getMaQuyen(),
+                    tenQuyen
                 });
             }
         } catch (Exception e) {
@@ -287,6 +368,7 @@ public class TaiKhoanGUI {
         String matKhau = table.getValueAt(selectedRow, 1).toString();
         String chucVu = table.getValueAt(selectedRow, 2).toString();
         String maQuyen = table.getValueAt(selectedRow, 3).toString();
+        String tenQuyen = table.getValueAt(selectedRow, 4).toString();
         TaiKhoanNVDTO tk = taiKhoanNVBUS.getTaiKhoanById(maNV);
         String trangThaiXoa = tk != null ? (tk.getTrangThaiXoa() == 0 ? "Hoạt động" : "Đã xóa") : "N/A";
 
@@ -315,15 +397,17 @@ public class TaiKhoanGUI {
         g2d.drawString("Mã Nhân viên:", 50, 130);
         g2d.drawString("Mật khẩu:", 50, 160);
         g2d.drawString("Chức vụ:", 50, 190);
-        g2d.drawString("Tên quyền:", 50, 220);
-        g2d.drawString("Trạng thái:", 50, 250);
+        g2d.drawString("Mã quyền:", 50, 220);
+        g2d.drawString("Tên quyền:", 50, 250);
+        g2d.drawString("Trạng thái:", 50, 280);
 
         g2d.setFont(new Font("Times New Roman", Font.PLAIN, 16));
         g2d.drawString(maNV, 200, 130);
         g2d.drawString(matKhau, 200, 160);
         g2d.drawString(chucVu, 200, 190);
         g2d.drawString(maQuyen, 200, 220);
-        g2d.drawString(trangThaiXoa, 200, 250);
+        g2d.drawString(tenQuyen, 200, 250);
+        g2d.drawString(trangThaiXoa, 200, 280);
 
         // Draw footer
         g2d.setFont(new Font("Times New Roman", Font.PLAIN, 16));
@@ -357,20 +441,18 @@ public class TaiKhoanGUI {
         }
     }
 
-    private void addTaiKhoan(JTextField maNV, JTextField matKhau, JTextField chucVu, JTextField maQuyen) {
-        if (!maNV.isEditable()) {
+    private void addTaiKhoan(JTextField maNV, JTextField matKhau, JTextField chucVu, JTextField maQuyen, JTextField tenQuyen) {
+        if (!isAdding) {
+            isAdding = true;
             maNV.setEditable(true);
             matKhau.setEditable(true);
-            chucVu.setEditable(true);
             maQuyen.setEditable(true);
-            int rowCount = modelTaiKhoan.getRowCount();
-            String newId = rowCount > 0
-                ? String.format("NV%02d", Integer.parseInt(modelTaiKhoan.getValueAt(rowCount - 1, 0).toString().replace("NV", "")) + 1)
-                : "NV01";
-            maNV.setText(newId);
+            // ChucVu and TenQuyen remain non-editable
+            maNV.setText("");
             matKhau.setText("");
             chucVu.setText("");
             maQuyen.setText("");
+            tenQuyen.setText("");
             btn_add.setBackground(new Color(202, 220, 252));
             btn_add.setForeground(Color.BLACK);
             btn_huy.setBackground(Color.RED);
@@ -383,16 +465,14 @@ public class TaiKhoanGUI {
                 tk.setMaNV(maNV.getText().trim());
                 tk.setMatKhau(matKhau.getText().trim());
                 tk.setMaQuyen(maQuyen.getText().trim());
-                tk.setTrangThaiXoa(0); // Default active
+                tk.setTrangThaiXoa(0); 
                 if (!checkValidate(tk)) {
                     return;
                 }
                 if (taiKhoanNVBUS.addTaiKhoan(tk)) {
                     JOptionPane.showMessageDialog(null, "Thêm tài khoản thành công!");
-                    cancel(maNV, matKhau, chucVu, maQuyen);
-                } else {
-                    JOptionPane.showMessageDialog(null, "Thêm tài khoản thất bại!");
-                }
+                    cancel(maNV, matKhau, chucVu, maQuyen, tenQuyen);
+                } 
             } catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Lỗi khi thêm tài khoản: " + e.getMessage());
@@ -400,15 +480,14 @@ public class TaiKhoanGUI {
         }
     }
 
-    private void editTaiKhoan(JTextField maNV, JTextField matKhau, JTextField chucVu, JTextField maQuyen) {
+    private void editTaiKhoan(JTextField maNV, JTextField matKhau, JTextField chucVu, JTextField maQuyen, JTextField tenQuyen) {
         if (table.getSelectedRow() == -1) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn tài khoản để sửa!");
-        } else if (!maNV.isEditable()) {
-            maNV.setEditable(true);
+        } else if (!matKhau.isEditable()) {
             matKhau.setEditable(true);
-            chucVu.setEditable(true);
             maQuyen.setEditable(true);
-            maNV.setEditable(false); // MaNV is not editable
+
+          
             btn_edit.setBackground(new Color(202, 220, 252));
             btn_edit.setForeground(Color.BLACK);
             btn_huy.setBackground(Color.RED);
@@ -427,7 +506,7 @@ public class TaiKhoanGUI {
                 }
                 if (taiKhoanNVBUS.updateTaiKhoan(tk)) {
                     JOptionPane.showMessageDialog(null, "Sửa tài khoản thành công!");
-                    cancel(maNV, matKhau, chucVu, maQuyen);
+                    cancel(maNV, matKhau, chucVu, maQuyen, tenQuyen);
                 } else {
                     JOptionPane.showMessageDialog(null, "Sửa tài khoản thất bại!");
                 }
@@ -447,7 +526,7 @@ public class TaiKhoanGUI {
                     String maNVText = maNV.getText().trim();
                     if (taiKhoanNVBUS.deleteTaiKhoan(maNVText)) {
                         JOptionPane.showMessageDialog(null, "Xóa tài khoản thành công!");
-                        cancel(maNV, null, null, null);
+                        cancel(maNV, null, null, null, null);
                     } else {
                         JOptionPane.showMessageDialog(null, "Xóa tài khoản thất bại!");
                     }
@@ -461,15 +540,18 @@ public class TaiKhoanGUI {
         }
     }
 
-    private void cancel(JTextField maNV, JTextField matKhau, JTextField chucVu, JTextField maQuyen) {
+    private void cancel(JTextField maNV, JTextField matKhau, JTextField chucVu, JTextField maQuyen, JTextField tenQuyen) {
+        isAdding = false;
         maNV.setText("");
         if (matKhau != null) matKhau.setText("");
         if (chucVu != null) chucVu.setText("");
         if (maQuyen != null) maQuyen.setText("");
+        if (tenQuyen != null) tenQuyen.setText("");
         maNV.setEditable(false);
         if (matKhau != null) matKhau.setEditable(false);
         if (chucVu != null) chucVu.setEditable(false);
         if (maQuyen != null) maQuyen.setEditable(false);
+        if (tenQuyen != null) tenQuyen.setEditable(false);
         table.clearSelection();
         refreshTable();
         for (JButton btn : new JButton[]{btn_add, btn_edit, btn_delete, btn_nhapExcel, btn_xuatExcel, btn_huy, btn_viewDetails}) {
@@ -489,7 +571,7 @@ public class TaiKhoanGUI {
             return false;
         }
         if (tk.getMaQuyen().trim().length() > 50) {
-            JOptionPane.showMessageDialog(null, "Tên quyền không được nhiều hơn 50 ký tự!");
+            JOptionPane.showMessageDialog(null, "Mã quyền không được nhiều hơn 50 ký tự!");
             return false;
         }
         // Check if maNV exists in nhanVienList
@@ -502,6 +584,12 @@ public class TaiKhoanGUI {
         }
         if (!maNVExists) {
             JOptionPane.showMessageDialog(null, "Mã nhân viên không tồn tại!");
+            return false;
+        }
+        // Check if maQuyen exists
+        QuyenDTO quyen = quyenBUS.getQuyenById(tk.getMaQuyen());
+        if (quyen == null) {
+            JOptionPane.showMessageDialog(null, "Mã quyền không tồn tại!");
             return false;
         }
         // Check for duplicate maNV in taiKhoanList (except for current record)

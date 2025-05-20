@@ -99,7 +99,7 @@ INSERT INTO `nhaxuatban` (`MANXB`, `TenNXB`, `DiaChi`, `SDT`, `trangThaiXoa`) VA
 ('NXB01', 'Nhà Xuất Bản Kim Đồng', '55 Quang Trung, Hà Nội', '0243822309', 0),
 ('NXB02', 'Nhà Xuất Bản Trẻ', '161B Lý Chính Thắng, TP.HCM', '0283931628', 0),
 ('NXB03', 'Nhà Xuất Bản Giáo Dục', '81 Trần Hưng Đạo, Hà Nội', '0243822080', 0),
-('NXB04', 'Nhà Xuất Bản Văn Học', '18 Nguyễn Du, Hà Nội', NULL, 0),
+('NXB04', 'Nhà Xuất Bản Văn Học', '18 Nguyễn Du, Hà Nội', '0243822081', 0),
 ('NXB05', 'Nhà Xuất Bản Hội Nhà Văn', '65 Nguyễn Du, Hà Nội', '0243822181', 0);
 
 -- --------------------------------------------------------

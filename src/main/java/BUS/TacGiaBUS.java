@@ -12,10 +12,16 @@ public class TacGiaBUS {
     public TacGiaBUS() {
         tacGiaDAO = new TacGiaDAO();
     }
+        private boolean isValidName(TacGiaDTO tacGia) {
+        return tacGia.getTenTG().matches("^[\\p{L}\\s'-]+$");
+    }
 
     // Thêm tác giả mới
     public boolean addTacGia(TacGiaDTO tacGia) {
         // Kiểm tra dữ liệu đầu vào
+        if (!isValidName(tacGia)) {
+            throw new IllegalArgumentException("Tên tác giả không hợp lệ!");
+        }
         if (tacGia.getMaTG() == null || tacGia.getMaTG().trim().isEmpty()) {
             throw new IllegalArgumentException("Mã tác giả không được để trống!");
         }
@@ -51,6 +57,9 @@ public class TacGiaBUS {
 
     // Cập nhật tác giả
     public boolean updateTacGia(TacGiaDTO tacGia) {
+        if (!isValidName(tacGia)) {
+            throw new IllegalArgumentException("Tên tác giả không hợp lệ!");
+        }
         if (tacGia.getMaTG() == null || tacGia.getMaTG().trim().isEmpty()) {
             throw new IllegalArgumentException("Mã tác giả không được để trống!");
         }

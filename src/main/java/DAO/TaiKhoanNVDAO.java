@@ -12,12 +12,13 @@ import Service.Data;
 public class TaiKhoanNVDAO {
 
     public int add(TaiKhoanNVDTO obj) {
-        String sql = "INSERT INTO taikhoannv ( maNV, PASS, maQuyen) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO taikhoannv (maNV, PASS, maQuyen, trangThaiXoa) VALUES (?, ?, ?, ?)";
         try (Connection conn = Data.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(2, obj.getMaNV());
-            ps.setString(3, obj.getMatKhau());
-            ps.setString(4, obj.getMaQuyen());
+            ps.setString(1, obj.getMaNV());        // đúng thứ tự: maNV
+            ps.setString(2, obj.getMatKhau());     // PASS
+            ps.setString(3, obj.getMaQuyen());     // maQuyen
+            ps.setInt(4, obj.getTrangThaiXoa());   // trangThaiXoa
             return ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -26,12 +27,12 @@ public class TaiKhoanNVDAO {
     }
 
     public int update(TaiKhoanNVDTO obj) {
-        String sql = "UPDATE taikhoannv SET  PASS = ?, maQuyen = ? WHERE maNV = ?";
+        String sql = "UPDATE taikhoannv SET PASS = ?, maQuyen = ? WHERE maNV = ?";
         try (Connection conn = Data.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setString(2, obj.getMatKhau());
-            ps.setString(3, obj.getMaQuyen());
-            ps.setString(4, obj.getMaNV());
+            ps.setString(1, obj.getMatKhau());     // PASS
+            ps.setString(2, obj.getMaQuyen());     // maQuyen
+            ps.setString(3, obj.getMaNV());        // maNV (điều kiện WHERE)
             return ps.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
