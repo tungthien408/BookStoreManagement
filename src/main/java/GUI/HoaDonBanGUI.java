@@ -281,7 +281,7 @@ public class HoaDonBanGUI implements TableRefreshListener {
             }
             File outputFile = new File(outputDir, "Chi_Tiet_Hoa_Don_Ban_" + maHD + ".png");
             ImageIO.write(img, "png", outputFile);
-
+            Desktop.getDesktop().open(outputFile);
             JFrame frame = new JFrame("Hóa đơn bán hàng - " + maHD);
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setSize(imgWidth, imgHeight);
@@ -380,6 +380,7 @@ public class HoaDonBanGUI implements TableRefreshListener {
             }
             File outputFile = new File(outputDir, "Hoa_Don_Ban.png");
             ImageIO.write(img, "png", outputFile);
+            Desktop.getDesktop().open(outputFile);
             JFrame frame = new JFrame("Hóa đơn bán hàng");
             frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
             frame.setSize(600, 800);
