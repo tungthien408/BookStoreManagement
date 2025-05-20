@@ -11,6 +11,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import java.awt.Cursor;
+import javax.swing.JFileChooser;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -24,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 
 import BUS.NXBBUS;
@@ -53,6 +56,9 @@ public class SachGUI {
     private TacGiaBUS tacGiaBUS = new TacGiaBUS();
 
     private int selectedRow = -1;
+    // Lưu tên file ảnh vừa chọn
+    private String currentChosenImage = null;
+
     private int lastSelectedRow = -1;
     private boolean add = false;
     private boolean update = false;
@@ -104,10 +110,8 @@ public class SachGUI {
     private void setupPanelLayout() {
         // Add search panel at the top
         panel.add(createSearchPanel(), BorderLayout.NORTH);
-
         // Create a center panel to hold table and detail panel
         JPanel centerPanel = new JPanel(new BorderLayout());
-
         // Add table to the center
         centerPanel.add(createBookTable(), BorderLayout.NORTH);
 
@@ -117,14 +121,44 @@ public class SachGUI {
 
         imagePanel = new JPanel(new BorderLayout());
         imageLabel = new JLabel();
+        imageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
         imageLabel.setHorizontalAlignment(JLabel.CENTER);
         imageLabel.setVerticalAlignment(JLabel.CENTER);
+        imageLabel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (!update)
+                    return;
+
+                JFileChooser chooser = new JFileChooser();
+                chooser.setFileFilter(new FileNameExtensionFilter("Image files", ImageIO.getReaderFileSuffixes()));
+                if (chooser.showOpenDialog(panel) == JFileChooser.APPROVE_OPTION) {
+                    File file = chooser.getSelectedFile();
+                    try {
+                        BufferedImage img = ImageIO.read(file);
+                        if (img == null) {
+                            JOptionPane.showMessageDialog(panel, "Không thể đọc file ảnh, vui lòng chọn lại!");
+                            return;
+                        }
+                        Image scaled = img.getScaledInstance(
+                                imagePanel.getWidth(),
+                                imagePanel.getHeight(),
+                                Image.SCALE_SMOOTH);
+                        imageLabel.setIcon(new ImageIcon(scaled));
+                        currentChosenImage = file.getName();
+                        // copy file...
+                    } catch (IOException ex) {
+                        JOptionPane.showMessageDialog(panel, "Lỗi I/O: " + ex.getMessage());
+                    }
+                }
+            }
+        });
+
         imagePanel.setPreferredSize(new Dimension(200, 260));
         imagePanel.setBorder(BorderFactory.createEmptyBorder(30, 30, 0, 0));
         imagePanel.add(imageLabel, BorderLayout.CENTER);
         // imagePanel.setBackground(Color.BLUE);
         centerPanel.add(imagePanel, BorderLayout.WEST);
-
 
         // Add center panel to main panel
         panel.add(centerPanel, BorderLayout.CENTER);
@@ -168,7 +202,7 @@ public class SachGUI {
 
                 tool.clearFields(txt_array);
                 tool.clearButtons(buttons);
-                add = false;
+                add = false; // ????????????
 
                 selectedRow = table.getSelectedRow();
 
@@ -187,7 +221,7 @@ public class SachGUI {
                     for (int i = 0; i < txt_array.length; i++) {
                         txt_array[i].setText(String.valueOf(table.getValueAt(selectedRow, i)));
                         txt_array[i].setEditable(false);
-                    }                    
+                    }
                     String bookId = table.getValueAt(selectedRow, 0).toString();
                     SachDTO sach = sachBUS.getSachByMaSach(bookId);
 
@@ -198,7 +232,7 @@ public class SachGUI {
                         imageLabel.setIcon(null);
                         imagePanel.revalidate();
                         imagePanel.repaint();
-                    }                
+                    }
 
                     if (update) {
                         tool.Editable(txt_array, true);
@@ -237,7 +271,8 @@ public class SachGUI {
     }
 
     private JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label) {
-        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, DETAIL_PANEL_WIDTH, DETAIL_PANEL_HEIGHT, 0.5, 3,
+        panelDetail = tool.createDetailPanel(txt_array, txt_label, null, DETAIL_PANEL_WIDTH, DETAIL_PANEL_HEIGHT, 0.5,
+                3,
                 false);
 
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -383,58 +418,47 @@ public class SachGUI {
     }
 
     private void updateSach() {
-        if (add) {
+        if (add)
             tool.clearFields(txt_array);
-        }
         add = false;
         delete = false;
         if (selectedRow == -1) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn sách để sửa!");
-        } else if (!update) {
+            return;
+        }
+        if (!update) {
             update = true;
             tool.clearButtons(buttons);
             tool.Editable(txt_array, true);
-
             buttons[1].setBackground(new Color(202, 220, 252));
             buttons[1].setForeground(Color.BLACK);
             buttons[5].setBackground(Color.RED);
-
-            for (int i = 0, length = buttons.length - 1; i < length; i++) {
-                if (i != 1) {
+            for (int i = 0; i < buttons.length - 1; i++)
+                if (i != 1)
                     buttons[i].setVisible(false);
-                }
-            }
-
             txt_array[0].setEditable(false);
-        } else {
-            try {
-                SachDTO sach = new SachDTO();
-                sach.setMaSach(txt_array[0].getText().trim());
-                sach.setTenSach(txt_array[1].getText().trim());
-                sach.setTheLoai(txt_array[2].getText().trim());
-                sach.setSoLuong(Integer.parseInt(txt_array[3].getText().trim()));
-                sach.setDonGia(Integer.parseInt(txt_array[4].getText().trim()));
-                sach.setMaTG(txt_array[5].getText().trim());
-
-                if (sach.getMaSach().isEmpty()) {
-                    JOptionPane.showMessageDialog(null, "Vui lòng chọn sách để sửa!");
-                    return;
-                }
-
-                if (!checkValidate(sach)) {
-                    return;
-                }
-
-                if (sachBUS.updateSach(sach)) {
-                    JOptionPane.showMessageDialog(null, "Sửa sách thành công!");
-                    cancel();
-                } else {
-                    JOptionPane.showMessageDialog(null, "Sửa sách thất bại!");
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                JOptionPane.showMessageDialog(null, "Lỗi khi sửa sách: " + e.getMessage());
+            return;
+        }
+        try {
+            SachDTO sach = new SachDTO();
+            sach.setMaSach(txt_array[0].getText().trim());
+            sach.setTenSach(txt_array[1].getText().trim());
+            sach.setTheLoai(txt_array[2].getText().trim());
+            sach.setSoLuong(Integer.parseInt(txt_array[3].getText().trim()));
+            sach.setDonGia(Integer.parseInt(txt_array[4].getText().trim()));
+            sach.setMaTG(txt_array[5].getText().trim());
+            if (currentChosenImage != null) {
+                sach.setImg(currentChosenImage);
             }
+            if (sachBUS.updateSach(sach)) {
+                JOptionPane.showMessageDialog(null, "Sửa sách thành công!");
+                currentChosenImage = null;
+                cancel();
+            } else {
+                JOptionPane.showMessageDialog(null, "Sửa sách thất bại!");
+            }
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, "Lỗi khi sửa sách: " + e.getMessage());
         }
     }
 

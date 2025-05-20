@@ -7,7 +7,7 @@ import DAO.SachDAO;
 import DTO.SachDTO;
 
 public class SachBUS {
-    private SachDAO sachDAO;
+    private SachDAO sachDAO = new SachDAO();
 
     public SachBUS() {
         sachDAO = new SachDAO();
