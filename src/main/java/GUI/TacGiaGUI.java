@@ -17,6 +17,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import BUS.TacGiaBUS;
@@ -193,11 +195,26 @@ public class TacGiaGUI {
         return searchPanel;
     }
     private void timkiem() {
-        comboBox.addActionListener(e -> {
-            String selectedOption = (String) comboBox.getSelectedItem();
-            filterTable(txt_array_search[0].getText(), selectedOption);
+        // Add real-time search with DocumentListener
+        txt_array_search[0].getDocument().addDocumentListener(new DocumentListener() {
+            @Override
+            public void insertUpdate(DocumentEvent e) {
+                filterTable(txt_array_search[0].getText(), (String) comboBox.getSelectedItem());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterTable(txt_array_search[0].getText(), (String) comboBox.getSelectedItem());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterTable(txt_array_search[0].getText(), (String) comboBox.getSelectedItem());
+            }
         });
 
+        comboBox.addActionListener(
+                e -> filterTable(txt_array_search[0].getText(), (String) comboBox.getSelectedItem()));
     }
 
         private void filterTable(String query, String searchType) {
