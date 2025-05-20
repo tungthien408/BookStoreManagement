@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 20, 2025 at 03:48 PM
+-- Generation Time: May 20, 2025 at 07:27 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.0.30
 
@@ -40,13 +40,28 @@ CREATE TABLE `chitiethoadon` (
 
 INSERT INTO `chitiethoadon` (`MASACH`, `MAHD`, `SoLuong`, `Gia`) VALUES
 ('S001', 'HD001', 2, 85000),
+('S001', 'HD043', 1, 95000),
+('S001', 'HD050', 1, 95000),
 ('S002', 'HD002', 1, 65000),
+('S002', 'HD039', 1, 65000),
+('S002', 'HD041', 1, 75000),
 ('S003', 'HD003', 1, 45000),
 ('S004', 'HD004', 2, 75000),
 ('S005', 'HD003', 2, 55000),
 ('S005', 'HD005', 1, 80000),
+('S005', 'HD037', 2, 90000),
+('S005', 'HD038', 1, 80000),
+('S005', 'HD044', 1, 90000),
+('S005', 'HD045', 1, 90000),
+('S005', 'HD046', 1, 90000),
+('S005', 'HD047', 1, 90000),
+('S005', 'HD048', 1, 90000),
+('S005', 'HD049', 1, 90000),
+('S005', 'HD051', 1, 90000),
 ('S006', 'HD006', 3, 82000),
 ('S007', 'HD007', 1, 70000),
+('S007', 'HD040', 1, 80000),
+('S007', 'HD042', 1, 80000),
 ('S008', 'HD008', 2, 85000),
 ('S009', 'HD009', 1, 60000),
 ('S010', 'HD010', 2, 60000),
@@ -158,7 +173,22 @@ INSERT INTO `hoadon` (`MAHD`, `MANV`, `MAKH`, `NgayBan`, `TongTien`, `trangThaiX
 ('HD033', 'NV03', 'KH033', '2025-05-12', 131400, 0, NULL),
 ('HD034', 'NV04', 'KH034', '2025-05-13', 66600, 0, NULL),
 ('HD035', 'NV05', 'KH035', '2025-05-14', 131400, 0, NULL),
-('HD036', 'NV01', 'KH036', '2025-05-15', 66600, 0, NULL);
+('HD036', 'NV01', 'KH036', '2025-05-15', 66600, 0, NULL),
+('HD037', 'NV01', 'KH000', '2025-05-20', 140000, 0, 'MGG003'),
+('HD038', 'NV01', 'KH000', '2025-05-20', 0, 0, 'MGG003'),
+('HD039', 'NV01', 'KH002', '2025-05-20', 32500, 0, 'MGG003'),
+('HD040', 'NV01', 'KH000', '2025-05-20', 70000, 0, 'MGG004'),
+('HD041', 'NV01', 'KH000', '2025-05-20', 37500, 0, 'MGG003'),
+('HD042', 'NV01', 'KH000', '2025-05-20', 40000, 0, 'MGG003'),
+('HD043', 'NV01', 'KH001', '2025-05-20', 47400, 0, 'MGG003'),
+('HD044', 'NV01', 'KH001', '2025-05-20', 79900, 0, 'MGG004'),
+('HD045', 'NV01', 'KH001', '2025-05-20', 89900, 0, 'GG10K'),
+('HD046', 'NV01', 'KH001', '2025-05-20', 79900, 0, 'MGG004'),
+('HD047', 'NV01', 'KH00', '2025-05-21', 90000, 0, 'GG10K'),
+('HD048', 'NV01', 'KH00', '2025-05-21', 90000, 0, 'GG10K'),
+('HD049', 'NV01', 'KH001', '2025-05-21', 90000, 0, 'GG10K'),
+('HD050', 'NV01', 'KH00', '2025-05-21', 95000, 0, 'GG10K'),
+('HD051', 'NV01', 'KH001', '2025-05-21', 90000, 0, 'GG10K');
 
 -- --------------------------------------------------------
 
@@ -179,9 +209,10 @@ CREATE TABLE `khachhang` (
 --
 
 INSERT INTO `khachhang` (`MAKH`, `SDT`, `HoTen`, `Diem`, `trangThaiXoa`) VALUES
-('KH000', '0123456789', 'Anonymous', 0, 0),
+('KH00', '0955555555', 'ShopBook', 0, 0),
+('KH000', '0123456789', 'Anonymous', 287, 0),
 ('KH001', '0912345678', 'Nguyễn Văn An', 100, 0),
-('KH002', '0987654321', 'Trần Thị Bình', 50, 0),
+('KH002', '0987654321', 'Trần Thị Bình', 82, 0),
 ('KH003', '0935432109', 'Lê Minh Châu', 200, 0),
 ('KH004', '0901234567', 'Phạm Quốc Dũng', 0, 0),
 ('KH005', '0923456789', 'Hoàng Thị E', 150, 0),
@@ -239,8 +270,7 @@ CREATE TABLE `magiamgia` (
 --
 
 INSERT INTO `magiamgia` (`maGiamGia`, `tenGiamGia`, `phanTramGiam`, `ngayBatDau`, `ngayKetThuc`, `trangThaiXoa`, `loaiGiamGia`, `soTienGiam`) VALUES
-('MGG001', 'aaaaaa1', 100, '2025-05-10', '2025-05-30', 0, 1, NULL),
-('MGG002', 'aaaaaaa', 1, '2025-05-10', '2025-05-30', 0, 1, 1),
+('GG10K', 'Giảm 10k cho đơn hàng bất kỳ', NULL, '2025-05-01', '2025-06-01', 0, 0, 0),
 ('MGG003', 'phantram', 50, '2025-05-10', '2025-05-30', 0, 1, 0),
 ('MGG004', 'tien', 0, '2025-05-10', '2025-05-30', 0, 0, 10000);
 
@@ -369,13 +399,13 @@ CREATE TABLE `sach` (
 --
 
 INSERT INTO `sach` (`MASACH`, `TenSach`, `TheLoai`, `SoLuong`, `DonGia`, `MATG`, `MANXB`, `trangThaiXoa`, `img`) VALUES
-('S001', 'Cho Tôi Xin Một Vé Đi Tuổi Thơ', 'Truyện dài', 100, 85000, 'TG01', 'NXB01', 0, 'cho_toi_xin_mot_ve_di_tuoi_tho.jpg'),
-('S002', 'Dế Mèn Phiêu Lưu Ký', 'Truyện thiếu nhi', 150, 65000, 'TG02', 'NXB01', 0, 'de_men_phieu_luu_ky.jpg'),
+('S001', 'Cho Tôi Xin Một Vé Đi Tuổi Thơ', 'Truyện dài', 98, 85000, 'TG01', 'NXB01', 0, 'cho_toi_xin_mot_ve_di_tuoi_tho.jpg'),
+('S002', 'Dế Mèn Phiêu Lưu Ký', 'Truyện thiếu nhi', 148, 65000, 'TG02', 'NXB01', 0, 'de_men_phieu_luu_ky.jpg'),
 ('S003', 'Chí Phèo', 'Truyện ngắn', 80, 45000, 'TG03', 'NXB04', 0, 'chi_pheo.png'),
 ('S004', 'Tắt Đèn', 'Tiểu thuyết', 60, 75000, 'TG04', 'NXB04', 0, 'tat_den.jpg'),
-('S005', 'Cô Gái Đến Từ Hôm Qua', 'Truyện dài', 120, 80000, 'TG01', 'NXB02', 0, 'co_gai_den_tu_hom_qua.jpg'),
+('S005', 'Cô Gái Đến Từ Hôm Qua', 'Truyện dài', 110, 80000, 'TG01', 'NXB02', 0, 'co_gai_den_tu_hom_qua.jpg'),
 ('S006', 'Mắt Biếc', 'Truyện dài', 90, 82000, 'TG01', 'NXB03', 0, 'mat_biec.jpg'),
-('S007', 'Tôi Là Bêtô', 'Truyện thiếu nhi', 110, 70000, 'TG01', 'NXB01', 0, 'toi_la_beto.jpg'),
+('S007', 'Tôi Là Bêtô', 'Truyện thiếu nhi', 108, 70000, 'TG01', 'NXB01', 0, 'toi_la_beto.jpg'),
 ('S008', 'Tôi Thấy Hoa Vàng Trên Cỏ Xanh', 'Truyện dài', 95, 85000, 'TG01', 'NXB02', 0, 'toi_thay_hoa_vang_tren_co_xanh.jpg'),
 ('S009', 'Nhà Chử', 'Tiểu thuyết', 70, 60000, 'TG02', 'NXB03', 0, 'nha_chu.jpg'),
 ('S010', 'Truyện Tây Bắc', 'Truyện ngắn', 100, 65000, 'TG02', 'NXB05', 0, 'truyen_tay_bac.png'),

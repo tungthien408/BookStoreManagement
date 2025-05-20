@@ -152,7 +152,7 @@ public class NhapSachGUI implements TableRefreshListener {
     }
 
     private String getID() {
-        String str = String.format("%03d", count);
+        String str = String.format("%02d", count);
         return "PN" + str;
     }
 
@@ -509,10 +509,11 @@ public class NhapSachGUI implements TableRefreshListener {
         txt_array_top[0].setEditable(false);
         txt_array_top[0].setText(getID());
         txt_array_top[3].setText(LocalDate.now().toString());
+        txt_array_top[2].setEditable(true);
 
-        for (JTextField txt : txt_array_top) {
-            txt.setEditable(true);
-        }
+        // for (JTextField txt : txt_array_top) {
+        //     txt.setEditable(true);
+        // }
 
         selectedRow = table_top.getSelectedRow();
         if (selectedRow == -1) {
@@ -588,7 +589,7 @@ public class NhapSachGUI implements TableRefreshListener {
         try {
             String maPN = txt_array_top[0].getText().trim();
             String maNV = nv.getMaNV(); // Use actual employee ID
-            String maNXB = txt_array_top[2].getText().trim();
+            String maNXB = txt_array_top[2].getText().trim().toUpperCase();
             String ngayNhapStr = txt_array_top[3].getText().trim();
             String tongTienStr = txt_array_top[4].getText().trim();
 
@@ -652,9 +653,11 @@ public class NhapSachGUI implements TableRefreshListener {
 
             for (JTextField txt : txt_array_top) {
                 txt.setText("");
+                txt.setEditable(false);
             }
             for (JTextField txt : txt_array_down) {
                 txt.setText("");
+                txt.setEditable(false);
             }
 
             count++;
