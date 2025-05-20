@@ -57,6 +57,7 @@ public class SachGUI {
 
     private int selectedRow = -1;
     // Lưu tên file ảnh vừa chọn
+    private ImageIcon finalIcon;
     private String currentChosenImage = null;
 
     private int lastSelectedRow = -1;
@@ -380,6 +381,8 @@ public class SachGUI {
             buttons[0].setBackground(new Color(202, 220, 252));
             buttons[0].setForeground(Color.BLACK);
             buttons[5].setBackground(Color.RED);
+            finalIcon = null;
+            imageLabel.setIcon(finalIcon);
 
             for (int i = 0, length = buttons.length - 1; i < length; i++) {
                 if (i != 0) {
@@ -503,6 +506,8 @@ public class SachGUI {
         add = false;
         update = false;
         delete = false;
+        finalIcon = null;
+        imageLabel.setIcon(finalIcon);
         refreshTable();
         tool.clearButtons(buttons);
         tool.clearFields(txt_array);
@@ -541,7 +546,7 @@ public class SachGUI {
     }
 
     public void renderBookImage(String bookId, SachDTO sach) {
-        ImageIcon finalIcon = null;
+        finalIcon = null;
         BufferedImage originalImage = null;
         try {
             String imgName = sach.getImg();

@@ -63,6 +63,7 @@ public class NhapSachGUI {
     private JTable table_down, table_top;
     private JLabel imageLabel;
     private JPanel imagePanel;
+    private ImageIcon finalIcon;
     private JComboBox<String> comboBox; // Added for search
     String[] txt_label = { "Mã Sách", "Số lượng" };
 
@@ -237,7 +238,7 @@ public class NhapSachGUI {
                 String bookId = table_top.getValueAt(selectedRow, 0).toString();
                 SachDTO sach = sachBUS.getSachByMaSach(bookId);
                 if (sach != null) {
-                    ImageIcon finalIcon = null;
+                    finalIcon = null;
                     BufferedImage originalImage = null;
                     try {
                         String imgName = sach.getImg();
@@ -362,7 +363,7 @@ public class NhapSachGUI {
                     txt_array_down[1].setText(String.valueOf(table_down.getValueAt(selectedRow, 2)));
 
                     // Load and display image
-                    ImageIcon finalIcon = null;
+                    finalIcon = null;
                     BufferedImage originalImage = null;
                     try {
                         String imgName = sach.getImg();
@@ -552,6 +553,8 @@ public class NhapSachGUI {
             img = new ImageIcon();
 
             JOptionPane.showMessageDialog(null, "Thêm chi tiết phiếu nhập thành công!");
+            finalIcon = null;
+            imageLabel.setIcon(finalIcon);
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(null, "Số lượng phải là số nguyên!");
         } catch (Exception e) {

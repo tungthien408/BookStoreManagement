@@ -65,6 +65,7 @@ public class BanSachGUI {
     private JTable table_down, table_top;
     private JLabel imageLabel;
     private JPanel imagePanel;
+    private ImageIcon finalIcon;
     private int selectedRow = -1;
     private int lastSelectedRow = -1;
     private int count = 0;
@@ -240,7 +241,7 @@ public class BanSachGUI {
                     SachDTO sach = sachBUS.getSachByMaSach(bookId);
 
                     if (sach != null) {
-                        ImageIcon finalIcon = null;
+                        finalIcon = null;
                         BufferedImage originalImage = null;
                         try {
                             String imgName = sach.getImg();
@@ -708,6 +709,8 @@ public class BanSachGUI {
             khachHangBUS.updateKhachHang(maKH);
 
             JOptionPane.showMessageDialog(null, "Thanh toán thành công!");
+            finalIcon = null;
+            imageLabel.setIcon(finalIcon);
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi thanh toán: " + e.getMessage());
