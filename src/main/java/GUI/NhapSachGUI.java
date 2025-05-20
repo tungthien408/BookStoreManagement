@@ -166,9 +166,14 @@ public class NhapSachGUI implements TableRefreshListener {
     }
 
     private void timkiem() {
-        comboBox.addActionListener(e -> {
-            String selectedOption = (String) comboBox.getSelectedItem();
-            filterTable(txt_array_search[0].getText(), selectedOption);
+        txt_array_search[0].addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    String selectedOption = (String) comboBox.getSelectedItem();
+                    filterTable(txt_array_search[0].getText(), selectedOption);
+                }
+            }
         });
     }
 

@@ -168,9 +168,14 @@ public class BanSachGUI implements TableRefreshListener {
     }
 
     private void timkiem() {
-        comboBox.addActionListener(e -> {
-            String selectedOption = (String) comboBox.getSelectedItem();
-            filterTable(txt_array_search[0].getText(), selectedOption);
+        txt_array_search[0].addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
+                    String selectedOption = (String) comboBox.getSelectedItem();
+                    filterTable(txt_array_search[0].getText(), selectedOption);
+                }
+            }
         });
     }
 
@@ -231,110 +236,36 @@ public class BanSachGUI implements TableRefreshListener {
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelTable.add(scrollPane);
 
-        table_top.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
+        table_top.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
                 selectedRow = table_top.getSelectedRow();
-                if (selectedRow >= 0) {
-                    txt_array_down[0].setText((String) table_top.getValueAt(selectedRow, 0));
-                    txt_array_down[0].setEditable(false);
+                if (selectedRow == lastSelectedRow && selectedRow >= 0) {
+                    table_top.clearSelection();
+                    lastSelectedRow = -1;
+                    txt_array_down[0].setText("");
+                    txt_array_down[1].setText("");
+                    for (JTextField txt : txt_array_down) {
+                        txt.setEditable(false);
+                    }
+                    imageLabel.setIcon(null);
+                } else if (selectedRow >= 0) {
+                    String bookId = (String) table_top.getValueAt(selectedRow, 0);
+                    txt_array_down[0].setText(bookId);
                     txt_array_down[1].setText("");
                     txt_array_down[1].setEditable(true);
+                    lastSelectedRow = selectedRow;
 
-                    String bookId = table_top.getValueAt(selectedRow, 0).toString();
                     SachDTO sach = sachBUS.getSachByMaSach(bookId);
-
                     if (sach != null) {
-                        finalIcon = null;
-                        BufferedImage originalImage = null;
-                        try {
-                            String imgName = sach.getImg();
-                            System.out.println("Image name from database: " + imgName);
-                            if (imgName != null && !imgName.trim().isEmpty()) {
-                                String absoluteImagePath = System.getProperty("user.dir") + "/images/Book/" + imgName;
-                                System.out.println("Constructed image path: " + absoluteImagePath);
-                                java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
-                                File imageFile = imagePath.toFile();
-                                if (imageFile.exists() && imageFile.isFile()) {
-                                    originalImage = ImageIO.read(imageFile);
-                                    if (originalImage != null) {
-                                        System.out.println("Successfully read image file: " + absoluteImagePath);
-                                        int targetWidth = imagePanel.getPreferredSize().width;
-                                        int targetHeight = imagePanel.getPreferredSize().height;
-                                        if (targetWidth <= 0)
-                                            targetWidth = 200;
-                                        if (targetHeight <= 0)
-                                            targetHeight = 250;
-                                        Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight,
-                                                Image.SCALE_SMOOTH);
-                                        finalIcon = new ImageIcon(scaledImage);
-                                        System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
-                                    } else {
-                                        System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
-                                    }
-                                } else {
-                                    System.err.println("Image file not found or is not a file: " + absoluteImagePath);
-                                }
-                            } else {
-                                System.err.println("Image name is null or empty for book: " + bookId);
-                            }
-                        } catch (IOException ioEx) {
-                            System.err.println(
-                                    "IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
-                            ioEx.printStackTrace();
-                        } catch (Exception ex) {
-                            System.err.println(
-                                    "General error processing image " + sach.getImg() + ": " + ex.getMessage());
-                            ex.printStackTrace();
-                        }
-
-                        if (finalIcon == null) {
-                            System.err.println("Attempting to load and scale default image...");
-                            try {
-                                BufferedImage defaultOriginal = null;
-                                String defaultImagePath = System.getProperty("user.dir") + "/images/Book/default.jpg";
-                                File defaultImageFile = new File(defaultImagePath);
-                                if (defaultImageFile.exists()) {
-                                    defaultOriginal = ImageIO.read(defaultImageFile);
-                                } else {
-                                    System.err.println("Default image file not found at: " + defaultImagePath);
-                                }
-                                if (defaultOriginal != null) {
-                                    int targetWidth = imagePanel.getPreferredSize().width;
-                                    int targetHeight = imagePanel.getPreferredSize().height;
-                                    if (targetWidth <= 0)
-                                        targetWidth = 200;
-                                    if (targetHeight <= 0)
-                                        targetHeight = 250;
-                                    Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight,
-                                            Image.SCALE_SMOOTH);
-                                    finalIcon = new ImageIcon(scaledDefault);
-                                    System.out.println("Loaded and scaled default image.");
-                                }
-                            } catch (IOException ioEx) {
-                                System.err.println("IOException reading default image: " + ioEx.getMessage());
-                            } catch (Exception ex) {
-                                System.err.println("General error processing default image: " + ex.getMessage());
-                            }
-                        }
-
-                        imageLabel.setIcon(finalIcon);
-                        imagePanel.revalidate();
-                        imagePanel.repaint();
+                        renderBookImage(bookId, sach);
                     } else {
                         System.err.println("SachDTO not found for ID: " + bookId);
                         imageLabel.setIcon(null);
-                        imagePanel.revalidate();
-                        imagePanel.repaint();
                     }
-                } else {
-                    txt_array_down[0].setText("");
-                    txt_array_down[1].setText("");
-                    txt_array_down[0].setEditable(true);
-                    txt_array_down[1].setEditable(true);
-                    imageLabel.setIcon(null);
-                    imagePanel.revalidate();
-                    imagePanel.repaint();
                 }
+                imagePanel.revalidate();
+                imagePanel.repaint();
             }
         });
 
@@ -357,6 +288,12 @@ public class BanSachGUI implements TableRefreshListener {
                 if (selectedRow == lastSelectedRow && selectedRow >= 0) {
                     table_down.clearSelection();
                     lastSelectedRow = -1;
+                    txt_array_down[0].setText("");
+                    txt_array_down[1].setText("");
+                    for (JTextField txt : txt_array_down) {
+                        txt.setEditable(false);
+                    }
+                    imageLabel.setIcon(null);
                 } else if (selectedRow >= 0) {
                     String bookId = (String) table_down.getValueAt(selectedRow, 0);
                     txt_array_down[0].setText(bookId);
@@ -365,7 +302,16 @@ public class BanSachGUI implements TableRefreshListener {
                         txt.setEditable(false);
                     }
                     lastSelectedRow = selectedRow;
+                    SachDTO sach = sachBUS.getSachByMaSach(bookId);
+                    if (sach != null) {
+                        renderBookImage(bookId, sach);
+                    } else {
+                        System.err.println("SachDTO not found for ID: " + bookId);
+                        imageLabel.setIcon(null);
+                    }
                 }
+                imagePanel.revalidate();
+                imagePanel.repaint();
             }
         });
 
@@ -552,8 +498,8 @@ public class BanSachGUI implements TableRefreshListener {
         }
 
         updateTotal();
-        txt_array_down[0].setText("");
-        txt_array_down[1].setText("");
+        // txt_array_down[0].setText("");
+        // txt_array_down[1].setText("");
     }
 
     private void deleteChiTietHoaDon() {
@@ -867,5 +813,85 @@ public class BanSachGUI implements TableRefreshListener {
 
     public JPanel getPanel() {
         return this.panel;
+    }
+
+    public void renderBookImage(String bookId, SachDTO sach) {
+        finalIcon = null;
+        BufferedImage originalImage = null;
+        try {
+            String imgName = sach.getImg();
+            System.out.println("Image name from database: " + imgName);
+            if (imgName != null && !imgName.trim().isEmpty()) {
+                String absoluteImagePath = System.getProperty("user.dir") + "/images/Book/" + imgName;
+                System.out.println("Constructed image path: " + absoluteImagePath);
+                java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
+                File imageFile = imagePath.toFile();
+                if (imageFile.exists() && imageFile.isFile()) {
+                    originalImage = ImageIO.read(imageFile);
+                    if (originalImage != null) {
+                        System.out.println("Successfully read image file: " + absoluteImagePath);
+                        int targetWidth = imagePanel.getPreferredSize().width;
+                        int targetHeight = imagePanel.getPreferredSize().height;
+                        if (targetWidth <= 0)
+                            targetWidth = 200;
+                        if (targetHeight <= 0)
+                            targetHeight = 250;
+                        Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight,
+                                Image.SCALE_SMOOTH);
+                        finalIcon = new ImageIcon(scaledImage);
+                        System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
+                    } else {
+                        System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
+                    }
+                } else {
+                    System.err.println("Image file not found or is not a file: " + absoluteImagePath);
+                }
+            } else {
+                System.err.println("Image name is null or empty for book: " + bookId);
+            }
+        } catch (IOException ioEx) {
+            System.err.println(
+                    "IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
+            ioEx.printStackTrace();
+        } catch (Exception ex) {
+            System.err.println(
+                    "General error processing image " + sach.getImg() + ": " + ex.getMessage());
+            ex.printStackTrace();
+        }
+
+        if (finalIcon == null) {
+            System.err.println("Attempting to load and scale default image...");
+            try {
+                BufferedImage defaultOriginal = null;
+                String defaultImagePath = System.getProperty("user.dir") + "/images/Book/default.jpg";
+                File defaultImageFile = new File(defaultImagePath);
+                if (defaultImageFile.exists()) {
+                    defaultOriginal = ImageIO.read(defaultImageFile);
+                } else {
+                    System.err.println("Default image file not found at: " + defaultImagePath);
+                }
+                if (defaultOriginal != null) {
+                    int targetWidth = imagePanel.getPreferredSize().width;
+                    int targetHeight = imagePanel.getPreferredSize().height;
+                    if (targetWidth <= 0)
+                        targetWidth = 200;
+                    if (targetHeight <= 0)
+                        targetHeight = 250;
+                    Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight,
+                            Image.SCALE_SMOOTH);
+                    finalIcon = new ImageIcon(scaledDefault);
+                    System.out.println("Loaded and scaled default image.");
+                }
+            } catch (IOException ioEx) {
+                System.err.println("IOException reading default image: " + ioEx.getMessage());
+            } catch (Exception ex) {
+                System.err.println("General error processing default image: " + ex.getMessage());
+            }
+        }
+
+        imageLabel.setIcon(finalIcon);
+        imagePanel.revalidate();
+        imagePanel.repaint();
+
     }
 }
