@@ -22,8 +22,10 @@ import javax.swing.table.DefaultTableModel;
 
 import BUS.KhachHangBUS;
 import DTO.KhachHangDTO;
+import Utils.EventManager;
+import Utils.TableRefreshListener;
 
-public class KhachHangGUI {
+public class KhachHangGUI implements TableRefreshListener {
     Tool tool = new Tool();
     JPanel panel, panelDetail;
     List<KhachHangDTO> khachHangList;
@@ -44,6 +46,7 @@ public class KhachHangGUI {
     private JComboBox<String> comboBox;
 
     public KhachHangGUI() {
+        EventManager.getInstance().registerListener(this);
         txt_search = new JTextField();
         txt_array_search = new JTextField[]{txt_search};
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
@@ -187,7 +190,8 @@ public class KhachHangGUI {
         }
     }
     
-    private void refreshTable() {
+    @Override
+    public void refreshTable() {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
         try {
@@ -242,6 +246,7 @@ public class KhachHangGUI {
 
                 if (khachHangBUS.updateKhachHang(khachHang)) {
                     JOptionPane.showMessageDialog(null, "Sửa khách hàng thành công!");
+                    EventManager.getInstance().notifyListeners();
                     cancel();
                 } else {
                     JOptionPane.showMessageDialog(null, "Sửa khách hàng thất bại!");
