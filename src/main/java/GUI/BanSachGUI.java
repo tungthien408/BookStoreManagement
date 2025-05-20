@@ -45,8 +45,10 @@ import DTO.KhachHangDTO;
 import DTO.NhanVienDTO;
 import DTO.SachDTO;
 import DTO.TaiKhoanNVDTO;
+import Utils.EventManager;
+import Utils.TableRefreshListener;
 
-public class BanSachGUI {
+public class BanSachGUI implements TableRefreshListener {
     private static final int WIDTH = 1200;
     private static final int SIDE_MENU_WIDTH = 151;
     private static final int HEIGHT = (int) (WIDTH * 0.625);
@@ -89,6 +91,7 @@ public class BanSachGUI {
         setupPanelLayout();
         initializeHoaDon();
         timkiem();
+        EventManager.getInstance().registerListener(this);
     }
 
     private void initializeTextFields() {
@@ -435,6 +438,7 @@ public class BanSachGUI {
                     tienGiamGia = 0;
                     txt_array[4].setText("");
                     txt_array[4].setEditable(false);
+                    txt_array[3].setText("Anonymous");
                 }
                 updateTotal();
             }
@@ -538,7 +542,8 @@ public class BanSachGUI {
         model.addRow(new Object[] { maSach, tenSach, soLuong, donGia });
 
         updateTotal();
-        int diem = Integer.parseInt(txt_array_top[4].getText());
+        String diemStr = txt_array_top[4].getText().trim();
+        int diem = (!diemStr.isEmpty()) ? Integer.parseInt(diemStr) : 0;
         int tien = Integer.parseInt(txt_array_top[6].getText());
         if (diem * 1000 > tien) {
             tienGiamGia = 0;
@@ -707,7 +712,7 @@ public class BanSachGUI {
             else
                 maKH.setDiem(maKH.getDiem() + (int) (tongTien / 1000));
             khachHangBUS.updateKhachHang(maKH);
-
+            EventManager.getInstance().notifyListeners();
             JOptionPane.showMessageDialog(null, "Thanh toán thành công!");
             finalIcon = null;
             imageLabel.setIcon(finalIcon);
@@ -733,7 +738,8 @@ public class BanSachGUI {
         txt_array_top[6].setText(String.valueOf(tongTien));
     }
 
-    private void refreshTable() {
+    @Override
+    public void refreshTable() {
         DefaultTableModel model = (DefaultTableModel) table_top.getModel();
         model.setRowCount(0);
         try {

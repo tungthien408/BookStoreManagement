@@ -45,8 +45,10 @@ import DTO.ChiTietHoaDonDTO;
 import DTO.HoaDonDTO;
 import DTO.KhachHangDTO;
 import DTO.SachDTO;
+import Utils.EventManager;
+import Utils.TableRefreshListener;
 
-public class HoaDonBanGUI {
+public class HoaDonBanGUI implements TableRefreshListener {
     private static final int WIDTH = 1200;
     private static final int SIDE_MENU_WIDTH = 151;
     private static final int HEIGHT = (int) (WIDTH * 0.625);
@@ -76,6 +78,7 @@ public class HoaDonBanGUI {
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         panel.add(createHoaDonBanTable(), BorderLayout.WEST);
         panel.add(createPanelButton(), BorderLayout.CENTER);
+        EventManager.getInstance().registerListener(this);
         timkiem();
     }
 
@@ -516,5 +519,21 @@ public class HoaDonBanGUI {
 
     public JPanel getPanel() {
         return this.panel;
+    }
+
+    @Override
+    public void refreshTable() {
+        initializeData();
+        DefaultTableModel model = (DefaultTableModel) tableModel.getModel();
+        model.setRowCount(0);
+        for (HoaDonDTO hoaDon : hoaDonList) {
+            model.addRow(new Object[] {
+                    hoaDon.getMaHD(),
+                    hoaDon.getMaNV(),
+                    hoaDon.getMaKH(),
+                    hoaDon.getNgayBan().toString(),
+                    hoaDon.getTongTien()
+            });
+        }
     }
 }

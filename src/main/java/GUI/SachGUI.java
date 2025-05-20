@@ -33,8 +33,10 @@ import BUS.NXBBUS;
 import BUS.SachBUS;
 import BUS.TacGiaBUS;
 import DTO.SachDTO;
+import Utils.EventManager;
+import Utils.TableRefreshListener;
 
-public class SachGUI {
+public class SachGUI implements TableRefreshListener {
     private static final int WIDTH = 1200;
     private static final int SIDE_MENU_WIDTH = 151;
     private static final int HEIGHT = (int) (WIDTH * 0.625);
@@ -86,6 +88,7 @@ public class SachGUI {
         initializeData();
         setupPanelLayout();
         timkiem();
+        EventManager.getInstance().registerListener(this);
     }
 
     private void initializeTextFields() {
@@ -250,7 +253,6 @@ public class SachGUI {
 
         JPanel panelTable = new JPanel(new FlowLayout(FlowLayout.LEFT));
         panelTable.add(scrollPane);
-        panelTable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         return panelTable;
     }
 
@@ -266,8 +268,6 @@ public class SachGUI {
         buttons[4].addActionListener(e -> exportToExcel());
         buttons[5].addActionListener(e -> cancel());
 
-        panelBtn.setBorder(BorderFactory.createLineBorder(Color.GREEN));
-
         return panelBtn;
     }
 
@@ -279,7 +279,6 @@ public class SachGUI {
         JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         wrappedPanel.add(panelDetail);
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(20, 0, 10, 0));
-        wrappedPanel.setBorder(BorderFactory.createLineBorder(Color.RED));
         return wrappedPanel;
     }
 
@@ -342,7 +341,8 @@ public class SachGUI {
         }
     }
 
-    private void refreshTable() {
+    @Override
+    public void refreshTable() {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
         try {
@@ -408,6 +408,7 @@ public class SachGUI {
                 }
 
                 if (sachBUS.addSach(sach)) {
+                    EventManager.getInstance().notifyListeners();
                     JOptionPane.showMessageDialog(null, "Thêm sách thành công!");
                     cancel();
                 } else {
@@ -454,6 +455,7 @@ public class SachGUI {
                 sach.setImg(currentChosenImage);
             }
             if (sachBUS.updateSach(sach)) {
+                EventManager.getInstance().notifyListeners();
                 JOptionPane.showMessageDialog(null, "Sửa sách thành công!");
                 currentChosenImage = null;
                 cancel();
@@ -483,6 +485,7 @@ public class SachGUI {
                 if (JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa sách này?", "Xóa thông tin sách",
                         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     if (sachBUS.deleteSach(maSach)) {
+                        EventManager.getInstance().notifyListeners();
                         JOptionPane.showMessageDialog(null, "Xóa sách thành công!");
                         cancel();
                     }

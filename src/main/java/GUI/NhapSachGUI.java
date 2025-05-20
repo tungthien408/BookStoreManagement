@@ -45,8 +45,10 @@ import DTO.NhanVienDTO;
 import DTO.PhieuNhapDTO;
 import DTO.SachDTO;
 import DTO.TaiKhoanNVDTO;
+import Utils.EventManager;
+import Utils.TableRefreshListener;
 
-public class NhapSachGUI {
+public class NhapSachGUI implements TableRefreshListener {
     private Tool tool = new Tool();
     private JPanel panel, paymentPanel;
     private static final int WIDTH = 1200;
@@ -91,6 +93,7 @@ public class NhapSachGUI {
         setupPanelLayout();
         initializePhieuNhap();
         timkiem(); // Initialize search functionality
+        EventManager.getInstance().registerListener(this);
     }
 
     private void initializeTextFields() {
@@ -656,6 +659,7 @@ public class NhapSachGUI {
             imageLabel.setIcon(null);
             imagePanel.revalidate();
             imagePanel.repaint();
+            EventManager.getInstance().notifyListeners();
             JOptionPane.showMessageDialog(null, "Thanh toán thành công!");
         } catch (SQLException e) {
             e.printStackTrace();
@@ -674,7 +678,8 @@ public class NhapSachGUI {
         txt_array_top[4].setText(String.valueOf(tongTien));
     }
 
-    private void refreshTable() {
+    @Override
+    public void refreshTable() {
         DefaultTableModel model = (DefaultTableModel) table_top.getModel();
         model.setRowCount(0);
         try {

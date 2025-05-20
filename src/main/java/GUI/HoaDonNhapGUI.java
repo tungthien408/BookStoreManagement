@@ -44,13 +44,15 @@ import DTO.NhanVienDTO;
 import DTO.PhieuNhapDTO;
 import DTO.SachDTO;
 import DTO.TaiKhoanNVDTO;
+import Utils.EventManager;
+import Utils.TableRefreshListener;
 
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 
-public class HoaDonNhapGUI {
+public class HoaDonNhapGUI implements TableRefreshListener {
     private static final int WIDTH = 1200;
     private static final int SIDE_MENU_WIDTH = 151;
     private static final int HEIGHT = (int) (WIDTH * 0.625);
@@ -82,6 +84,7 @@ public class HoaDonNhapGUI {
         panel.add(createHoaDonNhapTable(), BorderLayout.WEST);
         panel.add(createPanelButton(null), BorderLayout.CENTER);
         timkiem();
+        EventManager.getInstance().registerListener(this);
     }
 
     private void initializeData() {
@@ -519,5 +522,20 @@ public class HoaDonNhapGUI {
 
     public JPanel getPanel() {
         return this.panel;
+    }
+
+    @Override
+    public void refreshTable() {
+        initializeData();
+        tableModel.setRowCount(0);
+        for (PhieuNhapDTO phieuNhap : phieuNhapList) {
+            tableModel.addRow(new Object[] {
+                    phieuNhap.getMaPN(),
+                    phieuNhap.getMaNV(),
+                    phieuNhap.getNgayNhap().toString(),
+                    phieuNhap.getTongTien(),
+                    phieuNhap.getMaNXB()
+            });
+        }
     }
 }
