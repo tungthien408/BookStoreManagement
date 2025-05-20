@@ -6,6 +6,7 @@ public class HoaDonDTO {
     private String maHD;
     private String maNV;
     private String maKH;
+    private String maGG;
     private Date ngayBan;
     private int tongTien;
     private int trangThaiXoa;
@@ -15,12 +16,13 @@ public class HoaDonDTO {
     }
 
     // Constructor đầy đủ
-    public HoaDonDTO(String maHD, String maNV, String maKH, Date ngayBan, int tongTien) {
+    public HoaDonDTO(String maHD, String maNV, String maKH, Date ngayBan, int tongTien,String maGG) {
         this.maHD = maHD;
         this.maNV = maNV;
         this.maKH = maKH;
         this.ngayBan = ngayBan;
         this.tongTien = tongTien;
+        this.maGG = maGG;
         this.trangThaiXoa = 0;
     }
 
@@ -71,5 +73,11 @@ public class HoaDonDTO {
 
     public void setTrangThaiXoa(int trangThaiXoa) {
         this.trangThaiXoa = trangThaiXoa;
+    }
+    public String getMaGiamGia() {
+        return maGG;
+    }
+    public void setMaGiamGia(String maGG) {
+        this.maGG = maGG;
     }
 }

@@ -453,5 +453,16 @@ public class Tool {
         return searchPanel;
     }
 
+	public JLabel createLabel(String text) {
+    JLabel label = new JLabel(text);
+	label.setBackground(new Color(202, 220, 252));
+    // label.setForeground(new color.BLUE);
+    label.setFont(new Font("Arial", Font.PLAIN, 14));
+    label.setHorizontalAlignment(SwingConstants.LEFT);
+    return label;
+}
+
+
+
 	
 }

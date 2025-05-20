@@ -37,11 +37,13 @@ import javax.swing.table.DefaultTableModel;
 import BUS.ChiTietHoaDonBUS;
 import BUS.HoaDonBUS;
 import BUS.KhachHangBUS;
+import BUS.MaGiamGiaBUS;
 import BUS.NhanVienBUS;
 import BUS.SachBUS;
 import DTO.ChiTietHoaDonDTO;
 import DTO.HoaDonDTO;
 import DTO.KhachHangDTO;
+import DTO.MaGiamGiaDTO;
 import DTO.NhanVienDTO;
 import DTO.SachDTO;
 import DTO.TaiKhoanNVDTO;
@@ -59,16 +61,21 @@ public class BanSachGUI {
     private JTextField txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName, txt_point, txt_date,
             txt_total;
     private JTextField txt_bookId, txt_quantity;
-    private JTextField txt_search;
+    private JTextField txt_search, txt_discountCode;
     private JButton[] buttons = new JButton[3];
     private JButton[] searchbutton = new JButton[1];
+    private JButton btn_applyDiscount;
     private JTable table_down, table_top;
     private JLabel imageLabel;
     private JPanel imagePanel;
     private int selectedRow = -1;
     private int lastSelectedRow = -1;
     private int count = 0;
-    private int tienGiamGia = 0;
+    private int discountAmount = 0;
+    private String appliedDiscountCode = "GG10K";
+    private boolean isDiscountApplied = false;
+    private int baseTotal = 0; // Store base total before discount
+    private int tongTien = 0;
     private JTextField[] txt_array_search = new JTextField[1];
     private JComboBox<String> comboBox;
 
@@ -80,6 +87,7 @@ public class BanSachGUI {
     private ChiTietHoaDonBUS chiTietHoaDonBUS = new ChiTietHoaDonBUS();
     private KhachHangBUS khachHangBUS = new KhachHangBUS();
     private NhanVienDTO nv;
+    private MaGiamGiaBUS maGiamGiaBUS = new MaGiamGiaBUS();
 
     public BanSachGUI(TaiKhoanNVDTO account) {
         nv = nhanVienBUS.getNhanVienByMaNV(account.getMaNV());
@@ -92,6 +100,7 @@ public class BanSachGUI {
 
     private void initializeTextFields() {
         txt_search = new JTextField();
+        txt_discountCode = new JTextField(10);
         txt_array_search = new JTextField[] { txt_search };
         txt_invoiceId = new JTextField();
         txt_employeeName = new JTextField();
@@ -135,7 +144,6 @@ public class BanSachGUI {
         lowerPanel.add(imagePanel, BorderLayout.WEST);
 
         paymentPanel.add(lowerPanel, BorderLayout.WEST);
-        // paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
         paymentPanel.add(createTable_down(), BorderLayout.EAST);
 
         panel.add(paymentPanel, BorderLayout.SOUTH);
@@ -157,10 +165,73 @@ public class BanSachGUI {
     private JPanel createSearchPanel() {
         String[] searchOptions = { "Mã sách", "Tên sách" };
         comboBox = new JComboBox<>(searchOptions);
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        searchPanel.add(Box.createHorizontalStrut(33));
-        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
+        JPanel searchPanel = new JPanel(new BorderLayout());
+        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        leftPanel.add(Box.createHorizontalStrut(33));
+        leftPanel.add(tool.createSearchTextFieldTest(comboBox, txt_array_search));
+
+        JPanel discountPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        JLabel discountLabel = new JLabel("Mã giảm giá: ");
+        txt_discountCode.setPreferredSize(new Dimension(100, 25));
+        btn_applyDiscount = new JButton("Áp dụng");
+        btn_applyDiscount.setBackground(new Color(0, 36, 107));
+        btn_applyDiscount.setForeground(Color.WHITE);
+        btn_applyDiscount.addActionListener(e -> applyDiscountCode());
+        discountPanel.add(discountLabel);
+        discountPanel.add(txt_discountCode);
+        discountPanel.add(btn_applyDiscount);
+        discountPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 10));
+
+        searchPanel.add(leftPanel, BorderLayout.WEST);
+        searchPanel.add(discountPanel, BorderLayout.EAST);
         return searchPanel;
+    }
+
+    private void applyDiscountCode() {
+        String discountCode = txt_discountCode.getText().trim();
+        
+        if (discountCode.equals(appliedDiscountCode) && isDiscountApplied) {
+            JOptionPane.showMessageDialog(null, "Mã giảm giá đã được áp dụng!");
+            return;
+        }
+
+        MaGiamGiaDTO maGiamGia = maGiamGiaBUS.getMaGiamGiaById(discountCode);
+        
+        if (maGiamGia == null && !discountCode.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Mã giảm giá không hợp lệ!");
+            resetDiscount();
+        } else if (discountCode.isEmpty()) {
+            resetDiscount();
+        } else {
+            switch (maGiamGia.getLoaiGiamGia()) {
+                case 1: // Percentage discount
+                    discountAmount = (int) (baseTotal * maGiamGia.getPhanTramGiam() / 100.0);
+                    break;
+                case 0: // Fixed amount discount
+                    discountAmount = maGiamGia.getSoTienGiam();
+                    break;
+                default:
+                    JOptionPane.showMessageDialog(null, "Loại giảm giá không hợp lệ!");
+                    resetDiscount();
+                    return;
+            }
+            
+            if (discountAmount > baseTotal) {
+                discountAmount = baseTotal;
+            }
+            
+            appliedDiscountCode = discountCode;
+            isDiscountApplied = true;
+            updateTotal();
+            JOptionPane.showMessageDialog(null, "Áp dụng mã giảm giá thành công!");
+        }
+    }
+
+    private void resetDiscount() {
+        discountAmount = 0;
+        appliedDiscountCode = "";
+        isDiscountApplied = false;
+        updateTotal();
     }
 
     private void timkiem() {
@@ -244,16 +315,13 @@ public class BanSachGUI {
                         BufferedImage originalImage = null;
                         try {
                             String imgName = sach.getImg();
-                            System.out.println("Image name from database: " + imgName);
                             if (imgName != null && !imgName.trim().isEmpty()) {
                                 String absoluteImagePath = System.getProperty("user.dir") + "/images/Book/" + imgName;
-                                System.out.println("Constructed image path: " + absoluteImagePath);
                                 java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
                                 File imageFile = imagePath.toFile();
                                 if (imageFile.exists() && imageFile.isFile()) {
                                     originalImage = ImageIO.read(imageFile);
                                     if (originalImage != null) {
-                                        System.out.println("Successfully read image file: " + absoluteImagePath);
                                         int targetWidth = imagePanel.getPreferredSize().width;
                                         int targetHeight = imagePanel.getPreferredSize().height;
                                         if (targetWidth <= 0)
@@ -263,15 +331,8 @@ public class BanSachGUI {
                                         Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight,
                                                 Image.SCALE_SMOOTH);
                                         finalIcon = new ImageIcon(scaledImage);
-                                        System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
-                                    } else {
-                                        System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
                                     }
-                                } else {
-                                    System.err.println("Image file not found or is not a file: " + absoluteImagePath);
                                 }
-                            } else {
-                                System.err.println("Image name is null or empty for book: " + bookId);
                             }
                         } catch (IOException ioEx) {
                             System.err.println(
@@ -284,15 +345,12 @@ public class BanSachGUI {
                         }
 
                         if (finalIcon == null) {
-                            System.err.println("Attempting to load and scale default image...");
                             try {
                                 BufferedImage defaultOriginal = null;
                                 String defaultImagePath = System.getProperty("user.dir") + "/images/Book/default.jpg";
                                 File defaultImageFile = new File(defaultImagePath);
                                 if (defaultImageFile.exists()) {
                                     defaultOriginal = ImageIO.read(defaultImageFile);
-                                } else {
-                                    System.err.println("Default image file not found at: " + defaultImagePath);
                                 }
                                 if (defaultOriginal != null) {
                                     int targetWidth = imagePanel.getPreferredSize().width;
@@ -304,7 +362,6 @@ public class BanSachGUI {
                                     Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight,
                                             Image.SCALE_SMOOTH);
                                     finalIcon = new ImageIcon(scaledDefault);
-                                    System.out.println("Loaded and scaled default image.");
                                 }
                             } catch (IOException ioEx) {
                                 System.err.println("IOException reading default image: " + ioEx.getMessage());
@@ -317,7 +374,6 @@ public class BanSachGUI {
                         imagePanel.revalidate();
                         imagePanel.repaint();
                     } else {
-                        System.err.println("SachDTO not found for ID: " + bookId);
                         imageLabel.setIcon(null);
                         imagePanel.revalidate();
                         imagePanel.repaint();
@@ -338,7 +394,6 @@ public class BanSachGUI {
     }
 
     private JPanel createTable_down() {
-        // table
         String[] column = { "Mã sách", "Tên sách", "Số lượng", "Đơn giá" };
         DefaultTableModel model = new DefaultTableModel(column, 0);
         table_down = tool.createTable(model, column);
@@ -366,14 +421,13 @@ public class BanSachGUI {
         });
 
         JPanel panelTable = new JPanel();
-        panelTable.setLayout(new BoxLayout(panelTable, BoxLayout.Y_AXIS)); // Stack components vertically
+        panelTable.setLayout(new BoxLayout(panelTable, BoxLayout.Y_AXIS));
         scrollPane.setBorder(BorderFactory.createEmptyBorder(60, 0, 0, 0));
         scrollPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panelTable.add(scrollPane);
         panelTable.add(createButtonPanel());
-        panelTable.add(Box.createVerticalStrut(50)); // Add 20px spacing
+        panelTable.add(Box.createVerticalStrut(50));
         panelTable.setBorder(BorderFactory.createEmptyBorder(90, 10, 0, 10));
-        // panelTable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         return panelTable;
     }
 
@@ -384,8 +438,6 @@ public class BanSachGUI {
         wrappedPanel.add(panelDetail);
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(padding_top, 0, 0, 0));
 
-        // txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName,
-        // txt_point, txt_date, txt_total
         txt_array[0].setEditable(false); // txt_invoiceId
         txt_array[1].setEditable(false); // txt_employeeName
         txt_array[1].setText(nv.getHoTen());
@@ -403,7 +455,7 @@ public class BanSachGUI {
             public void keyReleased(java.awt.event.KeyEvent e) {
                 String sdt = txt_array[2].getText().trim();
                 if (sdt.equals(previousPhoneNumber)) {
-                    return; // Skip if the phone number hasn't changed
+                    return;
                 }
                 previousPhoneNumber = sdt;
                 if (sdt.matches("(02|03|05|07|08|09)\\d{8}")) {
@@ -413,25 +465,18 @@ public class BanSachGUI {
                         txt_array[3].setEditable(false);
                         txt_array[4].setText(khachHang.getDiem() + "");
                         txt_array[4].setEditable(true);
-                        System.out.println("Tong tien: " + txt_array[6].getText());
-
-                        int tien = Integer.parseInt(txt_array[6].getText());
-                        if (khachHang.getDiem() > tien) {
-                            tienGiamGia = 0;
-                        } else
-                            tienGiamGia = Integer.parseInt(txt_array[4].getText()) * 1000;
                     } else {
                         txt_array[3].setEditable(true);
                         txt_array[3].setText("");
                         txt_array[4].setText("0");
                         txt_array[4].setEditable(false);
-                        tienGiamGia = 0;
                     }
                 } else if (!sdt.isBlank()) {
-                    tienGiamGia = 0;
                     txt_array[3].setText("Số điện thoại không hợp lệ!");
+                    txt_array[4].setText("0");
+                    txt_array[4].setEditable(false);
                 } else {
-                    tienGiamGia = 0;
+                    txt_array[3].setText("Anonymous");
                     txt_array[4].setText("");
                     txt_array[4].setEditable(false);
                 }
@@ -442,18 +487,6 @@ public class BanSachGUI {
         txt_array[4].addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
             public void keyReleased(java.awt.event.KeyEvent e) {
-                String diemStr = txt_array[4].getText();
-                if (diemStr.isBlank() || !diemStr.matches("\\d+")) {
-                    tienGiamGia = 0;
-                } else {
-                    int diem = Integer.parseInt(diemStr);
-                    int tien = Integer.parseInt(txt_array[6].getText());
-                    if (diem * 1000 > tien) {
-                        tienGiamGia = 0;
-                    } else {
-                        tienGiamGia = diem * 1000;
-                    }
-                }
                 updateTotal();
             }
         });
@@ -473,9 +506,6 @@ public class BanSachGUI {
         String[] buttonTexts = { "Thêm", "Xóa", "Thanh toán" };
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(tool.createButtonPanel(buttons, buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
-        // buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 60, 25));
-        // buttonPanel.setBorder(BorderFactory.createLineBorder(Color.GREEN));
-
         buttons[0].addActionListener(e -> addChiTietHoaDon());
         buttons[1].addActionListener(e -> deleteChiTietHoaDon());
         buttons[2].addActionListener(e -> thanhToan());
@@ -537,15 +567,6 @@ public class BanSachGUI {
         model.addRow(new Object[] { maSach, tenSach, soLuong, donGia });
 
         updateTotal();
-        int diem = Integer.parseInt(txt_array_top[4].getText());
-        int tien = Integer.parseInt(txt_array_top[6].getText());
-        if (diem * 1000 > tien) {
-            tienGiamGia = 0;
-        } else {
-            tienGiamGia = diem * 1000;
-        }
-
-        updateTotal();
         txt_array_down[0].setText("");
         txt_array_down[1].setText("");
     }
@@ -559,14 +580,41 @@ public class BanSachGUI {
 
         DefaultTableModel model = (DefaultTableModel) table_down.getModel();
         model.removeRow(selectedRow);
+        lastSelectedRow = -1;
         updateTotal();
         JOptionPane.showMessageDialog(null, "Xóa chi tiết hóa đơn thành công!");
     }
 
+    private void updateTotal() {
+        DefaultTableModel model = (DefaultTableModel) table_down.getModel();
+        baseTotal = 0;
+
+        for (int i = 0; i < model.getRowCount(); i++) {
+            int soLuong = Integer.parseInt(model.getValueAt(i, 2).toString());
+            int donGia = Integer.parseInt(model.getValueAt(i, 3).toString());
+            baseTotal += soLuong * donGia;
+        }
+
+        int pointDiscount = 0;
+        String diemStr = txt_array_top[4].getText().trim();
+        int diem = Integer.parseInt(txt_array_top[4].getText());
+        if (!diemStr.isEmpty() && diemStr.matches("\\d+")) {
+            pointDiscount = diem;
+            if (pointDiscount > baseTotal) {
+                pointDiscount = 0;
+            }
+        }
+
+        tongTien = baseTotal - pointDiscount - discountAmount;
+        if (tongTien < 0) {
+            tongTien = 0;
+        }
+
+        txt_array_top[6].setText(String.valueOf(tongTien));
+    }
+
     private void thanhToan() {
         try {
-            // txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName,
-            // txt_point, txt_date, txt_total
             String maHD = txt_array_top[0].getText().trim();
             String maNV = nv.getMaNV();
             String sdtKhach = txt_array_top[2].getText().trim();
@@ -584,6 +632,7 @@ public class BanSachGUI {
                 return;
             }
 
+            
             if (!sdtKhach.isBlank() && !sdtKhach.matches("(02|03|05|07|08|09)\\d{8}")) {
                 JOptionPane.showMessageDialog(null, "Số điện thoại không hợp lệ!");
                 return;
@@ -623,13 +672,11 @@ public class BanSachGUI {
 
             if (!diemStr.equals("null")) {
                 diem = Integer.parseInt(diemStr);
-
                 if (diem < 0) {
                     JOptionPane.showMessageDialog(null,
                             "Điểm tích lũy được áp dụng phải lớn hơn 0 và phải chứa ký tự số");
                     return;
                 }
-
                 if (maKH.getDiem() < diem) {
                     JOptionPane.showMessageDialog(null, "Điểm tích lũy của khách hàng không đủ để được áp dụng");
                     return;
@@ -647,7 +694,7 @@ public class BanSachGUI {
                 return;
             }
 
-            HoaDonDTO hoaDon = new HoaDonDTO(maHD, maNV, maKH.getMaKH(), ngayBan, tongTien);
+            HoaDonDTO hoaDon = new HoaDonDTO(maHD, maNV, maKH.getMaKH(), ngayBan, tongTien, appliedDiscountCode);
             if (!hoaDonBUS.addHoaDon(hoaDon)) {
                 throw new SQLException("Thêm hóa đơn thất bại!");
             }
@@ -700,11 +747,16 @@ public class BanSachGUI {
             txt_array_top[5].setText(LocalDate.now().toString());
             txt_array_top[5].setEditable(false);
             txt_array_top[6].setEditable(false);
+            txt_discountCode.setText("");
+            resetDiscount();
             initializeHoaDon();
             if (diem != 0)
                 maKH.setDiem(maKH.getDiem() - diem);
-            else
-                maKH.setDiem(maKH.getDiem() + (int) (tongTien / 1000));
+            else if(maKH.getMaKH() != "KH00"){
+                System.out.println(maKH.getDiem() + (int) (tongTien / 10));
+                maKH.setDiem(maKH.getDiem() + (int) (tongTien / 10));
+            }
+                
             khachHangBUS.updateKhachHang(maKH);
 
             JOptionPane.showMessageDialog(null, "Thanh toán thành công!");
@@ -712,22 +764,6 @@ public class BanSachGUI {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi thanh toán: " + e.getMessage());
         }
-    }
-
-    private void updateTotal() {
-        int tongTien = 0;
-        DefaultTableModel model = (DefaultTableModel) table_down.getModel();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            int soLuong = Integer.parseInt(model.getValueAt(i, 2).toString());
-            int donGia = Integer.parseInt(model.getValueAt(i, 3).toString());
-            tongTien += soLuong * donGia;
-        }
-
-        if (tienGiamGia > tongTien) {
-            txt_array_top[4].setText(String.valueOf(tongTien));
-        }
-        tongTien -= tienGiamGia;
-        txt_array_top[6].setText(String.valueOf(tongTien));
     }
 
     private void refreshTable() {
@@ -783,21 +819,22 @@ public class BanSachGUI {
         g2d.drawString("Địa chỉ:.....................................", 51, 152);
         g2d.drawLine(51, 160, imgWidth - 51, 160);
 
-        // Draw column headers
         g2d.drawString("STT", 68, 182);
         g2d.drawString("TÊN HÀNG", 200, 182);
         g2d.drawString("SỐ LƯỢNG", 370, 182);
         g2d.drawString("ĐƠN GIÁ", 520, 182);
         g2d.drawString("THÀNH TIỀN", 700, 182);
-        g2d.drawLine(51, 160, imgWidth - 51, 160); // Horizontal line
-        // Draw vertical lines to separate columns
+        g2d.drawLine(51, 160, imgWidth - 51, 160);
+
         g2d.setFont(new Font("New Times Roman", Font.BOLD, 14));
+        int sum = 0;
         for (int row = 0; row < rowCount; row++) {
             String stt = String.valueOf(row + 1);
             String tenHang = model.getValueAt(row, 1).toString();
             String soLuong = model.getValueAt(row, 2).toString();
             String donGia = model.getValueAt(row, 3).toString();
             String thanhTien = String.valueOf(Integer.parseInt(soLuong) * Integer.parseInt(donGia));
+            sum += Integer.parseInt(soLuong) * Integer.parseInt(donGia);
 
             g2d.drawString(stt, 79, 210 + row * 25);
             g2d.drawString(tenHang, 125, 210 + row * 25);
@@ -806,32 +843,50 @@ public class BanSachGUI {
             g2d.drawString(thanhTien, 700, 210 + row * 25);
 
             g2d.drawLine(51, 160, 51, 214 + rowCount * 25);
-            g2d.drawLine(120, 160, 120, 214 + rowCount * 25); // STT - TÊN HÀNG
-            g2d.drawLine(365, 160, 365, 214 + rowCount * 25); // TÊN HÀNG - SỐ LƯỢNG
-            g2d.drawLine(460, 160, 460, 214 + rowCount * 25); // SỐ LƯỢNG - ĐƠN GIÁ
-            g2d.drawLine(650, 160, 650, 214 + rowCount * 25); // ĐƠN GIÁ - THÀNH TIỀN
-            g2d.drawLine(imgWidth - 51, 160, imgWidth - 51, 214 + rowCount * 25); // THÀNH TIỀN - right border
+            g2d.drawLine(120, 160, 120, 214 + rowCount * 25);
+            g2d.drawLine(365, 160, 365, 214 + rowCount * 25);
+            g2d.drawLine(460, 160, 460, 214 + rowCount * 25);
+            g2d.drawLine(650, 160, 650, 214 + rowCount * 25);
+            g2d.drawLine(imgWidth - 51, 160, imgWidth - 51, 214 + rowCount * 25);
 
-            g2d.drawLine(51, 214 + row * 25, imgWidth - 51, 214 + row * 25); // Horizontal line
+            g2d.drawLine(51, 214 + row * 25, imgWidth - 51, 214 + row * 25);
+           
             if (row == rowCount - 1) {
-                g2d.drawLine(51, 240 + row * 25, imgWidth - 51, 240 + row * 25); // Horizontal line
+                g2d.drawLine(51, 240 + row * 25, imgWidth - 51, 240 + row * 25);
                 g2d.setFont(new Font("New Times Roman", Font.BOLD, 16));
-                g2d.drawString("CỘNG: ", 125, 235 + row * 25);
-                g2d.setFont(new Font("New Times Roman", Font.BOLD, 16));
-                g2d.drawString(String.valueOf(txt_array_top[6].getText()) + "VNĐ", 700, 235 + row * 25);
+                g2d.drawString("TỔNG: ", 125, 235 + row * 25);
+                g2d.drawString(sum + "VNĐ", 700, 235 + row * 25);
             }
         }
         g2d.drawLine(51, 204 - 12, imgWidth - 51, 204 - 12);
 
-        // Draw footer
         g2d.getFont().deriveFont(16f);
-        g2d.drawString(
-                "Thành tiền:........................." + txt_array_top[6].getText()
-                        + "..VNĐ..............................................................",
-                51, 245 + rowCount * 25);
-        g2d.drawString("Ngày ......... Tháng .......... Năm ..........", 490, 270 + rowCount * 25);
-        g2d.drawString("KHÁCH HÀNG", 150, 350 + rowCount * 25);
-        g2d.drawString("NGƯỜI BÁN HÀNG", 470, 350 + rowCount * 25);
+// Set font rõ ràng và hỗ trợ tiếng Việt
+g2d.setFont(new Font("Arial", Font.PLAIN, 14));
+
+// Bắt đầu từ vị trí y cố định để tránh trùng
+int baseY = 245 + rowCount * 25;
+int lineHeight = 25; // khoảng cách giữa các dòng
+
+// Giảm giá
+g2d.drawString("Giảm giá:", 50, baseY);
+g2d.drawString(discountAmount + " VNĐ", 150, baseY);
+
+// Điểm tích lũy
+g2d.drawString("Điểm tích lũy:", 50, baseY + lineHeight);
+g2d.drawString(txt_array_top[4].getText() + " điểm", 150, baseY + lineHeight);
+
+// Thành tiền
+g2d.drawString("Thành tiền:", 50, baseY + lineHeight * 2);
+g2d.drawString(tongTien + " VNĐ", 150, baseY + lineHeight * 2);
+
+// Ngày tháng năm
+g2d.drawString("Ngày ...... Tháng ...... Năm ......", 420, baseY + lineHeight * 3);
+
+// Chữ ký
+g2d.drawString("KHÁCH HÀNG", 150, baseY + lineHeight * 5);
+g2d.drawString("NGƯỜI BÁN HÀNG", 450, baseY + lineHeight * 5);
+
         g2d.dispose();
         try {
             ImageIO.write(img, "png", new File("HoaDonBan\\Hoa_Don_Ban.png"));

@@ -27,14 +27,14 @@ import DTO.TaiKhoanNVDTO;
 public class MenuGUI {
     String array_function[] = { "Bán sách", "Nhập sách", "Hóa đơn bán", "Hóa đơn nhập", "Sách", 
                               "Nhà xuất bản", "Tác giả", "Khách hàng", "Nhân viên", "Tài khoản", 
-                              "Phân quyền", "Thống kê", "Đăng xuất" };
+                              "Phân quyền", "Thống kê","Giảm Giá ", "Đăng xuất" };
     JPanel panel_content[];
     JPanel menuContent;
     private static final Color MENU_BACKGROUND = new Color(0, 36, 107);
     private static final Color MENU_HOVER = new Color(15, 76, 104);
     private static final String[] PERMISSION_LABELS = {
         "Bán sách", "Nhập sách", "Hóa đơn bán", "Hóa đơn nhập", "Sách",
-        "Nhà xuất bản", "Tác giả", "Nhân viên", "Khách hàng", "Thống kê"
+        "Nhà xuất bản", "Tác giả", "Nhân viên", "Khách hàng", "Thống kê","Giảm Giá "
     }; // Permissions 0–9
 
     public MenuGUI(TaiKhoanNVDTO account) {
@@ -112,6 +112,9 @@ public class MenuGUI {
                     panel_content[i] = new ThongKeGUI().getPanel();
                     break;
                 case 12:
+                    panel_content[i] = new MaGiamGiaGUI().getPanel();
+                    break;
+                case 13:
                     panel_content[i] = new DangXuatGUI().getPanel();
                     break;
                 default:
@@ -126,13 +129,14 @@ public class MenuGUI {
         int[] permissionIndices = {
             0,  // Bán sách
             1,  // Nhập sách
-            2,  // Hóa đơn bán
-            3,  // Hóa đơn nhập
+            0,  // Hóa đơn bán
+            1,  // Hóa đơn nhập
+            2,  // Mã giảm giá 
             4,  // Sách
             5,  // Nhà xuất bản
             6,  // Tác giả
             8,  // Khách hàng
-            7,  // Nhân viên
+            3,  // Nhân viên
             7,  // Tài khoản 
             7,  // Phân quyền 
             9,  // Thống kê
@@ -155,7 +159,7 @@ public class MenuGUI {
             panel.setBackground(MENU_BACKGROUND);
 
             // Show menu items based on maQuyen
-            if (i == 12 || (maQuyen != null && !maQuyen.isEmpty() && permissionIndices[i] != -1 &&
+            if (i == 13 || (maQuyen != null && !maQuyen.isEmpty() && permissionIndices[i] != -1 &&
                     maQuyen.contains(String.valueOf(permissionIndices[i])))) {
                 panel.addMouseListener(new MouseAdapter() {
                     @Override

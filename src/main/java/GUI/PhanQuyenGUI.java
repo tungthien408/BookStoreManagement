@@ -41,16 +41,16 @@ public class PhanQuyenGUI {
     private static final Color MENU_HOVER = new Color(15, 76, 104);
     private static final String[] PERMISSION_LABELS = {
         "Bán sách", "Nhập sách", "Hóa đơn bán", "Hóa đơn nhập", "Sách",
-        "Nhà xuất bản", "Tác giả", "Nhân viên, Tài Khoản, Phân Quyền", "Khách hàng", "Thống kê"
+        "Nhà xuất bản", "Tác giả", "Nhân viên, Tài Khoản, Phân Quyền", "Khách hàng", "Thống kê","Giảm Giá "
     };
 
     public PhanQuyenGUI() {
-        // T o panel chia b c c
+       
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel_buttons = tool.createPanel(width - width_sideMenu, 50, new FlowLayout(FlowLayout.LEFT, 10, 0));
         panel_table = tool.createPanel(width - width_sideMenu, height - 50, new BorderLayout());
 
-        // Thêm các nội dung vào các panel
+      
         panel_buttons.setBorder(BorderFactory.createEmptyBorder(7, 3, 10, 10));
         panel_table.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
@@ -78,7 +78,7 @@ public class PhanQuyenGUI {
         btn_edit.setPreferredSize(buttonSize);
         btn_delete.setPreferredSize(buttonSize);
 
-        // Hiệu ứng nút bấm
+       
         btn_add.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
