@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
@@ -11,8 +12,6 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.awt.Cursor;
-import javax.swing.JFileChooser;
 
 import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
@@ -20,6 +19,7 @@ import javax.swing.Box;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -131,7 +131,7 @@ public class SachGUI implements TableRefreshListener {
         imageLabel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                if (!update)
+                if (!update && !add)
                     return;
 
                 JFileChooser chooser = new JFileChooser();
@@ -381,8 +381,7 @@ public class SachGUI implements TableRefreshListener {
             buttons[0].setBackground(new Color(202, 220, 252));
             buttons[0].setForeground(Color.BLACK);
             buttons[5].setBackground(Color.RED);
-            finalIcon = null;
-            imageLabel.setIcon(finalIcon);
+            renderBookImage("haha", null);
 
             for (int i = 0, length = buttons.length - 1; i < length; i++) {
                 if (i != 0) {
@@ -393,15 +392,21 @@ public class SachGUI implements TableRefreshListener {
             txt_array[0].setEditable(false);
             txt_array[3].setEditable(false);
         } else {
+            if (txt_array[4].getText().trim().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Vui lòng nhập đơn giá!");
+                return;
+            }
+
             try {
                 SachDTO sach = new SachDTO();
                 sach.setMaSach(txt_array[0].getText().trim());
                 sach.setTenSach(txt_array[1].getText().trim());
                 sach.setTheLoai(txt_array[2].getText().trim());
                 sach.setDonGia(Integer.parseInt(txt_array[4].getText().trim()));
-                sach.setMaTG(txt_array[5].getText().trim());
+                sach.setMaTG(txt_array[5].getText().trim().toUpperCase());
                 sach.setSoLuong(0);
                 sach.setMaNXB(null);
+                sach.setImg(currentChosenImage);
 
                 if (!checkValidate(sach)) {
                     return;
@@ -414,10 +419,12 @@ public class SachGUI implements TableRefreshListener {
                 } else {
                     JOptionPane.showMessageDialog(null, "Thêm sách thất bại!");
                 }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Đơn giá phải là số!");
             } catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Lỗi khi thêm sách: " + e.getMessage());
-            }
+            } 
         }
     }
 
@@ -450,7 +457,7 @@ public class SachGUI implements TableRefreshListener {
             sach.setTheLoai(txt_array[2].getText().trim());
             sach.setSoLuong(Integer.parseInt(txt_array[3].getText().trim()));
             sach.setDonGia(Integer.parseInt(txt_array[4].getText().trim()));
-            sach.setMaTG(txt_array[5].getText().trim());
+            sach.setMaTG(txt_array[5].getText().trim().toUpperCase());
             if (currentChosenImage != null) {
                 sach.setImg(currentChosenImage);
             }
@@ -541,6 +548,16 @@ public class SachGUI implements TableRefreshListener {
             return false;
         }
 
+        if (sach.getDonGia() <= 0) {
+            JOptionPane.showMessageDialog(null, "Đơn giá phải lớn hơn 0!");
+            return false;
+        }
+
+        if (sach.getImg() != null && sach.getImg().length() > 50) {
+            JOptionPane.showMessageDialog(null, "Tên file ảnh không được nhiều hơn 50 ký tự!");
+            return false;
+        }
+
         return true;
     }
 
@@ -551,45 +568,47 @@ public class SachGUI implements TableRefreshListener {
     public void renderBookImage(String bookId, SachDTO sach) {
         finalIcon = null;
         BufferedImage originalImage = null;
-        try {
-            String imgName = sach.getImg();
-            System.out.println("Image name from database: " + imgName);
-            if (imgName != null && !imgName.trim().isEmpty()) {
-                String absoluteImagePath = System.getProperty("user.dir") + "/images/Book/" + imgName;
-                System.out.println("Constructed image path: " + absoluteImagePath);
-                java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
-                File imageFile = imagePath.toFile();
-                if (imageFile.exists() && imageFile.isFile()) {
-                    originalImage = ImageIO.read(imageFile);
-                    if (originalImage != null) {
-                        System.out.println("Successfully read image file: " + absoluteImagePath);
-                        int targetWidth = imagePanel.getPreferredSize().width;
-                        int targetHeight = imagePanel.getPreferredSize().height;
-                        if (targetWidth <= 0)
-                            targetWidth = 200;
-                        if (targetHeight <= 0)
-                            targetHeight = 250;
-                        Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight,
-                                Image.SCALE_SMOOTH);
-                        finalIcon = new ImageIcon(scaledImage);
-                        System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
+        if (sach != null) {
+            try {
+                String imgName = sach.getImg();
+                System.out.println("Image name from database: " + imgName);
+                if (imgName != null && !imgName.trim().isEmpty()) {
+                    String absoluteImagePath = System.getProperty("user.dir") + "/images/Book/" + imgName;
+                    System.out.println("Constructed image path: " + absoluteImagePath);
+                    java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
+                    File imageFile = imagePath.toFile();
+                    if (imageFile.exists() && imageFile.isFile()) {
+                        originalImage = ImageIO.read(imageFile);
+                        if (originalImage != null) {
+                            System.out.println("Successfully read image file: " + absoluteImagePath);
+                            int targetWidth = imagePanel.getPreferredSize().width;
+                            int targetHeight = imagePanel.getPreferredSize().height;
+                            if (targetWidth <= 0)
+                                targetWidth = 200;
+                            if (targetHeight <= 0)
+                                targetHeight = 250;
+                            Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight,
+                                    Image.SCALE_SMOOTH);
+                            finalIcon = new ImageIcon(scaledImage);
+                            System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
+                        } else {
+                            System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
+                        }
                     } else {
-                        System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
+                        System.err.println("Image file not found or is not a file: " + absoluteImagePath);
                     }
                 } else {
-                    System.err.println("Image file not found or is not a file: " + absoluteImagePath);
+                    System.err.println("Image name is null or empty for book: " + bookId);
                 }
-            } else {
-                System.err.println("Image name is null or empty for book: " + bookId);
-            }
-        } catch (IOException ioEx) {
-            System.err.println(
-                    "IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
-            ioEx.printStackTrace();
-        } catch (Exception ex) {
-            System.err.println(
-                    "General error processing image " + sach.getImg() + ": " + ex.getMessage());
-            ex.printStackTrace();
+            } catch (IOException ioEx) {
+                System.err.println(
+                        "IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
+                ioEx.printStackTrace();
+            } catch (Exception ex) {
+                System.err.println(
+                        "General error processing image " + sach.getImg() + ": " + ex.getMessage());
+                ex.printStackTrace();
+            }    
         }
 
         if (finalIcon == null) {

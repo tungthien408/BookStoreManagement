@@ -33,6 +33,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
 import BUS.ChiTietPhieuNhapBUS;
@@ -166,15 +168,26 @@ public class NhapSachGUI implements TableRefreshListener {
     }
 
     private void timkiem() {
-        txt_array_search[0].addKeyListener(new java.awt.event.KeyAdapter() {
+        // Add real-time search with DocumentListener
+        txt_array_search[0].getDocument().addDocumentListener(new DocumentListener() {
             @Override
-            public void keyPressed(java.awt.event.KeyEvent e) {
-                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_ENTER) {
-                    String selectedOption = (String) comboBox.getSelectedItem();
-                    filterTable(txt_array_search[0].getText(), selectedOption);
-                }
+            public void insertUpdate(DocumentEvent e) {
+                filterTable(txt_array_search[0].getText(), (String) comboBox.getSelectedItem());
+            }
+
+            @Override
+            public void removeUpdate(DocumentEvent e) {
+                filterTable(txt_array_search[0].getText(), (String) comboBox.getSelectedItem());
+            }
+
+            @Override
+            public void changedUpdate(DocumentEvent e) {
+                filterTable(txt_array_search[0].getText(), (String) comboBox.getSelectedItem());
             }
         });
+
+        comboBox.addActionListener(
+                e -> filterTable(txt_array_search[0].getText(), (String) comboBox.getSelectedItem()));
     }
 
     private void filterTable(String query, String searchType) {
