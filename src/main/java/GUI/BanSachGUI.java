@@ -35,7 +35,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-
+import java.awt.Cursor;
 import BUS.ChiTietHoaDonBUS;
 import BUS.HoaDonBUS;
 import BUS.KhachHangBUS;
@@ -438,7 +438,9 @@ public class BanSachGUI implements TableRefreshListener {
         buttonPanel.add(tool.createButtonPanel(buttons, buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
         // buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 60, 25));
         // buttonPanel.setBorder(BorderFactory.createLineBorder(Color.GREEN));
-
+        buttons[0].setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        buttons[1].setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        buttons[2].setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         buttons[0].addActionListener(e -> addChiTietHoaDon());
         buttons[1].addActionListener(e -> deleteChiTietHoaDon());
         buttons[2].addActionListener(e -> thanhToan());

@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -126,7 +127,11 @@ public class HoaDonBanGUI implements TableRefreshListener {
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(buttons, btnText, new Color(0, 36, 107), Color.WHITE, "y"));
         panelBtn.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
+        for (int i = 0; i < btnText.length; i++) {
+            buttons[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
+            buttons[i].setFocusable(false);
 
+        }
         // Add action listeners for buttons
         buttons[0].addActionListener(e -> showInvoiceDetails());
         buttons[1].addActionListener(e -> importFromExcel());

@@ -3,6 +3,7 @@ package GUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
@@ -11,6 +12,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
@@ -20,6 +22,7 @@ import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -30,6 +33,11 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
+
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import BUS.NhanVienBUS;
 import BUS.QuyenBUS;
@@ -64,7 +72,7 @@ public class TaiKhoanGUI {
         // Initialize search components
         txt_array_search[0] = new JTextField();
         panel_searchCombo = Tool.createSearchTextField(width - width_sideMenu, height,
-                new String[]{"Mã Nhân viên", "Chức vụ", "Mã quyền"});
+                new String[] { "Mã Nhân viên", "Chức vụ", "Mã quyền" });
         panel_searchCombo.setBorder(BorderFactory.createEmptyBorder(5, 43, 0, 0));
         for (java.awt.Component comp : panel_searchCombo.getComponents()) {
             if (comp instanceof JComboBox) {
@@ -193,7 +201,7 @@ public class TaiKhoanGUI {
         });
 
         // Table setup
-        String[] columnNames = {"Mã Nhân viên", "Mật khẩu", "Chức vụ", "Mã quyền", "Tên quyền"};
+        String[] columnNames = { "Mã Nhân viên", "Mật khẩu", "Chức vụ", "Mã quyền", "Tên quyền" };
         taiKhoanList = taiKhoanNVBUS.getAllTaiKhoan();
         nhanVienList = nhanVienBUS.getAllNhanVien();
         modelTaiKhoan = new DefaultTableModel(columnNames, 0);
@@ -217,8 +225,23 @@ public class TaiKhoanGUI {
         btn_xuatExcel = new JButton("Xuất Excel");
         btn_huy = new JButton("Hủy");
         btn_viewDetails = new JButton("Xem chi tiết");
-
-        JButton[] buttons = {btn_add, btn_edit, btn_delete, btn_nhapExcel, btn_xuatExcel, btn_huy, btn_viewDetails};
+        // Cursor
+        btn_add.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn_edit.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn_delete.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn_nhapExcel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn_xuatExcel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn_huy.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btn_viewDetails.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        // Set button properties
+        btn_add.setFocusable(false);
+        btn_edit.setFocusable(false);
+        btn_delete.setFocusable(false);
+        btn_nhapExcel.setFocusable(false);
+        btn_xuatExcel.setFocusable(false);
+        btn_huy.setFocusable(false);
+        btn_viewDetails.setFocusable(false);
+        JButton[] buttons = { btn_add, btn_edit, btn_delete, btn_nhapExcel, btn_xuatExcel, btn_huy, btn_viewDetails };
         for (JButton btn : buttons) {
             btn.setPreferredSize(new Dimension(130, 30));
             btn.setBackground(new Color(0, 36, 107));
@@ -258,12 +281,17 @@ public class TaiKhoanGUI {
         });
 
         // Button action listeners
-        btn_add.addActionListener(e -> addTaiKhoan(textFieldMaNV, textFieldMatKhau, textFieldChucVu, textFieldMaQuyen, textFieldTenQuyen));
-        btn_edit.addActionListener(e -> editTaiKhoan(textFieldMaNV, textFieldMatKhau, textFieldChucVu, textFieldMaQuyen, textFieldTenQuyen));
+        btn_add.addActionListener(e -> addTaiKhoan(textFieldMaNV, textFieldMatKhau, textFieldChucVu, textFieldMaQuyen,
+                textFieldTenQuyen));
+        btn_edit.addActionListener(e -> editTaiKhoan(textFieldMaNV, textFieldMatKhau, textFieldChucVu, textFieldMaQuyen,
+                textFieldTenQuyen));
         btn_delete.addActionListener(e -> deleteTaiKhoan(textFieldMaNV));
-        btn_nhapExcel.addActionListener(e -> JOptionPane.showMessageDialog(null, "Chức năng Nhập Excel chưa được triển khai!"));
-        btn_xuatExcel.addActionListener(e -> JOptionPane.showMessageDialog(null, "Chức năng Xuất Excel chưa được triển khai!"));
-        btn_huy.addActionListener(e -> cancel(textFieldMaNV, textFieldMatKhau, textFieldChucVu, textFieldMaQuyen, textFieldTenQuyen));
+        btn_nhapExcel.addActionListener(
+                e -> JOptionPane.showMessageDialog(null, "Chức năng Nhập Excel chưa được triển khai!"));
+        btn_xuatExcel.addActionListener(
+                e -> exportToExcel());
+        btn_huy.addActionListener(
+                e -> cancel(textFieldMaNV, textFieldMatKhau, textFieldChucVu, textFieldMaQuyen, textFieldTenQuyen));
         btn_viewDetails.addActionListener(e -> viewDetails());
 
         panel.add(panel_searchCombo, BorderLayout.NORTH);
@@ -272,6 +300,68 @@ public class TaiKhoanGUI {
         panel.add(panel_textField, BorderLayout.SOUTH);
 
         timkiem();
+    }
+
+    private void exportToExcel() {
+        JFileChooser fileChooser = new JFileChooser();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+        fileChooser.setDialogTitle("Lưu Phiếu Nhập dưới dạng Excel");
+        fileChooser.setSelectedFile(new File("Danh_sach_Tai_Khoan.xlsx"));
+        int userSelection = fileChooser.showSaveDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                XSSFSheet sheet = workbook.createSheet("Danh sách Tài Khoản");
+
+                // Tạo header
+                XSSFRow headerRow = sheet.createRow(0);
+                for (int col = 0; col < model.getColumnCount(); col++) {
+                    XSSFCell cell = headerRow.createCell(col);
+                    cell.setCellValue(model.getColumnName(col));
+                }
+
+                // Ghi dữ liệu
+                for (int row = 0; row < model.getRowCount(); row++) {
+                    XSSFRow excelRow = sheet.createRow(row + 1);
+                    for (int col = 0; col < model.getColumnCount(); col++) {
+                        XSSFCell cell = excelRow.createCell(col);
+                        Object value = model.getValueAt(row, col);
+                        if (value instanceof Number) {
+                            cell.setCellValue(((Number) value).doubleValue());
+                        } else {
+                            cell.setCellValue(value != null ? value.toString() : "");
+                        }
+                    }
+                }
+
+                // Tự động điều chỉnh độ rộng cột
+                for (int col = 0; col < model.getColumnCount(); col++) {
+                    sheet.autoSizeColumn(col);
+                }
+
+                // Ghi file xuống đĩa
+                try (FileOutputStream fos = new FileOutputStream(fileToSave)) {
+                    workbook.write(fos);
+                }
+
+                JOptionPane.showMessageDialog(null,
+                        "Xuất Excel thành công! File được lưu tại: " + fileToSave.getAbsolutePath(),
+                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null,
+                        "Lỗi khi xuất Excel: " + ex.getMessage(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        try {
+            Desktop.getDesktop().open(fileChooser.getSelectedFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi mở file: " + e.getMessage(), "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void timkiem() {
@@ -293,7 +383,8 @@ public class TaiKhoanGUI {
                 }
             });
 
-            comboBox.addActionListener(e -> filterTable(txt_array_search[0].getText(), (String) comboBox.getSelectedItem()));
+            comboBox.addActionListener(
+                    e -> filterTable(txt_array_search[0].getText(), (String) comboBox.getSelectedItem()));
         }
     }
 
@@ -318,12 +409,12 @@ public class TaiKhoanGUI {
                         break;
                 }
                 if (match) {
-                    modelTaiKhoan.addRow(new Object[]{
-                        tk.getMaNV(),
-                        tk.getMatKhau(),
-                        chucVu,
-                        tk.getMaQuyen(),
-                        tenQuyen
+                    modelTaiKhoan.addRow(new Object[] {
+                            tk.getMaNV(),
+                            tk.getMatKhau(),
+                            chucVu,
+                            tk.getMaQuyen(),
+                            tenQuyen
                     });
                 }
             }
@@ -343,12 +434,12 @@ public class TaiKhoanGUI {
                 QuyenDTO quyen = quyenBUS.getQuyenById(tk.getMaQuyen());
                 String chucVu = nv != null ? nv.getChucVu() : "";
                 String tenQuyen = quyen != null ? quyen.getTenQuyen() : "";
-                modelTaiKhoan.addRow(new Object[]{
-                    tk.getMaNV(),
-                    tk.getMatKhau(),
-                    chucVu,
-                    tk.getMaQuyen(),
-                    tenQuyen
+                modelTaiKhoan.addRow(new Object[] {
+                        tk.getMaNV(),
+                        tk.getMatKhau(),
+                        chucVu,
+                        tk.getMaQuyen(),
+                        tenQuyen
                 });
             }
         } catch (Exception e) {
@@ -360,7 +451,8 @@ public class TaiKhoanGUI {
     private void viewDetails() {
         int selectedRow = table.getSelectedRow();
         if (selectedRow == -1) {
-            JOptionPane.showMessageDialog(null, "Vui lòng chọn một tài khoản để xem chi tiết!", "Thông báo", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn một tài khoản để xem chi tiết!", "Thông báo",
+                    JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -413,7 +505,7 @@ public class TaiKhoanGUI {
         g2d.setFont(new Font("Times New Roman", Font.PLAIN, 16));
         LocalDate date = LocalDate.now();
         g2d.drawString(String.format("Ngày %02d Tháng %02d Năm %04d",
-            date.getDayOfMonth(), date.getMonthValue(), date.getYear()), 500, 500);
+                date.getDayOfMonth(), date.getMonthValue(), date.getYear()), 500, 500);
         g2d.drawString("QUẢN LÝ", 150, 540);
         g2d.drawString("(Ký và ghi rõ họ tên)", 150, 560);
 
@@ -437,11 +529,13 @@ public class TaiKhoanGUI {
             frame.setVisible(true);
         } catch (IOException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi lưu hoặc hiển thị thông tin: " + e.getMessage(), "Lỗi", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(null, "Lỗi khi lưu hoặc hiển thị thông tin: " + e.getMessage(), "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    private void addTaiKhoan(JTextField maNV, JTextField matKhau, JTextField chucVu, JTextField maQuyen, JTextField tenQuyen) {
+    private void addTaiKhoan(JTextField maNV, JTextField matKhau, JTextField chucVu, JTextField maQuyen,
+            JTextField tenQuyen) {
         if (!isAdding) {
             isAdding = true;
             maNV.setEditable(true);
@@ -456,7 +550,7 @@ public class TaiKhoanGUI {
             btn_add.setBackground(new Color(202, 220, 252));
             btn_add.setForeground(Color.BLACK);
             btn_huy.setBackground(Color.RED);
-            for (JButton btn : new JButton[]{btn_edit, btn_delete, btn_nhapExcel, btn_xuatExcel, btn_viewDetails}) {
+            for (JButton btn : new JButton[] { btn_edit, btn_delete, btn_nhapExcel, btn_xuatExcel, btn_viewDetails }) {
                 btn.setVisible(false);
             }
         } else {
@@ -465,14 +559,14 @@ public class TaiKhoanGUI {
                 tk.setMaNV(maNV.getText().trim());
                 tk.setMatKhau(matKhau.getText().trim());
                 tk.setMaQuyen(maQuyen.getText().trim());
-                tk.setTrangThaiXoa(0); 
+                tk.setTrangThaiXoa(0);
                 if (!checkValidate(tk)) {
                     return;
                 }
                 if (taiKhoanNVBUS.addTaiKhoan(tk)) {
                     JOptionPane.showMessageDialog(null, "Thêm tài khoản thành công!");
                     cancel(maNV, matKhau, chucVu, maQuyen, tenQuyen);
-                } 
+                }
             } catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Lỗi khi thêm tài khoản: " + e.getMessage());
@@ -480,18 +574,18 @@ public class TaiKhoanGUI {
         }
     }
 
-    private void editTaiKhoan(JTextField maNV, JTextField matKhau, JTextField chucVu, JTextField maQuyen, JTextField tenQuyen) {
+    private void editTaiKhoan(JTextField maNV, JTextField matKhau, JTextField chucVu, JTextField maQuyen,
+            JTextField tenQuyen) {
         if (table.getSelectedRow() == -1) {
             JOptionPane.showMessageDialog(null, "Vui lòng chọn tài khoản để sửa!");
         } else if (!matKhau.isEditable()) {
             matKhau.setEditable(true);
             maQuyen.setEditable(true);
 
-          
             btn_edit.setBackground(new Color(202, 220, 252));
             btn_edit.setForeground(Color.BLACK);
             btn_huy.setBackground(Color.RED);
-            for (JButton btn : new JButton[]{btn_add, btn_delete, btn_nhapExcel, btn_xuatExcel, btn_viewDetails}) {
+            for (JButton btn : new JButton[] { btn_add, btn_delete, btn_nhapExcel, btn_xuatExcel, btn_viewDetails }) {
                 btn.setVisible(false);
             }
         } else {
@@ -540,21 +634,31 @@ public class TaiKhoanGUI {
         }
     }
 
-    private void cancel(JTextField maNV, JTextField matKhau, JTextField chucVu, JTextField maQuyen, JTextField tenQuyen) {
+    private void cancel(JTextField maNV, JTextField matKhau, JTextField chucVu, JTextField maQuyen,
+            JTextField tenQuyen) {
         isAdding = false;
         maNV.setText("");
-        if (matKhau != null) matKhau.setText("");
-        if (chucVu != null) chucVu.setText("");
-        if (maQuyen != null) maQuyen.setText("");
-        if (tenQuyen != null) tenQuyen.setText("");
+        if (matKhau != null)
+            matKhau.setText("");
+        if (chucVu != null)
+            chucVu.setText("");
+        if (maQuyen != null)
+            maQuyen.setText("");
+        if (tenQuyen != null)
+            tenQuyen.setText("");
         maNV.setEditable(false);
-        if (matKhau != null) matKhau.setEditable(false);
-        if (chucVu != null) chucVu.setEditable(false);
-        if (maQuyen != null) maQuyen.setEditable(false);
-        if (tenQuyen != null) tenQuyen.setEditable(false);
+        if (matKhau != null)
+            matKhau.setEditable(false);
+        if (chucVu != null)
+            chucVu.setEditable(false);
+        if (maQuyen != null)
+            maQuyen.setEditable(false);
+        if (tenQuyen != null)
+            tenQuyen.setEditable(false);
         table.clearSelection();
         refreshTable();
-        for (JButton btn : new JButton[]{btn_add, btn_edit, btn_delete, btn_nhapExcel, btn_xuatExcel, btn_huy, btn_viewDetails}) {
+        for (JButton btn : new JButton[] { btn_add, btn_edit, btn_delete, btn_nhapExcel, btn_xuatExcel, btn_huy,
+                btn_viewDetails }) {
             btn.setVisible(true);
             btn.setBackground(new Color(0, 36, 107));
             btn.setForeground(Color.white);

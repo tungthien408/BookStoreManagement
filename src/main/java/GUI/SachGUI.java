@@ -3,6 +3,7 @@ package GUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Image;
@@ -10,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -28,6 +30,11 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
+
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import BUS.NXBBUS;
 import BUS.SachBUS;
@@ -260,7 +267,11 @@ public class SachGUI implements TableRefreshListener {
         String[] txt_btn = { "Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Hủy" };
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(buttons, txt_btn, new Color(0, 36, 107), Color.WHITE, "y"));
+        for (int i = 0; i < txt_btn.length; i++) {
+            buttons[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
+            buttons[i].setFocusable(false);
 
+        }
         buttons[0].addActionListener(e -> addSach());
         buttons[1].addActionListener(e -> updateSach());
         buttons[2].addActionListener(e -> deleteSach());
@@ -424,7 +435,7 @@ public class SachGUI implements TableRefreshListener {
             } catch (Exception e) {
                 e.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Lỗi khi thêm sách: " + e.getMessage());
-            } 
+            }
         }
     }
 
@@ -509,7 +520,65 @@ public class SachGUI implements TableRefreshListener {
     }
 
     private void exportToExcel() {
-        JOptionPane.showMessageDialog(null, "Chức năng Xuất Excel đang được phát triển!");
+        JFileChooser fileChooser = new JFileChooser();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+        fileChooser.setDialogTitle("Lưu Phiếu Nhập dưới dạng Excel");
+        fileChooser.setSelectedFile(new File("Danh_sach_Sach.xlsx"));
+        int userSelection = fileChooser.showSaveDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                XSSFSheet sheet = workbook.createSheet("Danh sách sách");
+
+                // Tạo header
+                XSSFRow headerRow = sheet.createRow(0);
+                for (int col = 0; col < model.getColumnCount(); col++) {
+                    XSSFCell cell = headerRow.createCell(col);
+                    cell.setCellValue(model.getColumnName(col));
+                }
+
+                // Ghi dữ liệu
+                for (int row = 0; row < model.getRowCount(); row++) {
+                    XSSFRow excelRow = sheet.createRow(row + 1);
+                    for (int col = 0; col < model.getColumnCount(); col++) {
+                        XSSFCell cell = excelRow.createCell(col);
+                        Object value = model.getValueAt(row, col);
+                        if (value instanceof Number) {
+                            cell.setCellValue(((Number) value).doubleValue());
+                        } else {
+                            cell.setCellValue(value != null ? value.toString() : "");
+                        }
+                    }
+                }
+
+                // Tự động điều chỉnh độ rộng cột
+                for (int col = 0; col < model.getColumnCount(); col++) {
+                    sheet.autoSizeColumn(col);
+                }
+
+                // Ghi file xuống đĩa
+                try (FileOutputStream fos = new FileOutputStream(fileToSave)) {
+                    workbook.write(fos);
+                }
+
+                JOptionPane.showMessageDialog(null,
+                        "Xuất Excel thành công! File được lưu tại: " + fileToSave.getAbsolutePath(),
+                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null,
+                        "Lỗi khi xuất Excel: " + ex.getMessage(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        try {
+            Desktop.getDesktop().open(fileChooser.getSelectedFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi mở file: " + e.getMessage(), "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void cancel() {
@@ -608,7 +677,7 @@ public class SachGUI implements TableRefreshListener {
                 System.err.println(
                         "General error processing image " + sach.getImg() + ": " + ex.getMessage());
                 ex.printStackTrace();
-            }    
+            }
         }
 
         if (finalIcon == null) {

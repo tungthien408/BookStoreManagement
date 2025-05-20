@@ -2,22 +2,33 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import BUS.NXBBUS;
 import DTO.NXBDTO;
@@ -53,12 +64,12 @@ public class NhaXuatBanGUI {
 
     public NhaXuatBanGUI() {
         txt_search = new JTextField();
-        txt_array_search = new JTextField[]{txt_search};
+        txt_array_search = new JTextField[] { txt_search };
         panel = tool.createPanel(width - width_sideMenu, height, new BorderLayout());
         panel.setBackground(new Color(202, 220, 252));
         panel.add(createNXBTable(), BorderLayout.WEST);
         panel.add(createPanelButton(), BorderLayout.CENTER);
-        String txt_label[] = {"Mã NXB", "Tên NXB", "Địa chỉ", "Số điện thoại"};
+        String txt_label[] = { "Mã NXB", "Tên NXB", "Địa chỉ", "Số điện thoại" };
         panel.add(createPanelDetail(txt_array, txt_label), BorderLayout.SOUTH);
         panel.add(createSearchPanel(), BorderLayout.NORTH);
         timkiem();
@@ -71,11 +82,11 @@ public class NhaXuatBanGUI {
         try {
             nxbList = nxbBUS.getAllNhaXuatBan();
             for (NXBDTO nxb : nxbList) {
-                model.addRow(new Object[]{
-                    nxb.getMaNXB() != null ? nxb.getMaNXB() : "",
-                    nxb.getTenNXB() != null ? nxb.getTenNXB() : "",
-                    nxb.getDiaChi() != null ? nxb.getDiaChi() : "",
-                    nxb.getSdt() != null ? nxb.getSdt() : ""
+                model.addRow(new Object[] {
+                        nxb.getMaNXB() != null ? nxb.getMaNXB() : "",
+                        nxb.getTenNXB() != null ? nxb.getTenNXB() : "",
+                        nxb.getDiaChi() != null ? nxb.getDiaChi() : "",
+                        nxb.getSdt() != null ? nxb.getSdt() : ""
                 });
             }
             if (!nxbList.isEmpty()) {
@@ -145,15 +156,18 @@ public class NhaXuatBanGUI {
     }
 
     private JPanel createPanelButton() {
-        String[] txt_btn = {"Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Hủy"};
+        String[] txt_btn = { "Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Hủy" };
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(buttons, txt_btn, new Color(0, 36, 107), Color.WHITE, "y"));
-
+        for (int i = 0; i < txt_btn.length; i++) {
+            buttons[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
+            buttons[i].setFocusable(false);
+        }
         buttons[0].addActionListener(e -> addNhaXuatBan());
         buttons[1].addActionListener(e -> updateNhaXuatBan());
         buttons[2].addActionListener(e -> deleteNhaXuatBan());
         buttons[3].addActionListener(e -> importExcel());
-        buttons[4].addActionListener(e -> exportExcel());
+        buttons[4].addActionListener(e -> exportToExcel());
         buttons[5].addActionListener(e -> cancel());
 
         return panelBtn;
@@ -168,7 +182,7 @@ public class NhaXuatBanGUI {
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = {"Mã NXB", "Tên NXB", "SDT"};
+        String[] searchOptions = { "Mã NXB", "Tên NXB", "SDT" };
         comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
@@ -209,11 +223,11 @@ public class NhaXuatBanGUI {
                         break;
                 }
                 if (match) {
-                    model.addRow(new Object[]{
-                        nxb.getMaNXB() != null ? nxb.getMaNXB() : "",
-                        nxb.getTenNXB() != null ? nxb.getTenNXB() : "",
-                        nxb.getDiaChi() != null ? nxb.getDiaChi() : "",
-                        nxb.getSdt() != null ? nxb.getSdt() : ""
+                    model.addRow(new Object[] {
+                            nxb.getMaNXB() != null ? nxb.getMaNXB() : "",
+                            nxb.getTenNXB() != null ? nxb.getTenNXB() : "",
+                            nxb.getDiaChi() != null ? nxb.getDiaChi() : "",
+                            nxb.getSdt() != null ? nxb.getSdt() : ""
                     });
                 }
             }
@@ -229,11 +243,11 @@ public class NhaXuatBanGUI {
         try {
             nxbList = nxbBUS.getAllNhaXuatBan();
             for (NXBDTO nxb : nxbList) {
-                model.addRow(new Object[]{
-                    nxb.getMaNXB() != null ? nxb.getMaNXB() : "",
-                    nxb.getTenNXB() != null ? nxb.getTenNXB() : "",
-                    nxb.getDiaChi() != null ? nxb.getDiaChi() : "",
-                    nxb.getSdt() != null ? nxb.getSdt() : ""
+                model.addRow(new Object[] {
+                        nxb.getMaNXB() != null ? nxb.getMaNXB() : "",
+                        nxb.getTenNXB() != null ? nxb.getTenNXB() : "",
+                        nxb.getDiaChi() != null ? nxb.getDiaChi() : "",
+                        nxb.getSdt() != null ? nxb.getSdt() : ""
                 });
             }
             if (!nxbList.isEmpty()) {
@@ -364,7 +378,7 @@ public class NhaXuatBanGUI {
                     JOptionPane.showMessageDialog(null, "Mã nhà xuất bản không được để trống!");
                     return;
                 }
-                if (JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa nhà xuất bản này?", 
+                if (JOptionPane.showConfirmDialog(null, "Bạn có chắc muốn xóa nhà xuất bản này?",
                         "Xóa thông tin nhà xuất bản", JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
                     if (nxbBUS.deleteNhaXuatBan(maNXB)) {
                         JOptionPane.showMessageDialog(null, "Xóa nhà xuất bản thành công!");
@@ -384,8 +398,66 @@ public class NhaXuatBanGUI {
         JOptionPane.showMessageDialog(null, "Chức năng Nhập Excel chưa được triển khai!");
     }
 
-    private void exportExcel() {
-        JOptionPane.showMessageDialog(null, "Chức năng Xuất Excel chưa được triển khai!");
+    private void exportToExcel() {
+        JFileChooser fileChooser = new JFileChooser();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+        fileChooser.setDialogTitle("Lưu Phiếu Nhập dưới dạng Excel");
+        fileChooser.setSelectedFile(new File("Danh_sach_NXB.xlsx"));
+        int userSelection = fileChooser.showSaveDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                XSSFSheet sheet = workbook.createSheet("Danh sách Nhà Xuất Bản");
+
+                // Tạo header
+                XSSFRow headerRow = sheet.createRow(0);
+                for (int col = 0; col < model.getColumnCount(); col++) {
+                    XSSFCell cell = headerRow.createCell(col);
+                    cell.setCellValue(model.getColumnName(col));
+                }
+
+                // Ghi dữ liệu
+                for (int row = 0; row < model.getRowCount(); row++) {
+                    XSSFRow excelRow = sheet.createRow(row + 1);
+                    for (int col = 0; col < model.getColumnCount(); col++) {
+                        XSSFCell cell = excelRow.createCell(col);
+                        Object value = model.getValueAt(row, col);
+                        if (value instanceof Number) {
+                            cell.setCellValue(((Number) value).doubleValue());
+                        } else {
+                            cell.setCellValue(value != null ? value.toString() : "");
+                        }
+                    }
+                }
+
+                // Tự động điều chỉnh độ rộng cột
+                for (int col = 0; col < model.getColumnCount(); col++) {
+                    sheet.autoSizeColumn(col);
+                }
+
+                // Ghi file xuống đĩa
+                try (FileOutputStream fos = new FileOutputStream(fileToSave)) {
+                    workbook.write(fos);
+                }
+
+                JOptionPane.showMessageDialog(null,
+                        "Xuất Excel thành công! File được lưu tại: " + fileToSave.getAbsolutePath(),
+                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null,
+                        "Lỗi khi xuất Excel: " + ex.getMessage(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        try {
+            Desktop.getDesktop().open(fileChooser.getSelectedFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi mở file: " + e.getMessage(), "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void cancel() {
@@ -401,13 +473,15 @@ public class NhaXuatBanGUI {
     }
 
     private boolean checkValidate(NXBDTO nxb) {
-        if (nxb.getMaNXB().isEmpty() || nxb.getTenNXB().isEmpty() || nxb.getDiaChi().isEmpty() || nxb.getSdt().isEmpty()) {
+        if (nxb.getMaNXB().isEmpty() || nxb.getTenNXB().isEmpty() || nxb.getDiaChi().isEmpty()
+                || nxb.getSdt().isEmpty()) {
             JOptionPane.showMessageDialog(null, "Vui lòng điền đầy đủ các trường thông tin");
             return false;
         }
 
         if (!isValidName(nxb.getTenNXB())) {
-            JOptionPane.showMessageDialog(null, "Tên nhà xuất bản chỉ được chứa chữ cái, số, khoảng trắng, dấu gạch ngang hoặc dấu nháy đơn, không chứa ký tự đặc biệt khác");
+            JOptionPane.showMessageDialog(null,
+                    "Tên nhà xuất bản chỉ được chứa chữ cái, số, khoảng trắng, dấu gạch ngang hoặc dấu nháy đơn, không chứa ký tự đặc biệt khác");
             return false;
         }
 
@@ -427,8 +501,8 @@ public class NhaXuatBanGUI {
         }
 
         for (NXBDTO nxban : nxbList) {
-            if (!nxban.getMaNXB().equals(nxb.getMaNXB()) && 
-                nxban.getSdt().toLowerCase().equals(nxb.getSdt().toLowerCase())) {
+            if (!nxban.getMaNXB().equals(nxb.getMaNXB()) &&
+                    nxban.getSdt().toLowerCase().equals(nxb.getSdt().toLowerCase())) {
                 JOptionPane.showMessageDialog(null, "Số điện thoại đã được sử dụng");
                 return false;
             }

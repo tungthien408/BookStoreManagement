@@ -3,10 +3,14 @@ package GUI;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.List;
@@ -15,12 +19,18 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
+
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import BUS.NhanVienBUS;
 import DTO.NhanVienDTO;
@@ -57,7 +67,7 @@ public class NhanVienGUI {
 
     public NhanVienGUI() {
         txt_search = new JTextField();
-        txt_array_search = new JTextField[]{txt_search};
+        txt_array_search = new JTextField[] { txt_search };
         for (int i = 0; i < txt_array.length; i++) {
             txt_array[i] = new JTextField();
             txt_array[i].setCursor(new Cursor(Cursor.TEXT_CURSOR));
@@ -169,7 +179,10 @@ public class NhanVienGUI {
         String[] btn_txt = { "Thêm", "Sửa", "Xóa", "Nhập Excel", "Xuất Excel", "Hủy" };
         JPanel panelBtn = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBtn.add(tool.createButtonPanel(btn, btn_txt, new Color(0, 36, 107), Color.WHITE, "y"));
-
+        for (int i = 0; i < btn_txt.length; i++) {
+            btn[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
+            btn[i].setFocusable(false);
+        }
         btn[0].addActionListener(e -> addNhanVien());
         btn[1].addActionListener(e -> updateNhanVien());
         btn[2].addActionListener(e -> deleteNhanVien());
@@ -480,7 +493,8 @@ public class NhanVienGUI {
         }
 
         if (!isValidName(nv.getHoTen().trim())) {
-            JOptionPane.showMessageDialog(null, "Tên nhân viên chỉ được chứa chữ cái, khoảng trắng, dấu gạch ngang hoặc dấu nháy đơn, không chứa số hoặc ký tự đặc biệt");
+            JOptionPane.showMessageDialog(null,
+                    "Tên nhân viên chỉ được chứa chữ cái, khoảng trắng, dấu gạch ngang hoặc dấu nháy đơn, không chứa số hoặc ký tự đặc biệt");
             return false;
         }
 
@@ -533,7 +547,65 @@ public class NhanVienGUI {
     }
 
     private void exportExcel() {
-        JOptionPane.showMessageDialog(null, "Chức năng Xuất Excel chưa được triển khai!");
+        JFileChooser fileChooser = new JFileChooser();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+        fileChooser.setDialogTitle("Lưu Phiếu Nhập dưới dạng Excel");
+        fileChooser.setSelectedFile(new File("Danh_sach_Nhan_Vien.xlsx"));
+        int userSelection = fileChooser.showSaveDialog(null);
+        if (userSelection == JFileChooser.APPROVE_OPTION) {
+            File fileToSave = fileChooser.getSelectedFile();
+            try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+                XSSFSheet sheet = workbook.createSheet("Danh sách Nhân Viên");
+
+                // Tạo header
+                XSSFRow headerRow = sheet.createRow(0);
+                for (int col = 0; col < model.getColumnCount(); col++) {
+                    XSSFCell cell = headerRow.createCell(col);
+                    cell.setCellValue(model.getColumnName(col));
+                }
+
+                // Ghi dữ liệu
+                for (int row = 0; row < model.getRowCount(); row++) {
+                    XSSFRow excelRow = sheet.createRow(row + 1);
+                    for (int col = 0; col < model.getColumnCount(); col++) {
+                        XSSFCell cell = excelRow.createCell(col);
+                        Object value = model.getValueAt(row, col);
+                        if (value instanceof Number) {
+                            cell.setCellValue(((Number) value).doubleValue());
+                        } else {
+                            cell.setCellValue(value != null ? value.toString() : "");
+                        }
+                    }
+                }
+
+                // Tự động điều chỉnh độ rộng cột
+                for (int col = 0; col < model.getColumnCount(); col++) {
+                    sheet.autoSizeColumn(col);
+                }
+
+                // Ghi file xuống đĩa
+                try (FileOutputStream fos = new FileOutputStream(fileToSave)) {
+                    workbook.write(fos);
+                }
+
+                JOptionPane.showMessageDialog(null,
+                        "Xuất Excel thành công! File được lưu tại: " + fileToSave.getAbsolutePath(),
+                        "Thành công", JOptionPane.INFORMATION_MESSAGE);
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null,
+                        "Lỗi khi xuất Excel: " + ex.getMessage(),
+                        "Lỗi", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        try {
+            Desktop.getDesktop().open(fileChooser.getSelectedFile());
+        } catch (IOException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi mở file: " + e.getMessage(), "Lỗi",
+                    JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     public JPanel getPanel() {
