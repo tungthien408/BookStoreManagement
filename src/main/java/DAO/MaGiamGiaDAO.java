@@ -13,7 +13,7 @@ public class MaGiamGiaDAO {
 
     public ArrayList<MaGiamGiaDTO> getAll() {
         ArrayList<MaGiamGiaDTO> list = new ArrayList<>();
-        String sql = "SELECT * FROM MaGiamGia WHERE trangThaiXoa = 0";
+        String sql = "SELECT * FROM magiamgia WHERE trangThaiXoa = 0";
         try (Connection conn = Data.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);
              ResultSet rs = ps.executeQuery()) {
@@ -37,7 +37,7 @@ public class MaGiamGiaDAO {
     }
 
     public int add(MaGiamGiaDTO dto) {
-        String sql = "INSERT INTO MaGiamGia (maGiamGia, tenGiamGia, phanTramGiam, ngayBatDau, ngayKetThuc, trangThaiXoa, loaiGiamGia, soTienGiam) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Magiamgia (maGiamGia, tenGiamGia, phanTramGiam, ngayBatDau, ngayKetThuc, trangThaiXoa, loaiGiamGia, soTienGiam) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         try (Connection conn = Data.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, dto.getMaGiamGia());
@@ -56,7 +56,7 @@ public class MaGiamGiaDAO {
     }
 
     public int update(MaGiamGiaDTO dto) {
-        String sql = "UPDATE MaGiamGia SET tenGiamGia = ?, phanTramGiam = ?, ngayBatDau = ?, ngayKetThuc = ?, loaiGiamGia = ?, soTienGiam = ? WHERE maGiamGia = ?";
+        String sql = "UPDATE Magiamgia SET tenGiamGia = ?, phanTramGiam = ?, ngayBatDau = ?, ngayKetThuc = ?, loaiGiamGia = ?, soTienGiam = ? WHERE maGiamGia = ?";
         try (Connection conn = Data.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, dto.getTenGiamGia());
@@ -74,7 +74,7 @@ public class MaGiamGiaDAO {
     }
 
     public int delete(String maGiamGia) {
-        String sql = "UPDATE MaGiamGia SET trangThaiXoa = 1 WHERE maGiamGia = ?";
+        String sql = "UPDATE Magiamgia SET trangThaiXoa = 1 WHERE maGiamGia = ?";
         try (Connection conn = Data.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, maGiamGia);
@@ -86,7 +86,7 @@ public class MaGiamGiaDAO {
     }
 
     public MaGiamGiaDTO getByMaGiamGia(String maGiamGia) {
-        String sql = "SELECT * FROM MaGiamGia WHERE maGiamGia = ? AND trangThaiXoa = 0";
+        String sql = "SELECT * FROM Magiamgia WHERE maGiamGia = ? AND trangThaiXoa = 0";
         try (Connection conn = Data.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setString(1, maGiamGia);
