@@ -58,6 +58,31 @@ public class SachDAO {
         return list;
     }
 
+    public List<SachDTO> getAllIncludingDeletedItem() {
+        List<SachDTO> list = new ArrayList<>();
+        String sql = "SELECT * FROM sach";
+        try (Connection conn = Data.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(sql);
+                ResultSet rs = stmt.executeQuery()) {
+            while (rs.next()) {
+                SachDTO sach = new SachDTO();
+                sach.setMaSach(rs.getString("MASACH"));
+                sach.setTenSach(rs.getString("TenSach"));
+                sach.setTheLoai(rs.getString("TheLoai"));
+                sach.setSoLuong(rs.getInt("SoLuong"));
+                sach.setDonGia(rs.getInt("DonGia"));
+                sach.setMaTG(rs.getString("MATG"));
+                sach.setMaNXB(rs.getString("MANXB"));
+                sach.setTrangThaiXoa(rs.getInt("trangThaiXoa"));
+                sach.setImg(rs.getString("img"));
+                list.add(sach);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return list;
+    }
+
     // Lấy sách theo MASACH
     public SachDTO getByMaSach(String maSach) {
         String sql = "SELECT * FROM sach WHERE MASACH = ? AND trangThaiXoa = 0";

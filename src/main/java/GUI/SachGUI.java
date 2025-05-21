@@ -110,7 +110,7 @@ public class SachGUI implements TableRefreshListener {
             if (!sachList.isEmpty()) {
                 String maSach = sachList.get(sachList.size() - 1).getMaSach();
                 String numericPart = maSach.substring(1);
-                count = Integer.parseInt(numericPart) + 1;
+                count = sachBUS.getSoLuongTon() + 1;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -157,7 +157,14 @@ public class SachGUI implements TableRefreshListener {
                                 Image.SCALE_SMOOTH);
                         imageLabel.setIcon(new ImageIcon(scaled));
                         currentChosenImage = file.getName();
-                        // copy file...
+                        // copy file into project folder
+                        String destinationPath = System.getProperty("user.dir") + "/images/Book/" + currentChosenImage;
+                        File destinationFile = new File(destinationPath);
+                        if (!destinationFile.getParentFile().exists()) {
+                            destinationFile.getParentFile().mkdirs();
+                        }
+                        ImageIO.write(img, "jpg", destinationFile);
+                        System.out.println("Image saved to: " + destinationPath);
                     } catch (IOException ex) {
                         JOptionPane.showMessageDialog(panel, "Lỗi I/O: " + ex.getMessage());
                     }

@@ -13,6 +13,12 @@ public class SachBUS {
         sachDAO = new SachDAO();
     }
 
+    public int getSoLuongTon() {
+        // Lấy danh sách tất cả sách
+        List<SachDTO> sachList = sachDAO.getAllIncludingDeletedItem();
+        return sachList.size();
+    }
+
     // Thêm sách mới
     public boolean addSach(SachDTO sach) {
         // Kiểm tra dữ liệu đầu vào
