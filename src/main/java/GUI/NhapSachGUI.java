@@ -57,13 +57,13 @@ public class NhapSachGUI {
     private JTextField[] txt_array_down = new JTextField[2];
     private JTextField txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total;
     private JTextField txt_name, txt_quantity;
-    private JTextField txt_search; // Added for search
-    private JTextField[] txt_array_search; // Added for search
+    private JTextField txt_search;
+    private JTextField[] txt_array_search;
     private JButton[] buttons = new JButton[3];
     private JTable table_down, table_top;
     private JLabel imageLabel;
     private JPanel imagePanel;
-    private JComboBox<String> comboBox; // Added for search
+    private JComboBox<String> comboBox;
     String[] txt_label = { "Mã Sách", "Số lượng" };
 
     private int selectedRow = -1;
@@ -80,16 +80,14 @@ public class NhapSachGUI {
     private NhanVienBUS nhanVienBUS = new NhanVienBUS();
     private ChiTietPhieuNhapBUS chiTietPhieuNhapBUS = new ChiTietPhieuNhapBUS();
     private NhanVienDTO nv;
-    private ImageIcon img;
 
     public NhapSachGUI(TaiKhoanNVDTO account) {
         nv = nhanVienBUS.getNhanVienByMaNV(account.getMaNV());
-        img = new ImageIcon();
         initializeTextFields();
         initializeMainPanel();
         setupPanelLayout();
         initializePhieuNhap();
-        timkiem(); // Initialize search functionality
+        timkiem();
     }
 
     private void initializeTextFields() {
@@ -100,10 +98,10 @@ public class NhapSachGUI {
         txt_total = new JTextField();
         txt_name = new JTextField();
         txt_quantity = new JTextField();
-        txt_search = new JTextField(); // Initialize search text field
+        txt_search = new JTextField();
         txt_array_top = new JTextField[] { txt_importId, txt_employeeId, txt_nxb, txt_date, txt_total };
         txt_array_down = new JTextField[] { txt_name, txt_quantity };
-        txt_array_search = new JTextField[] { txt_search }; // Initialize search array
+        txt_array_search = new JTextField[] { txt_search };
     }
 
     private void initializeMainPanel() {
@@ -132,28 +130,38 @@ public class NhapSachGUI {
         lowerPanel.add(imagePanel, BorderLayout.WEST);
 
         paymentPanel.add(lowerPanel, BorderLayout.CENTER);
-        // paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
         paymentPanel.add(createTable_down(), BorderLayout.EAST);
 
         panel.add(paymentPanel, BorderLayout.SOUTH);
     }
 
     private void initializePhieuNhap() {
-        phieuNhapList = phieuNhapBUS.getAllPhieuNhap();
-        if (!phieuNhapList.isEmpty()) {
-            String maPN = phieuNhapList.get(phieuNhapList.size() - 1).getMaPN();
-            String numericPart = maPN.substring(2);
-            count = Integer.parseInt(numericPart) + 1;
+        try {
+            phieuNhapList = phieuNhapBUS.getAllPhieuNhap();
+            count = 0;
+            if (!phieuNhapList.isEmpty()) {
+                String maPN = phieuNhapList.get(phieuNhapList.size() - 1).getMaPN();
+                String numericPart = maPN.substring(2);
+                try {
+                    count = Integer.parseInt(numericPart) + 1;
+                } catch (NumberFormatException e) {
+                    System.err.println("Error parsing maPN: " + maPN);
+                    count = 1;
+                }
+            }
+            txt_array_top[0].setText(getID());
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi khởi tạo phiếu nhập: " + e.getMessage());
         }
     }
 
     private String getID() {
-        String str = String.format("%03d", count);
-        return "PN" + str;
+        return "PN" + String.format("%02d", count);
     }
 
     private JPanel createSearchPanel() {
-        String[] searchOptions = { "Mã sách", "Tên sách" }; // Search options for books
+        String[] searchOptions = { "Mã sách", "Tên sách" };
         comboBox = new JComboBox<>(searchOptions);
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.add(Box.createHorizontalStrut(33));
@@ -170,7 +178,7 @@ public class NhapSachGUI {
 
     private void filterTable(String query, String searchType) {
         DefaultTableModel model = (DefaultTableModel) table_top.getModel();
-        model.setRowCount(0); // Clear existing data
+        model.setRowCount(0);
         try {
             for (SachDTO sach : sachList) {
                 boolean match = false;
@@ -195,6 +203,48 @@ public class NhapSachGUI {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi lọc dữ liệu: " + e.getMessage());
         }
+    }
+
+    private ImageIcon loadBookImage(SachDTO sach, String bookId) {
+        ImageIcon finalIcon = null;
+        BufferedImage originalImage = null;
+        try {
+            String imgName = sach.getImg();
+            if (imgName != null && !imgName.trim().isEmpty()) {
+                String absoluteImagePath = System.getProperty("user.dir") + "/images/Book/" + imgName;
+                File imageFile = new File(absoluteImagePath);
+                if (imageFile.exists() && imageFile.isFile()) {
+                    originalImage = ImageIO.read(imageFile);
+                    if (originalImage != null) {
+                        int targetWidth = imagePanel.getPreferredSize().width > 0 ? imagePanel.getPreferredSize().width : 200;
+                        int targetHeight = imagePanel.getPreferredSize().height > 0 ? imagePanel.getPreferredSize().height : 250;
+                        Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                        finalIcon = new ImageIcon(scaledImage);
+                    }
+                }
+            }
+        } catch (IOException ioEx) {
+            System.err.println("IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
+        } catch (Exception ex) {
+            System.err.println("General error processing image " + sach.getImg() + ": " + ex.getMessage());
+        }
+
+        if (finalIcon == null) {
+            try {
+                String defaultImagePath = System.getProperty("user.dir") + "/images/Book/default.jpg";
+                File defaultImageFile = new File(defaultImagePath);
+                if (defaultImageFile.exists()) {
+                    BufferedImage defaultOriginal = ImageIO.read(defaultImageFile);
+                    int targetWidth = imagePanel.getPreferredSize().width > 0 ? imagePanel.getPreferredSize().width : 200;
+                    int targetHeight = imagePanel.getPreferredSize().height > 0 ? imagePanel.getPreferredSize().height : 250;
+                    Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight, Image.SCALE_SMOOTH);
+                    finalIcon = new ImageIcon(scaledDefault);
+                }
+            } catch (IOException ioEx) {
+                System.err.println("IOException reading default image: " + ioEx.getMessage());
+            }
+        }
+        return finalIcon;
     }
 
     private JPanel createTable_top() {
@@ -226,106 +276,34 @@ public class NhapSachGUI {
         panelTable.add(scrollPane);
 
         table_top.getSelectionModel().addListSelectionListener(e -> {
-            selectedRow = table_top.getSelectedRow();
-            if (selectedRow >= 0) {
-                txt_array_down[0].setText((String) table_top.getValueAt(selectedRow, 0));
-                txt_array_down[0].setEditable(false);
-                txt_array_down[1].setEditable(true);
-                txt_array_down[1].setText(""); // Clear quantity field
+            if (!e.getValueIsAdjusting()) {
+                selectedRow = table_top.getSelectedRow();
+                if (selectedRow >= 0) {
+                    txt_array_down[0].setText((String) table_top.getValueAt(selectedRow, 0));
+                    txt_array_down[0].setEditable(false);
+                    txt_array_down[1].setEditable(true);
+                    txt_array_down[1].setText("");
 
-                // Load and display image
-                String bookId = table_top.getValueAt(selectedRow, 0).toString();
-                SachDTO sach = sachBUS.getSachByMaSach(bookId);
-                if (sach != null) {
-                    ImageIcon finalIcon = null;
-                    BufferedImage originalImage = null;
-                    try {
-                        String imgName = sach.getImg();
-                        System.out.println("Image name from database: " + imgName);
-                        if (imgName != null && !imgName.trim().isEmpty()) {
-                            String absoluteImagePath = System.getProperty("user.dir") + "/images/Book/" + imgName;
-                            System.out.println("Constructed image path: " + absoluteImagePath);
-                            java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
-                            File imageFile = imagePath.toFile();
-                            if (imageFile.exists() && imageFile.isFile()) {
-                                originalImage = ImageIO.read(imageFile);
-                                if (originalImage != null) {
-                                    System.out.println("Successfully read image file: " + absoluteImagePath);
-                                    int targetWidth = imagePanel.getPreferredSize().width;
-                                    int targetHeight = imagePanel.getPreferredSize().height;
-                                    if (targetWidth <= 0)
-                                        targetWidth = 200;
-                                    if (targetHeight <= 0)
-                                        targetHeight = 250;
-                                    Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight,
-                                            Image.SCALE_SMOOTH);
-                                    finalIcon = new ImageIcon(scaledImage);
-                                    System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
-                                } else {
-                                    System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
-                                }
-                            } else {
-                                System.err.println("Image file not found or is not a file: " + absoluteImagePath);
-                            }
-                        } else {
-                            System.err.println("Image name is null or empty for book: " + bookId);
-                        }
-                    } catch (IOException ioEx) {
-                        System.err.println(
-                                "IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
-                        ioEx.printStackTrace();
-                    } catch (Exception ex) {
-                        System.err.println("General error processing image " + sach.getImg() + ": " + ex.getMessage());
-                        ex.printStackTrace();
+                    String bookId = table_top.getValueAt(selectedRow, 0).toString();
+                    SachDTO sach = sachBUS.getSachByMaSach(bookId);
+                    if (sach != null) {
+                        imageLabel.setIcon(loadBookImage(sach, bookId));
+                        imagePanel.revalidate();
+                        imagePanel.repaint();
+                    } else {
+                        imageLabel.setIcon(null);
+                        imagePanel.revalidate();
+                        imagePanel.repaint();
                     }
-
-                    if (finalIcon == null) {
-                        System.err.println("Attempting to load and scale default image...");
-                        try {
-                            BufferedImage defaultOriginal = null;
-                            String defaultImagePath = System.getProperty("user.dir") + "/images/Book/default.jpg";
-                            File defaultImageFile = new File(defaultImagePath);
-                            if (defaultImageFile.exists()) {
-                                defaultOriginal = ImageIO.read(defaultImageFile);
-                            } else {
-                                System.err.println("Default image file not found at: " + defaultImagePath);
-                            }
-                            if (defaultOriginal != null) {
-                                int targetWidth = imagePanel.getPreferredSize().width;
-                                int targetHeight = imagePanel.getPreferredSize().height;
-                                if (targetWidth <= 0)
-                                    targetWidth = 200;
-                                if (targetHeight <= 0)
-                                    targetHeight = 250;
-                                Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight,
-                                        Image.SCALE_SMOOTH);
-                                finalIcon = new ImageIcon(scaledDefault);
-                                System.out.println("Loaded and scaled default image.");
-                            }
-                        } catch (IOException ioEx) {
-                            System.err.println("IOException reading default image: " + ioEx.getMessage());
-                        } catch (Exception ex) {
-                            System.err.println("General error processing default image: " + ex.getMessage());
-                        }
-                    }
-
-                    imageLabel.setIcon(finalIcon);
-                    imagePanel.revalidate();
-                    imagePanel.repaint();
                 } else {
-                    System.err.println("SachDTO not found for ID: " + bookId);
+                    txt_array_down[0].setText("");
+                    txt_array_down[1].setText("");
+                    txt_array_down[0].setEditable(true);
+                    txt_array_down[1].setEditable(true);
                     imageLabel.setIcon(null);
                     imagePanel.revalidate();
                     imagePanel.repaint();
                 }
-            } else {
-                txt_array_down[0].setText("");
-                txt_array_down[1].setText("");
-                txt_array_down[0].setEditable(true);
-                txt_array_down[1].setEditable(true);
-                imageLabel.setIcon(null);
-                imagePanel.revalidate();
-                imagePanel.repaint();
             }
         });
 
@@ -339,7 +317,6 @@ public class NhapSachGUI {
         table_down.setDefaultEditor(Object.class, null);
         JScrollPane scrollPane = new JScrollPane(table_down);
         scrollPane.setPreferredSize(new Dimension(500, 240));
-        // scrollPane.setBorder(BorderFactory.createEmptyBorder(20, 10, 10, 10));
 
         table_down.addMouseListener(new MouseAdapter() {
             @Override
@@ -360,84 +337,11 @@ public class NhapSachGUI {
                     SachDTO sach = sachBUS.getSachByMaSach(bookId);
                     txt_array_down[0].setText(bookId);
                     txt_array_down[1].setText(String.valueOf(table_down.getValueAt(selectedRow, 2)));
-
-                    // Load and display image
-                    ImageIcon finalIcon = null;
-                    BufferedImage originalImage = null;
-                    try {
-                        String imgName = sach.getImg();
-                        System.out.println("Image name from database: " + imgName);
-                        if (imgName != null && !imgName.trim().isEmpty()) {
-                            String absoluteImagePath = System.getProperty("user.dir") + "/images/Book/" + imgName;
-                            System.out.println("Constructed image path: " + absoluteImagePath);
-                            java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
-                            File imageFile = imagePath.toFile();
-                            if (imageFile.exists() && imageFile.isFile()) {
-                                originalImage = ImageIO.read(imageFile);
-                                if (originalImage != null) {
-                                    System.out.println("Successfully read image file: " + absoluteImagePath);
-                                    int targetWidth = imagePanel.getPreferredSize().width;
-                                    int targetHeight = imagePanel.getPreferredSize().height;
-                                    if (targetWidth <= 0)
-                                        targetWidth = 200;
-                                    if (targetHeight <= 0)
-                                        targetHeight = 250;
-                                    Image scaledImage = originalImage.getScaledInstance(targetWidth, targetHeight,
-                                            Image.SCALE_SMOOTH);
-                                    finalIcon = new ImageIcon(scaledImage);
-                                    System.out.println("Scaled image to: " + targetWidth + "x" + targetHeight);
-                                } else {
-                                    System.err.println("ImageIO.read returned null for file: " + absoluteImagePath);
-                                }
-                            } else {
-                                System.err.println("Image file not found or is not a file: " + absoluteImagePath);
-                            }
-                        } else {
-                            System.err.println("Image name is null or empty for book: " + bookId);
-                        }
-                    } catch (IOException ioEx) {
-                        System.err.println(
-                                "IOException reading image file: " + sach.getImg() + " - " + ioEx.getMessage());
-                        ioEx.printStackTrace();
-                    } catch (Exception ex) {
-                        System.err.println("General error processing image " + sach.getImg() + ": " + ex.getMessage());
-                        ex.printStackTrace();
+                    if (sach != null) {
+                        imageLabel.setIcon(loadBookImage(sach, bookId));
+                        imagePanel.revalidate();
+                        imagePanel.repaint();
                     }
-
-                    if (finalIcon == null) {
-                        System.err.println("Attempting to load and scale default image...");
-                        try {
-                            BufferedImage defaultOriginal = null;
-                            String defaultImagePath = System.getProperty("user.dir") + "/images/Book/default.jpg";
-                            File defaultImageFile = new File(defaultImagePath);
-                            if (defaultImageFile.exists()) {
-                                defaultOriginal = ImageIO.read(defaultImageFile);
-                            } else {
-                                System.err.println("Default image file not found at: " + defaultImagePath);
-                            }
-                            if (defaultOriginal != null) {
-                                int targetWidth = imagePanel.getPreferredSize().width;
-                                int targetHeight = imagePanel.getPreferredSize().height;
-                                if (targetWidth <= 0)
-                                    targetWidth = 200;
-                                if (targetHeight <= 0)
-                                    targetHeight = 250;
-                                Image scaledDefault = defaultOriginal.getScaledInstance(targetWidth, targetHeight,
-                                        Image.SCALE_SMOOTH);
-                                finalIcon = new ImageIcon(scaledDefault);
-                                System.out.println("Loaded and scaled default image.");
-                            }
-                        } catch (IOException ioEx) {
-                            System.err.println("IOException reading default image: " + ioEx.getMessage());
-                        } catch (Exception ex) {
-                            System.err.println("General error processing default image: " + ex.getMessage());
-                        }
-                    }
-
-                    imageLabel.setIcon(finalIcon);
-                    imagePanel.revalidate();
-                    imagePanel.repaint();
-
                     for (JTextField txt : txt_array_down) {
                         txt.setEditable(false);
                     }
@@ -448,12 +352,12 @@ public class NhapSachGUI {
 
         JPanel panelTable = new JPanel();
         panelTable.setLayout(new BoxLayout(panelTable, BoxLayout.Y_AXIS));
-        scrollPane.setBorder(BorderFactory.createEmptyBorder(60,0,0,0));
+        scrollPane.setBorder(BorderFactory.createEmptyBorder(60, 0, 0, 0));
         scrollPane.setBorder(BorderFactory.createLineBorder(Color.BLACK));
         panelTable.add(scrollPane);
         panelTable.add(createButtonPanel());
-        panelTable.add(Box.createVerticalStrut(50)); // Add 20px spacing
-        panelTable.setBorder(BorderFactory.createEmptyBorder(90,10,0,10));
+        panelTable.add(Box.createVerticalStrut(50));
+        panelTable.setBorder(BorderFactory.createEmptyBorder(90, 10, 0, 10));
         return panelTable;
     }
 
@@ -464,11 +368,13 @@ public class NhapSachGUI {
         wrappedPanel.add(panelDetail);
         wrappedPanel.setBorder(BorderFactory.createEmptyBorder(padding_top, 0, 0, 0));
 
-        txt_array[0].setEditable(false);
+        txt_array[0].setEditable(false); // Mã phiếu nhập
         txt_array[1].setText(nv.getHoTen());
-        txt_array[1].setEditable(false);
-        txt_array[3].setEditable(false);
-        txt_array[4].setEditable(false);
+        txt_array[1].setEditable(false); // Nhân viên
+        txt_array[2].setEditable(true); // NXB
+        txt_array[3].setText(LocalDate.now().toString());
+        txt_array[3].setEditable(false); // Ngày nhập
+        txt_array[4].setEditable(false); // Tổng tiền
         return wrappedPanel;
     }
 
@@ -485,7 +391,6 @@ public class NhapSachGUI {
         String[] buttonTexts = { "Thêm", "Xóa", "Thanh toán" };
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(tool.createButtonPanel(buttons, buttonTexts, new Color(0, 36, 107), Color.WHITE, "x"));
-        // buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 110, 25));
         for (int i = 0; i < buttons.length; i++) {
             buttons[i].setCursor(new Cursor(Cursor.HAND_CURSOR));
             buttons[i].setFocusable(false);
@@ -497,13 +402,15 @@ public class NhapSachGUI {
     }
 
     private void addChiTietPhieuNhap() {
-        txt_array_top[0].setEditable(false);
+        // Ensure top fields are in correct state
         txt_array_top[0].setText(getID());
+        txt_array_top[1].setText(nv.getHoTen());
         txt_array_top[3].setText(LocalDate.now().toString());
-
-        for (JTextField txt : txt_array_top) {
-            txt.setEditable(true);
-        }
+        txt_array_top[0].setEditable(false);
+        txt_array_top[1].setEditable(false);
+        txt_array_top[3].setEditable(false);
+        txt_array_top[4].setEditable(false);
+        txt_array_top[2].setEditable(true);
 
         selectedRow = table_top.getSelectedRow();
         if (selectedRow == -1) {
@@ -519,6 +426,11 @@ public class NhapSachGUI {
 
             if (soLuongStr.isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Vui lòng nhập số lượng!");
+                return;
+            }
+
+            if (!soLuongStr.matches("\\d+")) {
+                JOptionPane.showMessageDialog(null, "Số lượng phải là số nguyên dương!");
                 return;
             }
 
@@ -539,7 +451,7 @@ public class NhapSachGUI {
                 String maSachCu = model.getValueAt(i, 0).toString().trim();
                 if (maSach.equals(maSachCu)) {
                     int soLuongCu = Integer.parseInt(model.getValueAt(i, 2).toString());
-                    soLuong = soLuong + soLuongCu;
+                    soLuong += soLuongCu;
                     model.removeRow(i);
                     break;
                 }
@@ -549,7 +461,9 @@ public class NhapSachGUI {
             updateTotal();
             txt_array_down[0].setText("");
             txt_array_down[1].setText("");
-            img = new ImageIcon();
+            imageLabel.setIcon(null);
+            imagePanel.revalidate();
+            imagePanel.repaint();
 
             JOptionPane.showMessageDialog(null, "Thêm chi tiết phiếu nhập thành công!");
         } catch (NumberFormatException e) {
@@ -569,95 +483,143 @@ public class NhapSachGUI {
 
         DefaultTableModel model = (DefaultTableModel) table_down.getModel();
         model.removeRow(selectedRow);
+        lastSelectedRow = -1;
         updateTotal();
+        txt_array_down[0].setText("");
+        txt_array_down[1].setText("");
+        imageLabel.setIcon(null);
+        imagePanel.revalidate();
+        imagePanel.repaint();
         JOptionPane.showMessageDialog(null, "Xóa chi tiết phiếu nhập thành công!");
     }
 
     private void thanhToan() {
-        try {
-            String maPN = txt_array_top[0].getText().trim();
-            String maNV = nv.getMaNV(); // Use actual employee ID
-            String maNXB = txt_array_top[2].getText().trim();
-            String ngayNhapStr = txt_array_top[3].getText().trim();
-            String tongTienStr = txt_array_top[4].getText().trim();
+        int maxRetries = 3;
+        int retryCount = 0;
+        boolean success = false;
 
-            if (maNV.isEmpty() || maNXB.isEmpty() || ngayNhapStr.isEmpty() || tongTienStr.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin phiếu nhập!");
-                return;
-            }
-
-            if (!nhanVienBUS.isNhanVienExists(maNV)) {
-                JOptionPane.showMessageDialog(null, "Mã nhân viên không tồn tại!");
-                return;
-            }
-
-            if (!nhaXuatBanBUS.isNhaXuatBanExists(maNXB)) {
-                JOptionPane.showMessageDialog(null, "Nhà xuất bản không tồn tại!");
-                return;
-            }
-
-            DefaultTableModel model = (DefaultTableModel) table_down.getModel();
-            if (model.getRowCount() == 0) {
-                JOptionPane.showMessageDialog(null, "Vui lòng thêm ít nhất một sách vào phiếu nhập!");
-                return;
-            }
-
-            int tongTien = Integer.parseInt(tongTienStr);
-            Date ngayNhap;
+        while (retryCount < maxRetries && !success) {
             try {
-                ngayNhap = Date.valueOf(ngayNhapStr);
-            } catch (IllegalArgumentException e) {
-                JOptionPane.showMessageDialog(null, "Định dạng ngày nhập không hợp lệ (YYYY-MM-DD)!");
+                String maPN = txt_array_top[0].getText().trim();
+                String maNV = nv.getMaNV();
+                String maNXB = txt_array_top[2].getText().trim();
+                String ngayNhapStr = txt_array_top[3].getText().trim();
+                String tongTienStr = txt_array_top[4].getText().trim();
+
+                if (maNV.isEmpty() || maNXB.isEmpty() || ngayNhapStr.isEmpty() || tongTienStr.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin phiếu nhập!");
+                    return;
+                }
+
+                if (!nhanVienBUS.isNhanVienExists(maNV)) {
+                    JOptionPane.showMessageDialog(null, "Mã nhân viên không tồn tại!");
+                    return;
+                }
+
+                if (!nhaXuatBanBUS.isNhaXuatBanExists(maNXB)) {
+                    JOptionPane.showMessageDialog(null, "Mã nhà xuất bản không hợp lệ!");
+                    return;
+                }
+
+                DefaultTableModel model = (DefaultTableModel) table_down.getModel();
+                if (model.getRowCount() == 0) {
+                    JOptionPane.showMessageDialog(null, "Vui lòng thêm ít nhất một sách vào phiếu nhập!");
+                    return;
+                }
+
+                int tongTien = Integer.parseInt(tongTienStr);
+                Date ngayNhap;
+                try {
+                    ngayNhap = Date.valueOf(ngayNhapStr);
+                } catch (IllegalArgumentException e) {
+                    JOptionPane.showMessageDialog(null, "Định dạng ngày nhập không hợp lệ (YYYY-MM-DD)!");
+                    return;
+                }
+
+                PhieuNhapDTO phieuNhap = new PhieuNhapDTO(maPN, maNV, ngayNhap, tongTien, maNXB);
+                if (!phieuNhapBUS.addPhieuNhap(phieuNhap)) {
+                    throw new SQLException("Thêm phiếu nhập thất bại!");
+                }
+
+                for (int i = 0; i < model.getRowCount(); i++) {
+                    String maSach = model.getValueAt(i, 0).toString().trim();
+                    int soLuong = Integer.parseInt(model.getValueAt(i, 2).toString());
+                    int giaNhap = Integer.parseInt(model.getValueAt(i, 3).toString());
+
+                    SachDTO sach = sachBUS.getSachByMaSach(maSach);
+                    if (sach == null) {
+                        throw new SQLException("Mã sách " + maSach + " không tồn tại!");
+                    }
+
+                    ChiTietPhieuNhapDTO chiTiet = new ChiTietPhieuNhapDTO(maSach, maPN, soLuong, giaNhap);
+                    if (!chiTietPhieuNhapBUS.addChiTietPhieuNhap(chiTiet)) {
+                        throw new SQLException("Thêm chi tiết phiếu nhập thất bại cho sách " + maSach);
+                    }
+
+                    int soLuongHienTai = sachBUS.getSoLuongTonSanPham(maSach);
+                    sachBUS.updateSoLuongTonSanPham(maSach, soLuongHienTai + soLuong);
+                }
+
+                Inhoadon();
+                model.setRowCount(0);
+                resetGUIState();
+                JOptionPane.showMessageDialog(null, "Thanh toán thành công!");
+                success = true;
+            } catch (SQLException e) {
+                retryCount++;
+                String errorMessage = e.getMessage().toLowerCase();
+                if (errorMessage.contains("duplicate") || errorMessage.contains("unique constraint") || e.getSQLState().startsWith("23")) {
+                    if (retryCount < maxRetries) {
+                        count++;
+                        txt_array_top[0].setText(getID());
+                        JOptionPane.showMessageDialog(null, "Mã phiếu nhập !!đã tồn tại, đang thử mã mới: " + getID());
+                        continue;
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Lỗi: Không thể tạo mã phiếu nhập mới sau " + maxRetries + " lần thử. Vui lòng kiểm tra cơ sở dữ liệu!");
+                        e.printStackTrace();
+                        return;
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Lỗi khi thanh toán: " + e.getMessage());
+                    e.printStackTrace();
+                    return;
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(null, "Tổng tiền không hợp lệ!");
                 return;
             }
-
-            PhieuNhapDTO phieuNhap = new PhieuNhapDTO(maPN, maNV, ngayNhap, tongTien, maNXB);
-            if (!phieuNhapBUS.addPhieuNhap(phieuNhap)) {
-                throw new SQLException("Thêm phiếu nhập thất bại!");
-            }
-
-            for (int i = 0; i < model.getRowCount(); i++) {
-                String maSach = model.getValueAt(i, 0).toString().trim();
-                int soLuong = Integer.parseInt(model.getValueAt(i, 2).toString());
-                int giaNhap = Integer.parseInt(model.getValueAt(i, 3).toString());
-
-                SachDTO sach = sachBUS.getSachByMaSach(maSach);
-                if (sach == null) {
-                    throw new SQLException("Mã sách " + maSach + " không tồn tại!");
-                }
-
-                ChiTietPhieuNhapDTO chiTiet = new ChiTietPhieuNhapDTO(maSach, maPN, soLuong, giaNhap);
-                if (!chiTietPhieuNhapBUS.addChiTietPhieuNhap(chiTiet)) {
-                    throw new SQLException("Thêm chi tiết phiếu nhập thất bại cho sách " + maSach);
-                }
-
-                int soLuongHienTai = sachBUS.getSoLuongTonSanPham(maSach);
-                sachBUS.updateSoLuongTonSanPham(maSach, soLuongHienTai + soLuong);
-            }
-
-            refreshTable();
-            Inhoadon();
-            model.setRowCount(0);
-
-            for (JTextField txt : txt_array_top) {
-                txt.setText("");
-            }
-            for (JTextField txt : txt_array_down) {
-                txt.setText("");
-            }
-
-            count++;
-            txt_array_top[0].setText(getID());
-            txt_array_top[3].setText(LocalDate.now().toString());
-            initializePhieuNhap();
-            imageLabel.setIcon(null);
-            imagePanel.revalidate();
-            imagePanel.repaint();
-            JOptionPane.showMessageDialog(null, "Thanh toán thành công!");
-        } catch (SQLException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Lỗi khi thanh toán: " + e.getMessage());
         }
+    }
+
+    private void resetGUIState() {
+        initializePhieuNhap(); // Refresh phieuNhapList and count
+        count++; // Increment count for next invoice
+        selectedRow = -1;
+        lastSelectedRow = -1;
+        table_down.clearSelection();
+        table_top.clearSelection();
+
+        txt_array_top[0].setText(getID());
+        txt_array_top[1].setText(nv != null ? nv.getHoTen() : "");
+        txt_array_top[2].setText("");
+        txt_array_top[3].setText(LocalDate.now().toString());
+        txt_array_top[4].setText("");
+
+        txt_array_top[0].setEditable(false);
+        txt_array_top[1].setEditable(false);
+        txt_array_top[2].setEditable(true);
+        txt_array_top[3].setEditable(false);
+        txt_array_top[4].setEditable(false);
+
+        for (JTextField txt : txt_array_down) {
+            txt.setText("");
+            txt.setEditable(true);
+        }
+
+        imageLabel.setIcon(null);
+        imagePanel.revalidate();
+        imagePanel.repaint();
+        refreshTable();
     }
 
     private void updateTotal() {
@@ -696,20 +658,19 @@ public class NhapSachGUI {
         int imgWidth = 900;
         int imgHeight = 500 + rowCount * 25 + 100;
         BufferedImage img = new BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_RGB);
-        Graphics2D g2d = img.createGraphics();
+Graphics2D g2d = img.createGraphics();
         g2d.setColor(Color.WHITE);
         g2d.fillRect(0, 0, imgWidth, imgHeight);
         g2d.setColor(Color.BLACK);
-        g2d.setFont(new Font("New Times Roman", Font.BOLD, 18));
-        g2d.drawString("HÓA ĐƠN NHẬP HÀNG", 500, 30);
-        g2d.drawString("CỬA HÀNG BÁN SÁCH", 75, 30);
-        g2d.setFont(new Font("New Times Roman", Font.BOLD, 16));
-        g2d.drawString("Địa chỉ:............................. ", 51, 54);
-        g2d.drawString("ĐT:....................................", 51, 78);
-        g2d.drawString("Mặt hàng nhập (Hoặc nghành nghề kinh doanh)", 423, 66);
-        g2d.drawString("Tên nhân viên:.....................................", 51, 128);
-        g2d.drawString("Địa chỉ:.....................................", 51, 152);
-        g2d.drawLine(51, 160, imgWidth - 51, 160);
+        g2d.setFont(new Font("Arial", Font.BOLD, 18));
+        g2d.drawString("HÓA ĐƠN NHẬP HÀNG", 350, 30);
+        g2d.drawString("CỬA HÀNG BÁN SÁCH", 51, 50);
+        g2d.setFont(new Font("Arial", Font.PLAIN, 14));
+        g2d.drawString("Địa chỉ: 123 Đường Sách, Quận 1, TP.HCM", 51, 70);
+        g2d.drawString("ĐT: 0123 456 789", 51, 90);
+        g2d.drawString("Nhà xuất bản: " + txt_array_top[2].getText(), 51, 110);
+        g2d.drawString("Nhân viên: " + txt_array_top[1].getText(), 51, 130);
+        g2d.drawLine(51, 150, imgWidth - 51, 150);
 
         // Draw column headers
         g2d.drawString("STT", 68, 182);
@@ -757,7 +718,7 @@ public class NhapSachGUI {
                 "Thành tiền:........................." + txt_array_top[4].getText()
                         + "..VNĐ..............................................................",
                 51, 245 + rowCount * 25);
-        g2d.drawString("Ngày ......... Tháng .......... Năm ..........", 490, 270 + rowCount * 25);
+        g2d.drawString("Ngày " + LocalDate.now().getDayOfMonth() + " Tháng " + LocalDate.now().getMonthValue() + " Năm " + LocalDate.now().getYear(), 350, 260 + rowCount * 25);
         g2d.drawString("NGƯỜI GIAO HÀNG", 150, 350 + rowCount * 25);
         g2d.drawString("NHÂN VIÊN", 470, 350 + rowCount * 25);
         g2d.dispose();

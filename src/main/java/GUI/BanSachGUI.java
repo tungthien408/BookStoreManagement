@@ -597,11 +597,22 @@ public class BanSachGUI {
 
         int pointDiscount = 0;
         String diemStr = txt_array_top[4].getText().trim();
-        int diem = Integer.parseInt(txt_array_top[4].getText());
         if (!diemStr.isEmpty() && diemStr.matches("\\d+")) {
-            pointDiscount = diem;
-            if (pointDiscount > baseTotal) {
-                pointDiscount = 0;
+            int diem = Integer.parseInt(diemStr);
+            String sdt = txt_array_top[2].getText().trim();
+            if (!sdt.isEmpty()) {
+                KhachHangDTO khachHang = khachHangBUS.getMaKhachHangBySdt(sdt);
+                if (khachHang != null && diem <= khachHang.getDiem()) {
+                    pointDiscount = diem ; // 1 point = 1000 VND
+                    if (pointDiscount > baseTotal) {
+                        pointDiscount = 0;
+                        txt_array_top[4].setText("0");
+                    }
+                } else {
+                    txt_array_top[4].setText("0");
+                }
+            } else {
+                txt_array_top[4].setText("0");
             }
         }
 
@@ -632,7 +643,6 @@ public class BanSachGUI {
                 return;
             }
 
-            
             if (!sdtKhach.isBlank() && !sdtKhach.matches("(02|03|05|07|08|09)\\d{8}")) {
                 JOptionPane.showMessageDialog(null, "Số điện thoại không hợp lệ!");
                 return;
@@ -750,14 +760,16 @@ public class BanSachGUI {
             txt_discountCode.setText("");
             resetDiscount();
             initializeHoaDon();
-            if (diem != 0)
-                maKH.setDiem(maKH.getDiem() - diem);
-            else if(maKH.getMaKH() != "KH00"){
-                System.out.println(maKH.getDiem() + (int) (tongTien / 10));
-                maKH.setDiem(maKH.getDiem() + (int) (tongTien / 10));
+
+            // Update customer points
+            if (!maKH.getMaKH().equals("KH000")) {
+                if (diem != 0) {
+                    maKH.setDiem(maKH.getDiem() - diem);
+                } else {
+                    maKH.setDiem(maKH.getDiem() + (int) (tongTien)); // 1 point per 1000 VND
+                }
+                khachHangBUS.updateKhachHang(maKH);
             }
-                
-            khachHangBUS.updateKhachHang(maKH);
 
             JOptionPane.showMessageDialog(null, "Thanh toán thành công!");
         } catch (SQLException e) {
@@ -776,7 +788,7 @@ public class BanSachGUI {
                         sach.getMaSach(),
                         sach.getTenSach(),
                         sach.getSoLuong(),
-                        sach.getDonGia()
+                        sach.getDonGia() + 10000
                 });
             }
         } catch (Exception e) {
@@ -798,7 +810,7 @@ public class BanSachGUI {
         return maKH;
     }
 
-    public void Inhoadon() {
+public void Inhoadon() {
         DefaultTableModel model = (DefaultTableModel) table_down.getModel();
         int rowCount = model.getRowCount();
         int imgWidth = 900;
