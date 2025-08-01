@@ -62,7 +62,7 @@ public class MenuGUI {
         JPanel panel_logo = new JPanel(new GridBagLayout());
         panel_logo.setBackground(new Color(0, 0, 0, 0));
         panel_logo.setPreferredSize(new Dimension(130, 130));
-        ImageIcon Logo = new ImageIcon("images/book-icon-transparent-image.png");
+        ImageIcon Logo = new ImageIcon("\\BookStoreManagement\\images\\book-icon-transparent-image.png");
         Image image = Logo.getImage();
         Image Logo_newImage = image.getScaledInstance(110, 110, Image.SCALE_SMOOTH);
         Logo = new ImageIcon(Logo_newImage);
@@ -76,6 +76,7 @@ public class MenuGUI {
         for (int i = 0; i < length; i++) {
             switch (i) {
                 case 0:
+                    // panel_content[i] = new BanSachGUI(account).getPanel();
                     panel_content[i] = new BanSachGUI(account).getPanel();
                     break;
                 case 1:

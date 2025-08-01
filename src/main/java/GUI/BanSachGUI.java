@@ -288,6 +288,7 @@ public class BanSachGUI implements TableRefreshListener {
         // table
         String[] column = { "Mã sách", "Tên sách", "Số lượng", "Đơn giá" };
         DefaultTableModel model = new DefaultTableModel(column, 0);
+        
         table_down = tool.createTable(model, column);
         table_down.setDefaultEditor(Object.class, null);
         JScrollPane scrollPane = new JScrollPane(table_down);
@@ -836,7 +837,7 @@ public class BanSachGUI implements TableRefreshListener {
             String imgName = sach.getImg();
             System.out.println("Image name from database: " + imgName);
             if (imgName != null && !imgName.trim().isEmpty()) {
-                String absoluteImagePath = System.getProperty("user.dir") + "/images/Book/" + imgName;
+                String absoluteImagePath = System.getProperty("user.dir") + "\\BookStoreManagement\\images\\Book\\" + imgName;
                 System.out.println("Constructed image path: " + absoluteImagePath);
                 java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
                 File imageFile = imagePath.toFile();
@@ -877,7 +878,7 @@ public class BanSachGUI implements TableRefreshListener {
             System.err.println("Attempting to load and scale default image...");
             try {
                 BufferedImage defaultOriginal = null;
-                String defaultImagePath = System.getProperty("user.dir") + "/images/Book/default.jpg";
+                String defaultImagePath = System.getProperty("user.dir") + "\\BookStoreManagement\\images\\Book\\default.jpg";
                 File defaultImageFile = new File(defaultImagePath);
                 if (defaultImageFile.exists()) {
                     defaultOriginal = ImageIO.read(defaultImageFile);
