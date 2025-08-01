@@ -1,3 +1,5 @@
+// TODO: Thiếu event cho createDetailPanel_down + các event liên quan đến thanh toán + hóa đơn + ...
+
 package GUI;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,6 +17,8 @@ import javax.swing.table.DefaultTableModel;
 
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.lang.reflect.Array;
+import java.time.LocalDate;
 import java.awt.FlowLayout;
 
 import java.awt.BorderLayout;
@@ -27,6 +31,7 @@ import BUS.KhachHangBUS;
 import BUS.NhanVienBUS;
 import BUS.SachBUS;
 import DTO.HoaDonDTO;
+import DTO.KhachHangDTO;
 import DTO.NhanVienDTO;
 import DTO.SachDTO;
 import GUI.BaseGUI;
@@ -98,13 +103,16 @@ public class SellBookGUI extends BaseGUI {
 
         panel.add(createTable_top(column, model, 650, 300), BorderLayout.WEST);
 
+        // detail panel top
         String[] txt_label_top = { "Mã hóa đơn", "Nhân viên", "SDT KH", "Tên KH", "Điểm tích lũy", "Ngày bán",
                 "Tổng tiền" };
-        panel.add(createDetailPanel_top(450, -10, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
-
+        panel.add(createDetailPanel(450, -10, txt_array_top, txt_label_top, null), BorderLayout.CENTER);
+        addEventDetailPanel_top(txt_array_top);
         JPanel lowerPanel = new JPanel(new BorderLayout(10, 0));
+
+        // detail panel down
         String[] txt_label_down = { "Mã sách", "Số lượng" };
-        JPanel detailPanelDown = createDetailPanel_down(300, 10, txt_array_down, txt_label_down);
+        JPanel detailPanelDown = createDetailPanel(300, 10, txt_array_down, txt_label_down, null);
         lowerPanel.add(detailPanelDown, BorderLayout.CENTER);
 
         imagePanel = new JPanel(new BorderLayout());
@@ -119,6 +127,8 @@ public class SellBookGUI extends BaseGUI {
         paymentPanel.add(lowerPanel, BorderLayout.WEST);
         // paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
 
+        // bottom table
+        buttons = new ArrayList<>(BTN_COUNT);
         DefaultTableModel model_down = new DefaultTableModel(column, 0);
         paymentPanel.add(createTable_down(column, model_down, 500, 240), BorderLayout.EAST);
         panel.add(paymentPanel, BorderLayout.SOUTH);
@@ -163,6 +173,81 @@ public class SellBookGUI extends BaseGUI {
                 }
                 imagePanel.revalidate();
                 imagePanel.repaint();
+            }
+        });
+    }
+
+    private void addEventDetailPanel_top(ArrayList<JTextField> txt_array) {
+        txt_array.get(0).setEditable(false); // txt_invoiceId
+        txt_array.get(1).setEditable(false); // txt_employeeName
+        txt_array.get(1).setText(nv.getHoTen());
+        txt_array.get(2).setEditable(true); // txt_customerPhone
+        txt_array.get(3).setText("Anonymous"); // txt_customerName
+        txt_array.get(5).setEditable(false); // txt_date
+        txt_array.get(5).setText(LocalDate.now().toString());
+        txt_array.get(6).setText("");
+        txt_array.get(6).setEditable(false); // txt_total
+
+        txt_array.get(2).addKeyListener(new java.awt.event.KeyAdapter() {
+            private String previousPhoneNumber = "";
+
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                String sdt = txt_array.get(2).getText().trim();
+                if (sdt.equals(previousPhoneNumber)) {
+                    return; // Skip if the phone number hasn't changed
+                }
+                previousPhoneNumber = sdt;
+                if (sdt.matches("(02|03|05|07|08|09)\\d{8}")) {
+                    KhachHangDTO khachHang = khachHangBUS.getMaKhachHangBySdt(sdt);
+                    if (khachHang != null) {
+                        txt_array.get(3).setText(khachHang.getHoTen());
+                        txt_array.get(3).setEditable(false);
+                        txt_array.get(4).setText(khachHang.getDiem() + "");
+                        txt_array.get(4).setEditable(true);
+                        System.out.println("Tong tien: " + txt_array.get(6).getText());
+
+                        int tien = Integer.parseInt(txt_array.get(6).getText());
+                        if (khachHang.getDiem() > tien) {
+                            tienGiamGia = 0;
+                        } else
+                            tienGiamGia = Integer.parseInt(txt_array.get(4).getText()) * 1000;
+                    } else {
+                        txt_array.get(3).setEditable(true);
+                        txt_array.get(3).setText("");
+                        txt_array.get(4).setText("0");
+                        txt_array.get(4).setEditable(false);
+                        tienGiamGia = 0;
+                    }
+                } else if (!sdt.isBlank()) {
+                    tienGiamGia = 0;
+                    txt_array.get(3).setText("Số điện thoại không hợp lệ!");
+                } else {
+                    tienGiamGia = 0;
+                    txt_array.get(4).setText("");
+                    txt_array.get(4).setEditable(false);
+                    txt_array.get(3).setText("Anonymous");
+                }
+                updateTotal();
+            }
+        });
+
+        txt_array.get(4).addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                String diemStr = txt_array.get(4).getText();
+                if (diemStr.isBlank() || !diemStr.matches("\\d+")) {
+                    tienGiamGia = 0;
+                } else {
+                    int diem = Integer.parseInt(diemStr);
+                    int tien = Integer.parseInt(txt_array.get(6).getText());
+                    if (diem * 1000 > tien) {
+                        tienGiamGia = 0;
+                    } else {
+                        tienGiamGia = diem * 1000;
+                    }
+                }
+                updateTotal();
             }
         });
     }
