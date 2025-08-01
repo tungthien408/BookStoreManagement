@@ -158,7 +158,7 @@ public class SachGUI implements TableRefreshListener {
                         imageLabel.setIcon(new ImageIcon(scaled));
                         currentChosenImage = file.getName();
                         // copy file into project folder
-                        String destinationPath = System.getProperty("user.dir") + "/images/Book/" + currentChosenImage;
+                        String destinationPath = System.getProperty("user.dir") + "\\BookStoreManagement\\images\\Book\\" + currentChosenImage;
                         File destinationFile = new File(destinationPath);
                         if (!destinationFile.getParentFile().exists()) {
                             destinationFile.getParentFile().mkdirs();
@@ -649,7 +649,7 @@ public class SachGUI implements TableRefreshListener {
                 String imgName = sach.getImg();
                 System.out.println("Image name from database: " + imgName);
                 if (imgName != null && !imgName.trim().isEmpty()) {
-                    String absoluteImagePath = System.getProperty("user.dir") + "/images/Book/" + imgName;
+                    String absoluteImagePath = System.getProperty("user.dir") + "\\BookStoreManagement\\images\\Book\\" + imgName;
                     System.out.println("Constructed image path: " + absoluteImagePath);
                     java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
                     File imageFile = imagePath.toFile();
@@ -691,7 +691,7 @@ public class SachGUI implements TableRefreshListener {
             System.err.println("Attempting to load and scale default image...");
             try {
                 BufferedImage defaultOriginal = null;
-                String defaultImagePath = System.getProperty("user.dir") + "/images/Book/default.jpg";
+                String defaultImagePath = System.getProperty("user.dir") + "\\BookStoreManagement\\images\\Book\\default.jpg";
                 File defaultImageFile = new File(defaultImagePath);
                 if (defaultImageFile.exists()) {
                     defaultOriginal = ImageIO.read(defaultImageFile);
