@@ -88,11 +88,19 @@ public abstract class BaseGUI extends JPanel {
 
     }
 
+    protected JPanel createDetailPanel(int width, int padding_top, ArrayList<JTextField> txt_array,
+        String[] txt_label, ImageIcon img) {
+        JPanel panelDetail = tool.createDetailPanel(txt_array, txt_label, img, width, 320, 2, txt_label.length, false);
+        JPanel wrappedPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        wrappedPanel.add(panelDetail);
+        wrappedPanel.setBorder(BorderFactory.createEmptyBorder(padding_top, 0, 0, 0));
+        return wrappedPanel;
+    }
+
     protected abstract void addEventTable(JTable table, int type);
 
     protected void initializeBaseFields() {
         txt_search = new JTextField();
-        buttons = new ArrayList<>();
         txt_array_top = new ArrayList<>();
         txt_array_down = new ArrayList<>();
     }

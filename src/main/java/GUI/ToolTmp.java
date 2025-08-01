@@ -139,7 +139,7 @@ public class ToolTmp {
 		return searchPanel;
 	}
 
-	public JPanel createDetailPanel(JTextField[] txt_array, String[] txt_label, ImageIcon img, int width, int height,
+	public JPanel createDetailPanel(ArrayList<JTextField> txt_array, String[] txt_label, ImageIcon img, int width, int height,
 			double weightx, final int TEXTFIELD_CAPACITY, boolean newLine) {
 		// final int TEXTFIELD_CAPACITY = 3;
 		JPanel panelDetail = createPanel(width, height, new GridBagLayout());
@@ -164,28 +164,27 @@ public class ToolTmp {
 			panelDetail.add(panelImg, c);
 		}
 
-		for (int i = 0; i < txt_array.length; i++) {
-			txt_array[i] = new JTextField(15);
-			txt_array[i].setBackground(new Color(202, 220, 252));
-			txt_array[i].setPreferredSize(new Dimension(182, 30));
-			txt_array[i].setEditable(false);
+		for (int i = 0; i < txt_array.size(); i++) {
+			txt_array.get(i).setBackground(new Color(202, 220, 252));
+			txt_array.get(i).setPreferredSize(new Dimension(182, 30));
+			txt_array.get(i).setEditable(false);
 		}
 
 		int count = 0;
 
-		while (count < txt_array.length) {
+		while (count < txt_array.size()) {
 			int index = count;
-			count = ((count + TEXTFIELD_CAPACITY) < txt_array.length) ? count + TEXTFIELD_CAPACITY : txt_array.length;
+			count = ((count + TEXTFIELD_CAPACITY) < txt_array.size()) ? count + TEXTFIELD_CAPACITY : txt_array.size();
 			for (int i = index; i < count; i++) {
 				c.gridy += 1;
 				JLabel label = new JLabel(txt_label[i]);
 				panel_detail.add(label, c);
 				if (newLine == true) {
 					c.gridy += 1;
-					panel_detail.add(txt_array[i], c);
+					panel_detail.add(txt_array.get(i), c);
 				} else {
 					c.gridx += 1;
-					panel_detail.add(txt_array[i], c);
+					panel_detail.add(txt_array.get(i), c);
 					c.gridx--;
 				}
 			}
