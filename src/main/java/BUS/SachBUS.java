@@ -1,4 +1,5 @@
 package BUS;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -6,10 +7,16 @@ import DAO.SachDAO;
 import DTO.SachDTO;
 
 public class SachBUS {
-    private SachDAO sachDAO;
+    private SachDAO sachDAO = new SachDAO();
 
     public SachBUS() {
         sachDAO = new SachDAO();
+    }
+
+    public int getSoLuongTon() {
+        // Lấy danh sách tất cả sách
+        List<SachDTO> sachList = sachDAO.getAllIncludingDeletedItem();
+        return sachList.size();
     }
 
     // Thêm sách mới
@@ -87,11 +94,15 @@ public class SachBUS {
         return result;
     }
 
-    public int getSoLuongTonSanPham(String maSp){
+    public int getSoLuongTonSanPham(String maSp) {
         return sachDAO.getSoLuongTonSanPham(maSp);
     }
-    
-    public boolean updateSoLuongTonSanPham(String maSp, int soLuongTon){
+
+    public boolean updateSoLuongTonSanPham(String maSp, int soLuongTon) {
         return sachDAO.updateSoLuongTonSanPham(maSp, soLuongTon) > 0;
+    }
+
+    public List<SachDTO> getSoLuongDaBan() {
+        return sachDAO.getSoLuongDaBan();
     }
 }
