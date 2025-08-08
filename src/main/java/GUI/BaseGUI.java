@@ -20,7 +20,18 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
 
+import BUS.ChiTietHoaDonBUS;
+import BUS.ChiTietPhieuNhapBUS;
+import BUS.HoaDonBUS;
+import BUS.KhachHangBUS;
+import BUS.NXBBUS;
+import BUS.NhanVienBUS;
+import BUS.PhieuNhapBUS;
 import BUS.SachBUS;
+import DTO.ChiTietPhieuNhapDTO;
+import DTO.HoaDonDTO;
+import DTO.NhanVienDTO;
+import DTO.PhieuNhapDTO;
 import DTO.SachDTO;
 import Utils.TableRefreshListener;
 
@@ -57,8 +68,24 @@ public abstract class BaseGUI extends JPanel implements TableRefreshListener {
     protected int lastSelectedRow = -1;
     protected int count = 0;
 
-    private SachBUS sachBUS = new SachBUS();
+    // sell books
+    protected SachBUS sachBUS = new SachBUS();
     protected List<SachDTO> sachList;
+    protected List<HoaDonDTO> hoaDonList;
+    protected NhanVienBUS nhanVienBUS = new NhanVienBUS();
+    protected HoaDonBUS hoaDonBUS = new HoaDonBUS();
+    protected ChiTietHoaDonBUS chiTietHoaDonBUS = new ChiTietHoaDonBUS();
+    protected KhachHangBUS khachHangBUS = new KhachHangBUS();
+    protected NhanVienDTO nv;
+
+    // import books
+    protected List<ChiTietPhieuNhapDTO> chiTietPhieuNhapList;
+    protected List<PhieuNhapDTO> phieuNhapList;
+    protected PhieuNhapBUS phieuNhapBUS = new PhieuNhapBUS();
+    protected NXBBUS nhaXuatBanBUS = new NXBBUS();
+    protected ChiTietPhieuNhapBUS chiTietPhieuNhapBUS = new ChiTietPhieuNhapBUS();
+
+
 
     protected void initializeTextFields(ArrayList<JTextField> textFieldList, int count) {
         for (int i = 0; i < count; i++) {
@@ -78,6 +105,15 @@ public abstract class BaseGUI extends JPanel implements TableRefreshListener {
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(tool.createButtonPanel(buttons, buttonTexts, new Color(0, 36, 107), Color.WHITE, xy));
         return buttonPanel;
+    }
+
+    protected JPanel createSearchPanel() {
+        String[] searchOptions = { "Mã sách", "Tên sách" };
+        comboBox = new JComboBox<>(searchOptions);
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(Box.createHorizontalStrut(33));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_search));
+        return searchPanel;
     }
 
     protected JPanel createTable_top(String[] column, DefaultTableModel model, int width, int height) {
@@ -397,30 +433,30 @@ public abstract class BaseGUI extends JPanel implements TableRefreshListener {
         return prefix + str;
     }
 
-    protected void timkiem() {
+    protected void timkiem(int status) {
         txt_search.getDocument().addDocumentListener(new DocumentListener() {
             @Override
             public void insertUpdate(DocumentEvent e) {
-                filterTable(txt_search.getText(), (String) comboBox.getSelectedItem());
+                filterTable(status, txt_search.getText(), (String) comboBox.getSelectedItem());
             }
 
             @Override
             public void removeUpdate(DocumentEvent e) {
-                filterTable(txt_search.getText(), (String) comboBox.getSelectedItem());
+                filterTable(status, txt_search.getText(), (String) comboBox.getSelectedItem());
             }
 
             @Override
             public void changedUpdate(DocumentEvent e) {
-                filterTable(txt_search.getText(), (String) comboBox.getSelectedItem());
+                filterTable(status, txt_search.getText(), (String) comboBox.getSelectedItem());
             }
         });
 
         comboBox.addActionListener(
-                e -> filterTable(txt_search.getText(), (String) comboBox.getSelectedItem()));
+                e -> filterTable(status, txt_search.getText(), (String) comboBox.getSelectedItem()));
     }
 
 
-    protected void filterTable(String query, String searchType) {
+    protected void filterTable(int status, String query, String searchType) {
         DefaultTableModel model = (DefaultTableModel) table_top.getModel();
         model.setRowCount(0);
         try {
@@ -439,7 +475,7 @@ public abstract class BaseGUI extends JPanel implements TableRefreshListener {
                             sach.getMaSach(),
                             sach.getTenSach(),
                             sach.getSoLuong(),
-                            sach.getDonGia() + 10000
+                            sach.getDonGia() + (status == 0 ? 10000 : 0)
                     });
                 }
             }
