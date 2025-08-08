@@ -2,6 +2,7 @@ package GUI;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
@@ -35,7 +36,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.table.DefaultTableModel;
-import java.awt.Cursor;
+
 import BUS.ChiTietHoaDonBUS;
 import BUS.HoaDonBUS;
 import BUS.KhachHangBUS;
@@ -682,21 +683,48 @@ public class BanSachGUI implements TableRefreshListener {
         }
     }
 
-    private void updateTotal() {
-        int tongTien = 0;
-        DefaultTableModel model = (DefaultTableModel) table_down.getModel();
-        for (int i = 0; i < model.getRowCount(); i++) {
-            int soLuong = Integer.parseInt(model.getValueAt(i, 2).toString());
-            int donGia = Integer.parseInt(model.getValueAt(i, 3).toString());
-            tongTien += soLuong * donGia;
-        }
-
-        if (tienGiamGia > tongTien) {
-            txt_array_top[4].setText(String.valueOf(tongTien));
-        }
-        tongTien -= tienGiamGia;
-        txt_array_top[6].setText(String.valueOf(tongTien));
+private void updateTotal() {
+    int tongTien = 0;
+    DefaultTableModel model = (DefaultTableModel) table_down.getModel();
+    
+    // Tính tổng tiền hóa đơn
+    for (int i = 0; i < model.getRowCount(); i++) {
+        int soLuong = Integer.parseInt(model.getValueAt(i, 2).toString());
+        int donGia = Integer.parseInt(model.getValueAt(i, 3).toString());
+        tongTien += soLuong * donGia;
     }
+
+    // Xác thực và áp dụng giảm giá dựa trên điểm tích lũy
+    String diemStr = txt_array_top[4].getText().trim();
+    int diem = 0;
+    try {
+        if (!diemStr.isEmpty() && diemStr.matches("\\d+")) {
+            diem = Integer.parseInt(diemStr);
+            // Kiểm tra điểm không vượt quá tổng tiền hoặc điểm của khách hàng
+            String sdt = txt_array_top[2].getText().trim();
+            if (!sdt.isEmpty()) {
+                KhachHangDTO khachHang = khachHangBUS.getMaKhachHangBySdt(sdt);
+                if (khachHang != null && diem > khachHang.getDiem()) {
+                    JOptionPane.showMessageDialog(null, "Điểm nhập vượt quá điểm tích lũy của khách hàng!");
+                    txt_array_top[4].setText(String.valueOf(khachHang.getDiem()));
+                    diem = khachHang.getDiem();
+                }
+            }
+            // Tính giảm giá (1 điểm = 1000 VNĐ)
+            tienGiamGia = Math.min(diem * 1000, tongTien); // Đảm bảo giảm giá không vượt quá tổng tiền
+        } else {
+            tienGiamGia = 0; // Không có điểm hợp lệ
+        }
+    } catch (NumberFormatException e) {
+        tienGiamGia = 0; // Reset giảm giá nếu lỗi phân tích
+        txt_array_top[4].setText("0"); // Reset trường điểm
+        JOptionPane.showMessageDialog(null, "Điểm tích lũy phải là số nguyên dương!");
+    }
+
+    // Cập nhật tổng tiền sau giảm giá
+    tongTien -= tienGiamGia;
+    txt_array_top[6].setText(String.valueOf(tongTien));
+}
 
     @Override
     public void refreshTable() {
