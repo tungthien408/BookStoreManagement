@@ -1,4 +1,4 @@
-// TODO: Thiếu event cho createDetailPanel_down + các event liên quan đến thanh toán + hóa đơn + ...
+// TODO: các event liên quan đến thanh toán + hóa đơn + button
 
 package GUI;
 import java.util.ArrayList;
@@ -62,8 +62,8 @@ public class SellBookGUI extends BaseGUI {
     }
 
     private void addButtonEvents() {
-        // buttons.get(0).addActionListener(e -> addChiTietHoaDon());
-        // buttons.get(1).addActionListener(e -> deleteChiTietHoaDon());
+        buttons.get(0).addActionListener(e -> addChiTietHoaDon(0, 5, count, "HD"));
+        buttons.get(1).addActionListener(e -> deleteChiTietHoaDon());
         // buttons.get(2).addActionListener(e -> thanhToan());
     }
 
@@ -81,10 +81,10 @@ public class SellBookGUI extends BaseGUI {
         paymentPanel = tool.createPanel(WIDTH - SIDE_MENU_WIDTH, (int) (HEIGHT * 0.55), new BorderLayout());
     }
 
-    private void setupPanelLayout() {
-        // top table 
-        panel.add(createSearchPanel(), BorderLayout.NORTH);
+    private void setupPanelLayout() { 
+        panel.add(createSearchPanel(), BorderLayout.NORTH); // search panel
         String[] column = new String[] { "Mã sách", "Tên sách", "Số lượng", "Đơn giá" };
+        // top table
         DefaultTableModel model = new DefaultTableModel(column, 0);
         try {
             sachList = sachBUS.getAllSach();
@@ -250,6 +250,19 @@ public class SellBookGUI extends BaseGUI {
                 updateTotal();
             }
         });
+    }
+
+    @Override
+    protected void addChiTietHoaDon(int status, int date_index, int count, String prefix) {
+        super.addChiTietHoaDon(0, 5, count, "HD");
+        String diemStr = txt_array_top.get(4).getText().trim();
+        int diem = (!diemStr.isEmpty()) ? Integer.parseInt(diemStr) : 0;
+        int tien = Integer.parseInt(txt_array_top.get(6).getText());
+        if (diem * 1000 > tien) {
+            tienGiamGia = 0;
+        } else {
+            tienGiamGia = diem * 1000;
+        }
     }
 
     public SellBookGUI() {

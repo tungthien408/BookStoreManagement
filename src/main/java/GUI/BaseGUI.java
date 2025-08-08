@@ -19,6 +19,7 @@ import DTO.SachDTO;
 
 import java.awt.Color;
 import java.awt.FlowLayout;
+import java.time.LocalDate;
 import java.awt.Dimension;
 
 public abstract class BaseGUI extends JPanel {
@@ -103,6 +104,81 @@ public abstract class BaseGUI extends JPanel {
         txt_search = new JTextField();
         txt_array_top = new ArrayList<>();
         txt_array_down = new ArrayList<>();
+    }
+
+    protected void addChiTietHoaDon(int status, int date_index, int count, String prefix) {
+        // status = 0: sell; status = 1; import
+        txt_array_top.get(0).setEditable(false);
+        txt_array_top.get(0).setText(getID(prefix, count));
+        txt_array_top.get(date_index).setText(LocalDate.now().toString());
+                selectedRow = table_top.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn một sách từ danh sách!");
+            return;
+        }
+        String maSach = table_top.getValueAt(selectedRow, 0).toString();
+        String tenSach = table_top.getValueAt(selectedRow, 1).toString();
+        String soLuongStr = txt_array_down.get(1).getText().trim();
+        int donGia = Integer.parseInt(table_top.getValueAt(selectedRow, 3).toString());
+
+        if (soLuongStr.isEmpty()) {
+            JOptionPane.showMessageDialog(null, "Vui lòng nhập số lượng!");
+            return;
+        }
+
+        if (!soLuongStr.matches("\\d+")) {
+            JOptionPane.showMessageDialog(null, "Số lượng phải là số nguyên dương!");
+            return;
+        }
+        int soLuong = Integer.parseInt(soLuongStr);
+
+        if (soLuong <= 0) {
+            JOptionPane.showMessageDialog(null, "Số lượng phải lớn hơn 0!");
+            return;
+        }
+
+        SachDTO sach = sachBUS.getSachByMaSach(maSach);
+        if (sach == null) {
+            JOptionPane.showMessageDialog(null, "Sách không tồn tại!");
+            return;
+        }
+
+        if (status == 0 && soLuong > sach.getSoLuong()) {
+            JOptionPane.showMessageDialog(null, "Số lượng sách trong kho không đủ!");
+            return;
+        }
+
+        DefaultTableModel model = (DefaultTableModel) table_down.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            String maSachCu = model.getValueAt(i, 0).toString().trim();
+            if (maSach.equals(maSachCu)) {
+                int soLuongCu = Integer.parseInt(model.getValueAt(i, 2).toString());
+                soLuong += soLuongCu;
+                model.removeRow(i);
+                break;
+            }
+        }
+        model.addRow(new Object[] { maSach, tenSach, soLuong, donGia });
+
+        updateTotal();
+    }
+
+    protected void deleteChiTietHoaDon() {
+        selectedRow = table_down.getSelectedRow();
+        if (selectedRow < 0) {
+            JOptionPane.showMessageDialog(null, "Vui lòng chọn một dòng để xóa!");
+            return;
+        }
+
+        DefaultTableModel model = (DefaultTableModel) table_down.getModel();
+        model.removeRow(selectedRow);
+        updateTotal();
+        // JOptionPane.showMessageDialog(null, "Xóa chi tiết hóa đơn thành công!");
+    }
+
+    protected String getID(String prefix, int count) {
+        String str = String.format("%02d", count);
+        return prefix + str;
     }
 
     protected abstract void initializeCustomFields();

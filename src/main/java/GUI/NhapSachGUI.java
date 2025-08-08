@@ -522,7 +522,7 @@ public class NhapSachGUI implements TableRefreshListener {
         txt_array_top[0].setEditable(false);
         txt_array_top[0].setText(getID());
         txt_array_top[3].setText(LocalDate.now().toString());
-        txt_array_top[2].setEditable(true);
+        txt_array_top[2].setEditable(true); // nxh jtextfield
 
         // for (JTextField txt : txt_array_top) {
         //     txt.setEditable(true);
