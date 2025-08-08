@@ -133,7 +133,6 @@ public class SellBookGUI extends BaseGUI {
         // paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
 
         // bottom table
-        buttons = new ArrayList<>(BTN_COUNT);
         DefaultTableModel model_down = new DefaultTableModel(column, 0);
         paymentPanel.add(createTable_down(column, model_down, 500, 240), BorderLayout.EAST);
         addButtonEvents();
@@ -270,6 +269,7 @@ public class SellBookGUI extends BaseGUI {
     @Override
     protected void addChiTietHoaDon(int status, int date_index, int count, String prefix) {
         super.addChiTietHoaDon(0, 5, count, INVOICE_ID_PREFIX);
+        updateTotal();
         String diemStr = txt_array_top.get(4).getText().trim();
         int diem = (!diemStr.isEmpty()) ? Integer.parseInt(diemStr) : 0;
         int tien = Integer.parseInt(txt_array_top.get(6).getText());

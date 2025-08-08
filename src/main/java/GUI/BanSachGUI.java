@@ -141,7 +141,6 @@ public class BanSachGUI implements TableRefreshListener {
         lowerPanel.add(imagePanel, BorderLayout.WEST);
 
         paymentPanel.add(lowerPanel, BorderLayout.WEST);
-        // paymentPanel.add(createButtonPanel(), BorderLayout.SOUTH);
         paymentPanel.add(createTable_down(), BorderLayout.EAST);
 
         panel.add(paymentPanel, BorderLayout.SOUTH);
