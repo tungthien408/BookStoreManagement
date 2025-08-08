@@ -77,7 +77,7 @@ public class MenuGUI {
             switch (i) {
                 case 0:
                     // panel_content[i] = new BanSachGUI(account).getPanel();
-                    panel_content[i] = new BanSachGUI(account).getPanel();
+                    panel_content[i] = new SellBookGUI(account).getPanel();
                     break;
                 case 1:
                     panel_content[i] = new NhapSachGUI(account).getPanel();

@@ -18,6 +18,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Array;
+import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.awt.FlowLayout;
 
@@ -30,11 +32,14 @@ import BUS.HoaDonBUS;
 import BUS.KhachHangBUS;
 import BUS.NhanVienBUS;
 import BUS.SachBUS;
+import DTO.ChiTietHoaDonDTO;
 import DTO.HoaDonDTO;
 import DTO.KhachHangDTO;
 import DTO.NhanVienDTO;
 import DTO.SachDTO;
+import DTO.TaiKhoanNVDTO;
 import GUI.BaseGUI;
+import Utils.EventManager;
 
 public class SellBookGUI extends BaseGUI {
     private static final String INVOICE_ID_PREFIX = "HD";
@@ -53,27 +58,27 @@ public class SellBookGUI extends BaseGUI {
     private KhachHangBUS khachHangBUS = new KhachHangBUS();
     private NhanVienDTO nv;
 
+    public SellBookGUI(TaiKhoanNVDTO account) {
+        nv = nhanVienBUS.getNhanVienByMaNV(account.getMaNV());
+        initializeBaseFields();
+        initializeCustomFields();
+    }
+
     @Override
     protected void initializeCustomFields() {
         initializeTextFields(txt_array_top, TOP_TEXTFIELD_COUNT);
         initializeTextFields(txt_array_down, DOWN_TEXTFIELD_COUNT);
-        setupPanelLayout();
         initializeMainPanel();
+        setupPanelLayout();
+        initializeHoaDon();
+        timkiem();
+        EventManager.getInstance().registerListener(this);
     }
 
     private void addButtonEvents() {
-        buttons.get(0).addActionListener(e -> addChiTietHoaDon(0, 5, count, "HD"));
+        buttons.get(0).addActionListener(e -> addChiTietHoaDon(0, 5, count, INVOICE_ID_PREFIX));
         buttons.get(1).addActionListener(e -> deleteChiTietHoaDon());
-        // buttons.get(2).addActionListener(e -> thanhToan());
-    }
-
-    private JPanel createSearchPanel() {
-        String[] searchOptions = { "Mã sách", "Tên sách" };
-        comboBox = new JComboBox<>(searchOptions);
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        searchPanel.add(Box.createHorizontalStrut(33));
-        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_search));
-        return searchPanel;
+        buttons.get(2).addActionListener(e -> thanhToan());
     }
 
     private void initializeMainPanel() {
@@ -131,7 +136,17 @@ public class SellBookGUI extends BaseGUI {
         buttons = new ArrayList<>(BTN_COUNT);
         DefaultTableModel model_down = new DefaultTableModel(column, 0);
         paymentPanel.add(createTable_down(column, model_down, 500, 240), BorderLayout.EAST);
+        addButtonEvents();
         panel.add(paymentPanel, BorderLayout.SOUTH);
+    }
+
+    private JPanel createSearchPanel() {
+        String[] searchOptions = { "Mã sách", "Tên sách" };
+        comboBox = new JComboBox<>(searchOptions);
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(Box.createHorizontalStrut(33));
+        searchPanel.add(tool.createSearchTextFieldTest(comboBox, txt_search));
+        return searchPanel;
     }
 
     @Override
@@ -254,7 +269,7 @@ public class SellBookGUI extends BaseGUI {
 
     @Override
     protected void addChiTietHoaDon(int status, int date_index, int count, String prefix) {
-        super.addChiTietHoaDon(0, 5, count, "HD");
+        super.addChiTietHoaDon(0, 5, count, INVOICE_ID_PREFIX);
         String diemStr = txt_array_top.get(4).getText().trim();
         int diem = (!diemStr.isEmpty()) ? Integer.parseInt(diemStr) : 0;
         int tien = Integer.parseInt(txt_array_top.get(6).getText());
@@ -263,11 +278,207 @@ public class SellBookGUI extends BaseGUI {
         } else {
             tienGiamGia = diem * 1000;
         }
+        updateTotal();
     }
 
-    public SellBookGUI() {
-        initializeBaseFields();
-        initializeCustomFields();
-        // Additional setup for SellBookGUI can be done here
+    @Override
+    protected void deleteChiTietHoaDon() {
+        super.deleteChiTietHoaDon();
+        updateTotal();
+    }
+
+    private void thanhToan() {
+        try {
+            // txt_invoiceId, txt_employeeName, txt_customerPhone, txt_customerName,
+            // txt_point, txt_date, txt_total
+            String maHD = txt_array_top.get(0).getText().trim();
+            String maNV = nv.getMaNV();
+            String sdtKhach = txt_array_top.get(2).getText().trim();
+            String tenKhach = txt_array_top.get(3).getText().trim();
+            String diemStr = txt_array_top.get(4).getText().trim();
+            String ngayBanStr = txt_array_top.get(5).getText().trim();
+            String tongTienStr = txt_array_top.get(6).getText().trim();
+
+            KhachHangDTO maKH;
+            int diem;
+
+            if (maNV.isEmpty() || tenKhach.isEmpty() || ngayBanStr.isEmpty() || tongTienStr.isEmpty()
+                    || (!sdtKhach.isBlank() && diemStr.isEmpty())) {
+                JOptionPane.showMessageDialog(null, "Vui lòng nhập đầy đủ thông tin hóa đơn!");
+                return;
+            }
+
+            if (!sdtKhach.isBlank() && !sdtKhach.matches("(02|03|05|07|08|09)\\d{8}")) {
+                JOptionPane.showMessageDialog(null, "Số điện thoại không hợp lệ!");
+                return;
+            }
+
+            if (!nhanVienBUS.isNhanVienExists(maNV)) {
+                JOptionPane.showMessageDialog(null, "Mã nhân viên không tồn tại!");
+                return;
+            }
+
+            if (!sdtKhach.isBlank() && !diemStr.matches("\\d+")) {
+                JOptionPane.showMessageDialog(null, "Điểm tích lũy được áp dụng phải chứa ký tự số");
+                return;
+            }
+
+            DefaultTableModel model = (DefaultTableModel) table_down.getModel();
+            if (model.getRowCount() == 0) {
+                JOptionPane.showMessageDialog(null, "Vui lòng thêm ít nhất một sách vào hóa đơn!");
+                return;
+            }
+
+            if (!sdtKhach.isEmpty()) {
+                maKH = khachHangBUS.getMaKhachHangBySdt(sdtKhach);
+                if (maKH == null) {
+                    maKH = new KhachHangDTO();
+                    maKH.setMaKH(getNextMaKH());
+                    maKH.setHoTen(tenKhach);
+                    maKH.setSdt(sdtKhach);
+                    maKH.setTrangThaiXoa(0);
+                    maKH.setDiem(0);
+                    boolean b = khachHangBUS.addKhachHang(maKH);
+                }
+            } else {
+                maKH = khachHangBUS.getKhachHangByMaKH("KH000");
+                diemStr = "null";
+            }
+
+            if (!diemStr.equals("null")) {
+                diem = Integer.parseInt(diemStr);
+
+                if (diem < 0) {
+                    JOptionPane.showMessageDialog(null,
+                            "Điểm tích lũy được áp dụng phải lớn hơn 0 và phải chứa ký tự số");
+                    return;
+                }
+
+                if (maKH.getDiem() < diem) {
+                    JOptionPane.showMessageDialog(null, "Điểm tích lũy của khách hàng không đủ để được áp dụng");
+                    return;
+                }
+            } else {
+                diem = 0;
+            }
+
+            int tongTien = Integer.parseInt(tongTienStr);
+            Date ngayBan;
+            try {
+                ngayBan = Date.valueOf(ngayBanStr);
+            } catch (IllegalArgumentException e) {
+                JOptionPane.showMessageDialog(null, "Định dạng ngày bán không hợp lệ (YYYY-MM-DD)!");
+                return;
+            }
+
+            HoaDonDTO hoaDon = new HoaDonDTO(maHD, maNV, maKH.getMaKH(), ngayBan, tongTien);
+            if (!hoaDonBUS.addHoaDon(hoaDon)) {
+                throw new SQLException("Thêm hóa đơn thất bại!");
+            }
+
+            for (int i = 0; i < model.getRowCount(); i++) {
+                String maSach = model.getValueAt(i, 0).toString().trim();
+                int soLuong = Integer.parseInt(model.getValueAt(i, 2).toString());
+                int donGia = Integer.parseInt(model.getValueAt(i, 3).toString());
+
+                SachDTO sach = sachBUS.getSachByMaSach(maSach);
+                if (sach == null) {
+                    throw new SQLException("Mã sách " + maSach + " không tồn tại!");
+                }
+
+                if (soLuong > sach.getSoLuong()) {
+                    throw new SQLException("Số lượng sách trong kho không đủ cho sách " + maSach);
+                }
+
+                ChiTietHoaDonDTO chiTiet = new ChiTietHoaDonDTO(maSach, maHD, soLuong, donGia);
+                if (!chiTietHoaDonBUS.addChiTietHoaDon(chiTiet)) {
+                    throw new SQLException("Thêm chi tiết hóa đơn thất bại cho sách " + maSach);
+                }
+
+                int soLuongHienTai = sach.getSoLuong();
+                sachBUS.updateSoLuongTonSanPham(maSach, soLuongHienTai - soLuong);
+            }
+
+            refreshTable();
+            Inhoadon(0);
+            model.setRowCount(0);
+
+            for (JTextField txt : txt_array_top) {
+                if (txt != txt_array_top.get(1) ) { // employee
+                    txt.setText("");
+                }
+                txt.setEditable(txt != txt_array_top.get(0) && txt != txt_array_top.get(1) && txt != txt_array_top.get(5) && txt != txt_array_top.get(6)); // txt_invoiceId, txt_employeeName, txt_date, txt_total respectively
+            }
+            for (JTextField txt : txt_array_down) {
+                txt.setText("");
+            }
+
+            count++;
+            txt_array_top.get(0).setText(getID(INVOICE_ID_PREFIX, count));
+            txt_array_top.get(0).setEditable(false);
+            txt_array_top.get(1).setText(nv.getHoTen());
+            txt_array_top.get(1).setEditable(false);
+            txt_array_top.get(3).setText("Anonymous");
+            txt_array_top.get(3).setEditable(false);
+            txt_array_top.get(4).setEditable(false);
+            txt_array_top.get(5).setText(LocalDate.now().toString());
+            txt_array_top.get(5).setEditable(false);
+            txt_array_top.get(6).setEditable(false);
+            initializeHoaDon();
+            if (diem != 0)
+                maKH.setDiem(maKH.getDiem() - diem);
+            else
+                maKH.setDiem(maKH.getDiem() + (int) (tongTien / 1000));
+            khachHangBUS.updateKhachHang(maKH);
+            EventManager.getInstance().notifyListeners();
+            JOptionPane.showMessageDialog(null, "Thanh toán thành công!");
+            finalIcon = null;
+            imageLabel.setIcon(finalIcon);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi thanh toán: " + e.getMessage());
+        }
+    }
+
+    private void initializeHoaDon() {
+        hoaDonList = hoaDonBUS.getAllHoaDon();
+        if (!hoaDonList.isEmpty()) {
+            String maHD = hoaDonList.get(hoaDonList.size() - 1).getMaHD();
+            String numericPart = maHD.substring(2);
+            count = Integer.parseInt(numericPart) + 1;
+        }
+    }
+
+    public JPanel getPanel() {
+        return this.panel;
+    }
+
+    private void updateTotal() {
+        int tongTien = 0;
+        DefaultTableModel model = (DefaultTableModel) table_down.getModel();
+        for (int i = 0; i < model.getRowCount(); i++) {
+            int soLuong = Integer.parseInt(model.getValueAt(i, 2).toString());
+            int donGia = Integer.parseInt(model.getValueAt(i, 3).toString());
+            tongTien += soLuong * donGia;
+        }
+
+        if (tienGiamGia > tongTien) {
+            txt_array_top.get(4).setText(String.valueOf(tongTien));
+        }
+        tongTien -= tienGiamGia;
+        txt_array_top.get(6).setText(String.valueOf(tongTien));
+    }
+
+    private String getNextMaKH() {
+        String maKH = "KH";
+        int count = khachHangBUS.getCountKhachHang() + 1;
+        if (count < 10) {
+            maKH += "00" + count;
+        } else if (count < 100) {
+            maKH += "0" + count;
+        } else {
+            maKH += count;
+        }
+        return maKH;
     }
 }
