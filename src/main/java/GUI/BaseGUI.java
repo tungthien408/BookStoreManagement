@@ -68,6 +68,13 @@ public abstract class BaseGUI extends JPanel implements TableRefreshListener {
     }
 
     protected JPanel createButtonPanel(String [] buttonTexts, String xy) {
+        if (buttons == null && buttonTexts.length > 0) {
+            buttons = new ArrayList<>(buttonTexts.length);
+            for (int i = 0; i < buttonTexts.length; i++) {
+                JButton btn = new JButton();
+                buttons.add(btn);
+            }
+        }
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(tool.createButtonPanel(buttons, buttonTexts, new Color(0, 36, 107), Color.WHITE, xy));
         return buttonPanel;
@@ -120,6 +127,7 @@ public abstract class BaseGUI extends JPanel implements TableRefreshListener {
         txt_search = new JTextField();
         txt_array_top = new ArrayList<>();
         txt_array_down = new ArrayList<>();
+        sachList = sachBUS.getAllSach();
     }
 
     protected void addChiTietHoaDon(int status, int date_index, int count, String prefix) {
@@ -311,7 +319,7 @@ public abstract class BaseGUI extends JPanel implements TableRefreshListener {
             String imgName = sach.getImg();
             System.out.println("Image name from database: " + imgName);
             if (imgName != null && !imgName.trim().isEmpty()) {
-                String absoluteImagePath = System.getProperty("user.dir") + "\\BookStoreManagement\\images\\Book\\" + imgName;
+                String absoluteImagePath = System.getProperty("user.dir") + "\\images\\Book\\" + imgName;
                 System.out.println("Constructed image path: " + absoluteImagePath);
                 java.nio.file.Path imagePath = java.nio.file.Paths.get(absoluteImagePath);
                 File imageFile = imagePath.toFile();
@@ -352,7 +360,7 @@ public abstract class BaseGUI extends JPanel implements TableRefreshListener {
             System.err.println("Attempting to load and scale default image...");
             try {
                 BufferedImage defaultOriginal = null;
-                String defaultImagePath = System.getProperty("user.dir") + "\\BookStoreManagement\\images\\Book\\default.jpg";
+                String defaultImagePath = System.getProperty("user.dir") + "\\images\\Book\\default.jpg";
                 File defaultImageFile = new File(defaultImagePath);
                 if (defaultImageFile.exists()) {
                     defaultOriginal = ImageIO.read(defaultImageFile);
