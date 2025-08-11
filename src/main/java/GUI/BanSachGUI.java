@@ -445,7 +445,6 @@ public class BanSachGUI extends BaseGUI {
         }
     }
 
-<<<<<<< HEAD
     private void initializeHoaDon() {
         hoaDonList = hoaDonBUS.getAllHoaDon();
         if (!hoaDonList.isEmpty()) {
@@ -473,7 +472,6 @@ public class BanSachGUI extends BaseGUI {
         }
         tongTien -= tienGiamGia;
         txt_array_top.get(6).setText(String.valueOf(tongTien));
-=======
 private void updateTotal() {
     int tongTien = 0;
     DefaultTableModel model = (DefaultTableModel) table_down.getModel();
@@ -535,7 +533,6 @@ private void updateTotal() {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Lỗi khi làm mới bảng: " + e.getMessage());
         }
->>>>>>> 703571d52f944198eca0e5d2b5dc02afb4e26331
     }
 
     private String getNextMaKH() {
