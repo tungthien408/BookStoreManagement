@@ -1,7 +1,27 @@
 // TODO: các event liên quan đến thanh toán + hóa đơn + button
 
+<<<<<<< HEAD
 package GUI;
 import java.util.ArrayList;
+=======
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Desktop;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.Image;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import java.sql.Date;
+import java.sql.SQLException;
+import java.time.LocalDate;
+>>>>>>> 703571d52f944198eca0e5d2b5dc02afb4e26331
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -15,6 +35,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 
+<<<<<<< HEAD
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Array;
@@ -27,6 +48,8 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 
+=======
+>>>>>>> 703571d52f944198eca0e5d2b5dc02afb4e26331
 import BUS.ChiTietHoaDonBUS;
 import BUS.HoaDonBUS;
 import BUS.KhachHangBUS;
@@ -422,6 +445,7 @@ public class BanSachGUI extends BaseGUI {
         }
     }
 
+<<<<<<< HEAD
     private void initializeHoaDon() {
         hoaDonList = hoaDonBUS.getAllHoaDon();
         if (!hoaDonList.isEmpty()) {
@@ -449,6 +473,69 @@ public class BanSachGUI extends BaseGUI {
         }
         tongTien -= tienGiamGia;
         txt_array_top.get(6).setText(String.valueOf(tongTien));
+=======
+private void updateTotal() {
+    int tongTien = 0;
+    DefaultTableModel model = (DefaultTableModel) table_down.getModel();
+    
+    // Tính tổng tiền hóa đơn
+    for (int i = 0; i < model.getRowCount(); i++) {
+        int soLuong = Integer.parseInt(model.getValueAt(i, 2).toString());
+        int donGia = Integer.parseInt(model.getValueAt(i, 3).toString());
+        tongTien += soLuong * donGia;
+    }
+
+    // Xác thực và áp dụng giảm giá dựa trên điểm tích lũy
+    String diemStr = txt_array_top[4].getText().trim();
+    int diem = 0;
+    try {
+        if (!diemStr.isEmpty() && diemStr.matches("\\d+")) {
+            diem = Integer.parseInt(diemStr);
+            // Kiểm tra điểm không vượt quá tổng tiền hoặc điểm của khách hàng
+            String sdt = txt_array_top[2].getText().trim();
+            if (!sdt.isEmpty()) {
+                KhachHangDTO khachHang = khachHangBUS.getMaKhachHangBySdt(sdt);
+                if (khachHang != null && diem > khachHang.getDiem()) {
+                    JOptionPane.showMessageDialog(null, "Điểm nhập vượt quá điểm tích lũy của khách hàng!");
+                    txt_array_top[4].setText(String.valueOf(khachHang.getDiem()));
+                    diem = khachHang.getDiem();
+                }
+            }
+            // Tính giảm giá (1 điểm = 1000 VNĐ)
+            tienGiamGia = Math.min(diem * 1000, tongTien); // Đảm bảo giảm giá không vượt quá tổng tiền
+        } else {
+            tienGiamGia = 0; // Không có điểm hợp lệ
+        }
+    } catch (NumberFormatException e) {
+        tienGiamGia = 0; // Reset giảm giá nếu lỗi phân tích
+        txt_array_top[4].setText("0"); // Reset trường điểm
+        JOptionPane.showMessageDialog(null, "Điểm tích lũy phải là số nguyên dương!");
+    }
+
+    // Cập nhật tổng tiền sau giảm giá
+    tongTien -= tienGiamGia;
+    txt_array_top[6].setText(String.valueOf(tongTien));
+}
+
+    @Override
+    public void refreshTable() {
+        DefaultTableModel model = (DefaultTableModel) table_top.getModel();
+        model.setRowCount(0);
+        try {
+            sachList = sachBUS.getAllSach();
+            for (SachDTO sach : sachList) {
+                model.addRow(new Object[] {
+                        sach.getMaSach(),
+                        sach.getTenSach(),
+                        sach.getSoLuong(),
+                        sach.getDonGia()
+                });
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Lỗi khi làm mới bảng: " + e.getMessage());
+        }
+>>>>>>> 703571d52f944198eca0e5d2b5dc02afb4e26331
     }
 
     private String getNextMaKH() {
