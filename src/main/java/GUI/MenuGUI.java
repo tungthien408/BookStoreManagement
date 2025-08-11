@@ -79,8 +79,7 @@ public class MenuGUI {
                     panel_content[i] = new BanSachGUI(account).getPanel();
                     break;
                 case 1:
-                    // panel_content[i] = new NhapSachGUI(account).getPanel();
-                    panel_content[i] = new ImportBookGUI(account).getPanel();
+                    panel_content[i] = new NhapSachGUI(account).getPanel();
                     break;
                 case 2:
                     panel_content[i] = new HoaDonBanGUI().getPanel();
